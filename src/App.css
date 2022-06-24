@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 }
+
+.logo-wrapper {
+  padding: .5rem;
+  box-sizing: border-box;
+  /* background: linear-gradient(#eeeeee, #fff); */
+  background: linear-gradient(to right, #eee,#eee,#eee,#eee,#eee,#fff,#fff,#fff,#fff, #fff);
+
+}
