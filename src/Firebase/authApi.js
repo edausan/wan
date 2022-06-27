@@ -220,6 +220,34 @@ export const UploadPhoto = async ({ id, imageUpload }) => {
   return { photoURL, updateProfile };
 };
 
-export const GetUserProfile = async () => {};
+export const RealtimeUsers = () => {
+  const user = auth.currentUser;
+  const [data, setData] = useState([]);
 
-export const GetWorshipLeaders = async () => {};
+  useEffect(() => {
+    try {
+      onSnapshot(
+        collection(Firestore, 'user_metadata'),
+
+        (snapshot) => {
+          const docs = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          console.log({ docs });
+
+          if (docs.length > 0) {
+            //   localStorage.setItem('orders', JSON.stringify(docs));
+            //   const local_orders = JSON.parse(localStorage.getItem('orders'));
+            setData(docs);
+          }
+        }
+      );
+    } catch (error) {
+      console.log({ RealtimeMetadata_ERROR: error });
+    }
+  }, []);
+
+  return { data };
+};

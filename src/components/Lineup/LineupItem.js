@@ -94,6 +94,32 @@ const LineupItem = ({ lineup, isBordered, isLast }) => {
     }
   };
 
+  const handleCopy = () => {
+    const verse = document.querySelector('#verse');
+    const pre_chorus = document.querySelector('#pre-chorus');
+    const chorus = document.querySelector('#chorus');
+
+    verse.select();
+    pre_chorus.select();
+    chorus.select();
+
+    console.log({
+      verse,
+      pre_chorus,
+      chorus,
+      lyrics: `Verse: ${verse.innerHTML} /n Pre-chorus: ${pre_chorus.innerHTML} /n Chorus: ${chorus.innerHTML}`,
+    });
+
+    navigator.clipboard.readText(verse.innerHTML).then((clipText) => {
+      console.log({ clipText });
+      // document.querySelector('#lyrics').innerText += clipText;
+    });
+
+    const successful = document.execCommand('copy');
+    const msg = successful ? 'successful' : 'unsuccessful';
+    console.log('Fallback: Copying text command was ' + msg);
+  };
+
   const isOpen = Boolean(anchorEl);
   const id = isOpen ? 'about-popper' : undefined;
 
@@ -291,9 +317,15 @@ const LineupItem = ({ lineup, isBordered, isLast }) => {
         anchor='right'
         open={expanded}
         onClose={() => handleExpandClick({ song: null, id: null })}
+        sx={{
+          '& > .MuiDrawer-paper': {
+            background: `${theme.palette.background.default}`,
+          },
+        }}
       >
         <Box sx={{ width: 320, p: 2 }}>
-          <List>
+          <Button onClick={handleCopy}>Copy</Button>
+          <List id='lyrics'>
             {
               <ListItem>
                 <ListItemText
@@ -323,26 +355,27 @@ const LineupItem = ({ lineup, isBordered, isLast }) => {
                 <ListItemText
                   primary='Verse:'
                   secondary={
-                    drawerData.id === 'Lyrics' ? (
-                      drawerData?.song?.lyrics?.verse
-                    ) : (
-                      <TextField
-                        value={drawerData?.song?.chords?.verse}
-                        fullWidth
-                        disabled
-                        variant='standard'
-                        multiline
-                        sx={{
-                          '& textarea.Mui-disabled': {
-                            '-webkit-text-fill-color':
-                              theme.palette.text.primary,
-                          },
-                          '& > .Mui-disabled:before': {
-                            borderBottomStyle: 'none !important',
-                          },
-                        }}
-                      />
-                    )
+                    <TextField
+                      id='verse'
+                      value={
+                        drawerData.id === 'Lyrics'
+                          ? drawerData?.song?.lyrics?.verse
+                          : drawerData?.song?.chords?.verse
+                      }
+                      fullWidth
+                      disabled
+                      variant='standard'
+                      multiline
+                      sx={{
+                        '& textarea.Mui-disabled': {
+                          '-webkit-text-fill-color': theme.palette.text.primary,
+                          textTransform: 'uppercase',
+                        },
+                        '& > .Mui-disabled:before': {
+                          borderBottomStyle: 'none !important',
+                        },
+                      }}
+                    />
                   }
                   primaryTypographyProps={{
                     sx: {
@@ -367,26 +400,27 @@ const LineupItem = ({ lineup, isBordered, isLast }) => {
               <ListItem>
                 <ListItemText
                   secondary={
-                    drawerData.id === 'Lyrics' ? (
-                      drawerData?.song?.lyrics?.pre_chorus
-                    ) : (
-                      <TextField
-                        value={drawerData?.song?.chords?.pre_chorus}
-                        fullWidth
-                        disabled
-                        variant='standard'
-                        multiline
-                        sx={{
-                          '& textarea.Mui-disabled': {
-                            '-webkit-text-fill-color':
-                              theme.palette.text.primary,
-                          },
-                          '& > .Mui-disabled:before': {
-                            borderBottomStyle: 'none !important',
-                          },
-                        }}
-                      />
-                    )
+                    <TextField
+                      id='pre-chorus'
+                      value={
+                        drawerData.id === 'Lyrics'
+                          ? drawerData?.song?.lyrics?.pre_chorus
+                          : drawerData?.song?.chords?.pre_chorus
+                      }
+                      fullWidth
+                      disabled
+                      variant='standard'
+                      multiline
+                      sx={{
+                        '& textarea.Mui-disabled': {
+                          '-webkit-text-fill-color': theme.palette.text.primary,
+                          textTransform: 'uppercase',
+                        },
+                        '& > .Mui-disabled:before': {
+                          borderBottomStyle: 'none !important',
+                        },
+                      }}
+                    />
                   }
                   primary='Pre-chorus:'
                   primaryTypographyProps={{
@@ -412,26 +446,27 @@ const LineupItem = ({ lineup, isBordered, isLast }) => {
               <ListItem>
                 <ListItemText
                   secondary={
-                    drawerData.id === 'Lyrics' ? (
-                      drawerData?.song?.lyrics?.chorus
-                    ) : (
-                      <TextField
-                        value={drawerData?.song?.chords?.chorus}
-                        fullWidth
-                        disabled
-                        variant='standard'
-                        multiline
-                        sx={{
-                          '& textarea.Mui-disabled': {
-                            '-webkit-text-fill-color':
-                              theme.palette.text.primary,
-                          },
-                          '& > .Mui-disabled:before': {
-                            borderBottomStyle: 'none !important',
-                          },
-                        }}
-                      />
-                    )
+                    <TextField
+                      id='chorus'
+                      value={
+                        drawerData.id === 'Lyrics'
+                          ? drawerData?.song?.lyrics?.chorus
+                          : drawerData?.song?.chords?.chorus
+                      }
+                      fullWidth
+                      disabled
+                      variant='standard'
+                      multiline
+                      sx={{
+                        '& textarea.Mui-disabled': {
+                          '-webkit-text-fill-color': theme.palette.text.primary,
+                          textTransform: 'uppercase',
+                        },
+                        '& > .Mui-disabled:before': {
+                          borderBottomStyle: 'none !important',
+                        },
+                      }}
+                    />
                   }
                   primary='Chorus:'
                   primaryTypographyProps={{
