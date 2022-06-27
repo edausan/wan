@@ -26,7 +26,7 @@ import React from 'react';
 import { useContext, useState } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { AppCtx } from '../../App';
-import { SignOut } from './../../Auth/auth';
+import { SignOut } from '../../Firebase/authApi';
 import BG from '../../assets/bg.jpg';
 import Profile from './User/Profile';
 
@@ -37,13 +37,12 @@ const Settings = () => {
   const [toggleMode, setToggleMode] = useState(false);
 
   return (
-    <>
-      <Profile />
+    <section style={{ paddingBottom: 100 }}>
       <List
-        sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+        sx={{ width: '100%', bgcolor: 'background.paper' }}
         subheader={<ListSubheader>Settings</ListSubheader>}
       >
-        <ListItem>
+        <ListItem onClick={() => setMode(!mode)}>
           <ListItemIcon>
             {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
           </ListItemIcon>
@@ -61,7 +60,12 @@ const Settings = () => {
             }}
           />
         </ListItem>
-        <ListItem>
+        <ListItem
+          onClick={() => {
+            history.push('/');
+            SignOut();
+          }}
+        >
           <ListItemIcon>
             <LogoutOutlined />
           </ListItemIcon>
@@ -80,7 +84,7 @@ const Settings = () => {
           </IconButton>
         </ListItem>
       </List>
-    </>
+    </section>
   );
 };
 

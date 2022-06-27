@@ -24,12 +24,11 @@ import {
 } from '@mui/material';
 import { useContext, useState } from 'react';
 import { AppCtx } from '../../../App';
-import { SignIn } from '../../../Auth/auth';
 import { LoadingButton } from '@mui/lab';
 import { Box } from '@mui/system';
 import WAN_LOGO from '../../../assets/WAN_LOGO.png';
 import WAN_LOGO_WHITE from '../../../assets/WAN_LOGO_WHITE.png';
-import { CreateAccount } from './../../../Auth/auth';
+import { CreateAccount } from '../../../Firebase/authApi';
 import { useEffect } from 'react';
 
 export const Ministries = [

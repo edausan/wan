@@ -20,15 +20,16 @@ import {
 } from '@mui/material';
 import { useContext, useState, useEffect } from 'react';
 import { AppCtx } from '../../../App';
-import { SignIn } from '../../../Auth/auth';
 import { LoadingButton } from '@mui/lab';
 import { Box } from '@mui/system';
 import WAN_LOGO_WHITE from '../../../assets/WAN_LOGO_WHITE.png';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import Login from './Login';
 import SignUp from './Signup';
 
 const Splash = () => {
+  const params = useParams();
+  const { currentUser } = useContext(AppCtx);
   const history = useHistory();
   const [screen, setScreen] = useState('splash');
 
@@ -36,7 +37,7 @@ const Splash = () => {
   const pink = '#f51088';
 
   useEffect(() => {
-    history.push('/settings');
+    // history.push(`/profile/${currentUser.user?.uid || params.id}`);
   }, []);
 
   const Screen = () => {

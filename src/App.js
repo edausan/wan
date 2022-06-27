@@ -6,7 +6,7 @@ import Home from './components/Pages/Home';
 import Assignments from './components/Pages/Assignments';
 import Lineup from './components/Lineup/LineupMain';
 import { WAN_LOGO } from './data';
-import { createAccount, RealtimeMetadata } from './Auth/auth';
+import { createAccount, RealtimeMetadata } from './Firebase/authApi';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import NewLineup from './components/Lineup/NewLineup';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -17,6 +17,7 @@ import { FirebaseApp, Firestore } from './Firebase';
 import Splash from './components/Pages/Auth/Splash';
 import EditProfile from './components/Pages/EditProfile';
 import { doc, onSnapshot, collection } from 'firebase/firestore';
+import ProfilePage from './components/Pages/Profile';
 
 export const AppCtx = createContext();
 
@@ -34,6 +35,9 @@ function App() {
   const [index, setIndex] = useState(0);
   const [mode, setMode] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [lineups, setLineups] = useState([]);
+
+  console.log({ lineups });
 
   useEffect(() => {
     console.log({ data });
@@ -43,17 +47,10 @@ function App() {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        // const uid = user.uid;
         setCurrentUser({ ...currentUser, user });
-        // console.log({ user });
-        // ...
       } else {
         console.log({ user });
         setCurrentUser({ ...currentUser, user });
-        // User is signed out
-        // ...
       }
     });
   }, []);
@@ -69,6 +66,8 @@ function App() {
     currentUser,
     setIsLoggedIn,
     isLoggedIn,
+    setLineups,
+    lineups,
   };
 
   const theme = createTheme({
@@ -107,8 +106,10 @@ function App() {
                     <Route path='/assignments' component={Assignments} />
                     <Route exact path='/lineup' component={Lineup} />
                     <Route path='/lineup/new' component={NewLineup} />
+                    <Route path='/lineup/edit/:id' component={NewLineup} />
                     <Route path='/settings' component={Settings} />
                     <Route path='/edit_profile' component={EditProfile} />
+                    <Route path='/profile/:id' component={ProfilePage} />
                   </Switch>
                 </Grid>
               </Grid>

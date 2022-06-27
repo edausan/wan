@@ -1,7 +1,28 @@
-import React from 'react';
-import { ExpandMore, Favorite, MoreVert, Share } from '@mui/icons-material';
+import React, { useState } from 'react';
 import {
+  Add,
+  Delete,
+  Edit,
+  Event,
+  ExpandMore,
+  Favorite,
+  FavoriteBorder,
+  FavoriteOutlined,
+  FormatQuote,
+  MoreVert,
+  MusicNote,
+  Note,
+  NoteAlt,
+  PlayArrow,
+  Share,
+  TextSnippet,
+} from '@mui/icons-material';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Avatar,
+  Box,
   Button,
   Card,
   CardActions,
@@ -10,97 +31,430 @@ import {
   CardMedia,
   Collapse,
   Divider,
+  Drawer,
   IconButton,
   List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  SwipeableDrawer,
+  TextField,
   Typography,
+  useTheme,
 } from '@mui/material';
 import { red } from '@mui/material/colors';
 import BG from '../../assets/bg.jpg';
+import WALL_SD from '../../assets/wallpaper-sd.jpg';
+import { VIA } from '../../data';
+import moment from 'moment';
+import { pink, blue } from '../Pages/Auth/Login';
+import PopperUnstyled from '@mui/base/PopperUnstyled';
+import ClickAwayListener from '@mui/base/ClickAwayListener';
+import { useHistory, Link } from 'react-router-dom';
+import { getAuth } from 'firebase/auth';
+import { FirebaseApp } from './../../Firebase';
+import { DeleteLineup, HeartLineup } from './../../Firebase/songsApi';
 
 const avatar_url =
   'https://scontent.fmnl8-2.fna.fbcdn.net/v/t39.30808-6/280194017_7362509033822685_908075910970226655_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=7uZOrEvaygMAX_gt8ZW&_nc_ht=scontent.fmnl8-2.fna&oh=00_AT8yHI4Ps0WBFxq1pLmV6C1OUnXdTgT2JDT4rG0GvaYO9w&oe=62AE53AB';
 const coverImg =
   'https://jilworldwide.org/wp-content/uploads/2022/05/wallpaper-hd.jpg';
 
-const LineupItem = ({ lineup }) => {
-  const [expanded, setExpanded] = React.useState(false);
+const LineupItem = ({ lineup, isBordered, isLast }) => {
+  const auth = getAuth(FirebaseApp);
+  const user = auth.currentUser;
 
-  const handleExpandClick = () => {
+  const history = useHistory();
+  const theme = useTheme();
+  const [expanded, setExpanded] = useState(false);
+  const [drawerData, setDrawerData] = useState({ song: null, id: null });
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const handleExpandClick = (song, id) => {
+    setDrawerData({ song, id });
     setExpanded(!expanded);
   };
+
+  const handleEdit = () => {
+    history.push(`/lineup/edit/${lineup.id}`);
+  };
+
+  const handleDelete = async () => {
+    DeleteLineup({ id: lineup.id });
+  };
+
+  const handleHeart = async () => {
+    const idx = lineup?.heart?.findIndex((h) => h === user.uid);
+    if (idx === -1) {
+      HeartLineup({
+        lineupId: lineup.id,
+        userIds: [...lineup?.heart, user.uid],
+      });
+    }
+  };
+
+  const isOpen = Boolean(anchorEl);
+  const id = isOpen ? 'about-popper' : undefined;
+
+  const admin_id = 'Hfhcau8TAiXR4T4FEAXp7eipDvz2';
+
   console.log({ lineup });
   return (
-    <Card sx={{ maxWidth: '100%', mb: 1 }}>
-      <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label='recipe'>
-            R
-          </Avatar>
-        }
-        action={
-          <IconButton aria-label='settings'>
-            <MoreVert />
-          </IconButton>
-        }
-        title='Shrimp and Chorizo Paella'
-        subheader='September 14, 2016'
-      />
-      <CardMedia component='img' height='194' image={BG} alt='Paella dish' />
-      <CardContent>
-        <Typography variant='body2' color='text.secondary'>
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the
-          mussels, if you like.
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label='add to favorites'>
-          <Favorite />
-        </IconButton>
-        <IconButton aria-label='share'>
-          <Share />
-        </IconButton>
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label='show more'
-        >
-          <ExpandMore />
-        </ExpandMore>
-      </CardActions>
-      <Collapse in={expanded} timeout='auto' unmountOnExit>
-        <CardContent>
-          <Typography paragraph>Method:</Typography>
-          <Typography paragraph>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and
-            set aside for 10 minutes.
-          </Typography>
-          <Typography paragraph>
-            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet
-            over medium-high heat. Add chicken, shrimp and chorizo, and cook,
-            stirring occasionally until lightly browned, 6 to 8 minutes.
-            Transfer shrimp to a large plate and set aside, leaving chicken and
-            chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes,
-            onion, salt and pepper, and cook, stirring often until thickened and
-            fragrant, about 10 minutes. Add saffron broth and remaining 4 1/2
-            cups chicken broth; bring to a boil.
-          </Typography>
-          <Typography paragraph>
-            Add rice and stir very gently to distribute. Top with artichokes and
-            peppers, and cook without stirring, until most of the liquid is
-            absorbed, 15 to 18 minutes. Reduce heat to medium-low, add reserved
-            shrimp and mussels, tucking them down into the rice, and cook again
-            without stirring, until mussels have opened and rice is just tender,
-            5 to 7 minutes more. (Discard any mussels that don&apos;t open.)
-          </Typography>
-          <Typography>
-            Set aside off of the heat to let rest for 10 minutes, and then
-            serve.
-          </Typography>
+    <>
+      <Card
+        sx={{
+          maxWidth: '100%',
+          mb: isBordered && isLast ? 0 : isBordered ? 1 : 2,
+          border: 'none',
+          borderRadius: isBordered ? 0 : '',
+        }}
+        variant={isBordered ? 'outlined' : 'elevation'}
+      >
+        <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+          <CardHeader
+            sx={{ pb: 0 }}
+            avatar={
+              <Link
+                to={`/profile/${lineup.user?.uid}`}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <Avatar
+                  sx={{
+                    background: `linear-gradient(45deg, ${pink}, ${blue})`,
+                    color: '#fff',
+                  }}
+                  aria-label='recipe'
+                  src={lineup.user?.photoURL}
+                >
+                  {lineup.worship_leader.split('')[0]}
+                </Avatar>
+              </Link>
+            }
+            action={
+              <>
+                {(user.uid === lineup.user?.uid || user.uid === admin_id) && (
+                  <IconButton
+                    aria-label='settings'
+                    onClick={(event) =>
+                      isOpen
+                        ? setAnchorEl(null)
+                        : setAnchorEl(event.currentTarget)
+                    }
+                  >
+                    <MoreVert />
+                  </IconButton>
+                )}
+                <PopperUnstyled
+                  id={id}
+                  open={isOpen}
+                  anchorEl={anchorEl}
+                  disablePortal
+                  keepMounted
+                  placement='left-end'
+                  style={{ zIndex: 1001 }}
+                >
+                  <Card
+                    variant='outlined'
+                    sx={{ boxShadow: 'md', borderRadius: 'sm', p: 0 }}
+                  >
+                    <List>
+                      <ListItem sx={{ py: 0 }}>
+                        <Button
+                          startIcon={<Edit fontSize='small' />}
+                          color='inherit'
+                          onClick={handleEdit}
+                        >
+                          Edit
+                        </Button>
+                      </ListItem>
+                      {user.uid === lineup.user?.uid && (
+                        <ListItem sx={{ py: 0 }}>
+                          <Button
+                            startIcon={<Delete fontSize='small' />}
+                            color='inherit'
+                            onClick={handleDelete}
+                          >
+                            Delete
+                          </Button>
+                        </ListItem>
+                      )}
+                    </List>
+                  </Card>
+                </PopperUnstyled>
+              </>
+            }
+            title={
+              <Link
+                to={`/profile/${lineup.user?.uid}`}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                {lineup.worship_leader}
+              </Link>
+            }
+            subheader={
+              <small>
+                {moment(lineup.date_created).startOf('minute').fromNow()}{' '}
+                {lineup.date_updated && (
+                  <span style={{ color: '#777' }}>
+                    • Edited:{' '}
+                    {moment(lineup.date_updated).startOf('minute').fromNow()}
+                  </span>
+                )}
+              </small>
+            }
+          />
+        </ClickAwayListener>
+
+        <CardContent sx={{ py: 0 }}>
+          <List sx={{ py: 0 }}>
+            <Accordion
+              expanded={isExpanded}
+              disableGutters
+              sx={{ boxShadow: 'none', py: 0, background: 'none' }}
+            >
+              <AccordionSummary
+                sx={{ px: 0 }}
+                expandIcon={<ExpandMore />}
+                aria-controls='panel1a-content'
+                id='panel1a-header'
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
+                <ListItem sx={{ py: 0 }}>
+                  <ListItemIcon>
+                    <Event fontSize='small' />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <small>
+                        {moment(lineup.date).format('LL')} •{' '}
+                        {moment(lineup.date).format('dddd')}
+                      </small>
+                    }
+                    secondary={<small>Lineup Date</small>}
+                  />
+                </ListItem>
+              </AccordionSummary>
+              <Divider />
+              <AccordionDetails sx={{ px: 0 }}>
+                {lineup.songs
+                  .filter((s) => s.song)
+                  .map((s) => {
+                    return (
+                      <ListItem key={s.id}>
+                        <ListItemText primary={s.song} secondary={s.label} />
+                        <IconButton
+                          color='primary'
+                          disabled={!s.lyrics?.verse}
+                          onClick={() => handleExpandClick(s, 'Lyrics')}
+                          sx={{ mr: 1 }}
+                        >
+                          <TextSnippet fontSize='small' />
+                        </IconButton>
+                        <IconButton
+                          color='secondary'
+                          onClick={() => handleExpandClick(s, 'Chords')}
+                          disabled={!s.chords}
+                          sx={{ mr: 1 }}
+                        >
+                          <MusicNote fontSize='small' />
+                        </IconButton>
+                        <IconButton color='error' disabled={!s.media}>
+                          <PlayArrow fontSize='small' />
+                        </IconButton>
+                      </ListItem>
+                    );
+                  })}
+              </AccordionDetails>
+            </Accordion>
+          </List>
         </CardContent>
-      </Collapse>
-    </Card>
+
+        <CardActions disableSpacing>
+          <IconButton aria-label='add to favorites' onClick={handleHeart}>
+            {lineup?.heart?.length > 0 ? (
+              <Favorite color='error' />
+            ) : (
+              <FavoriteBorder />
+            )}{' '}
+            <small style={{ marginLeft: 6, fontSize: 14 }}>
+              {lineup?.heart?.length}
+            </small>
+          </IconButton>
+          <IconButton aria-label='share' disabled>
+            <Share />
+          </IconButton>
+        </CardActions>
+      </Card>
+
+      <SwipeableDrawer
+        anchor='right'
+        open={expanded}
+        onClose={() => handleExpandClick({ song: null, id: null })}
+      >
+        <Box sx={{ width: 320, p: 2 }}>
+          <List>
+            {
+              <ListItem>
+                <ListItemText
+                  primary='Song Title:'
+                  secondary={drawerData?.song?.song}
+                  primaryTypographyProps={{
+                    sx: {
+                      fontSize: '0.875rem',
+                      color: theme.palette.text.primary,
+                      opacity: 0.7,
+                    },
+                  }}
+                  secondaryTypographyProps={{
+                    sx: {
+                      fontSize: '1rem',
+                      color: theme.palette.text.primary,
+                      textTransform: 'uppercase',
+                    },
+                  }}
+                />
+              </ListItem>
+            }
+
+            {(drawerData?.song?.lyrics?.verse ||
+              drawerData?.song?.chords?.verse) && (
+              <ListItem>
+                <ListItemText
+                  primary='Verse:'
+                  secondary={
+                    drawerData.id === 'Lyrics' ? (
+                      drawerData?.song?.lyrics?.verse
+                    ) : (
+                      <TextField
+                        value={drawerData?.song?.chords?.verse}
+                        fullWidth
+                        disabled
+                        variant='standard'
+                        multiline
+                        sx={{
+                          '& textarea.Mui-disabled': {
+                            '-webkit-text-fill-color':
+                              theme.palette.text.primary,
+                          },
+                          '& > .Mui-disabled:before': {
+                            borderBottomStyle: 'none !important',
+                          },
+                        }}
+                      />
+                    )
+                  }
+                  primaryTypographyProps={{
+                    sx: {
+                      fontSize: '0.875rem',
+                      color: theme.palette.text.primary,
+                      opacity: 0.7,
+                    },
+                  }}
+                  secondaryTypographyProps={{
+                    sx: {
+                      fontSize: '1rem',
+                      color: theme.palette.text.primary,
+                      textTransform: 'uppercase',
+                    },
+                  }}
+                />
+              </ListItem>
+            )}
+
+            {(drawerData?.song?.lyrics?.pre_chorus ||
+              drawerData?.song?.chords?.pre_chorus) && (
+              <ListItem>
+                <ListItemText
+                  secondary={
+                    drawerData.id === 'Lyrics' ? (
+                      drawerData?.song?.lyrics?.pre_chorus
+                    ) : (
+                      <TextField
+                        value={drawerData?.song?.chords?.pre_chorus}
+                        fullWidth
+                        disabled
+                        variant='standard'
+                        multiline
+                        sx={{
+                          '& textarea.Mui-disabled': {
+                            '-webkit-text-fill-color':
+                              theme.palette.text.primary,
+                          },
+                          '& > .Mui-disabled:before': {
+                            borderBottomStyle: 'none !important',
+                          },
+                        }}
+                      />
+                    )
+                  }
+                  primary='Pre-chorus:'
+                  primaryTypographyProps={{
+                    sx: {
+                      fontSize: '0.875rem',
+                      color: theme.palette.text.primary,
+                      opacity: 0.7,
+                    },
+                  }}
+                  secondaryTypographyProps={{
+                    sx: {
+                      fontSize: '1rem',
+                      color: theme.palette.text.primary,
+                      textTransform: 'uppercase',
+                    },
+                  }}
+                />
+              </ListItem>
+            )}
+
+            {(drawerData?.song?.lyrics?.chorus ||
+              drawerData?.song?.chords?.chorus) && (
+              <ListItem>
+                <ListItemText
+                  secondary={
+                    drawerData.id === 'Lyrics' ? (
+                      drawerData?.song?.lyrics?.chorus
+                    ) : (
+                      <TextField
+                        value={drawerData?.song?.chords?.chorus}
+                        fullWidth
+                        disabled
+                        variant='standard'
+                        multiline
+                        sx={{
+                          '& textarea.Mui-disabled': {
+                            '-webkit-text-fill-color':
+                              theme.palette.text.primary,
+                          },
+                          '& > .Mui-disabled:before': {
+                            borderBottomStyle: 'none !important',
+                          },
+                        }}
+                      />
+                    )
+                  }
+                  primary='Chorus:'
+                  primaryTypographyProps={{
+                    sx: {
+                      fontSize: '0.875rem',
+                      color: theme.palette.text.primary,
+                      opacity: 0.7,
+                    },
+                  }}
+                  secondaryTypographyProps={{
+                    sx: {
+                      fontSize: '1rem',
+                      color: theme.palette.text.primary,
+                      textTransform: 'uppercase',
+                    },
+                  }}
+                />
+              </ListItem>
+            )}
+          </List>
+        </Box>
+      </SwipeableDrawer>
+    </>
   );
 };
 

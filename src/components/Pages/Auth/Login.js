@@ -20,11 +20,14 @@ import {
 } from '@mui/material';
 import { useContext, useState } from 'react';
 import { AppCtx } from '../../../App';
-import { SignIn } from '../../../Auth/auth';
+import { SignIn } from '../../../Firebase/authApi';
 import { LoadingButton } from '@mui/lab';
 import { Box } from '@mui/system';
 import WAN_LOGO from '../../../assets/WAN_LOGO.png';
 import WAN_LOGO_WHITE from '../../../assets/WAN_LOGO_WHITE.png';
+
+export const blue = '#00addd';
+export const pink = '#f51088';
 
 const Login = ({ setScreen }) => {
   const theme = useTheme();
@@ -64,9 +67,6 @@ const Login = ({ setScreen }) => {
     }
     // setCurrentUser(response.auth.currentUser);
   };
-
-  const blue = '#00addd';
-  const pink = '#f51088';
 
   return (
     <>
