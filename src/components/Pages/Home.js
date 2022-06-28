@@ -11,9 +11,7 @@ const Home = () => {
       sx={{ height: '100vh' }}
     >
       <Card sx={{ p: 2 }}>
-        <Typography>
-          Wait lang guys ah! Darating din tayo sa exciting part. XD
-        </Typography>
+        <Typography>Home</Typography>
       </Card>
     </Grid>
   );

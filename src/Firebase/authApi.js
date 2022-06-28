@@ -13,6 +13,9 @@ import {
   getDoc,
   onSnapshot,
   updateDoc,
+  query,
+  where,
+  getDocs,
 } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL, uploadBytes } from 'firebase/storage';
 import { useEffect, useState } from 'react';
@@ -250,4 +253,25 @@ export const RealtimeUsers = () => {
   }, []);
 
   return { data };
+};
+
+export const GetVIA = async () => {
+  try {
+    const q = query(
+      collection(Firestore, 'user_metadata'),
+      where('ministry', '==', 'VIA'),
+      where('uid', '!=', null)
+    );
+
+    const querySnapshot = await getDocs(q);
+    const VIA = [];
+    querySnapshot.forEach((doc) => {
+      VIA.push({ ...doc.data(), id: doc.id });
+      // doc.data() is never undefined for query doc snapshots
+    });
+
+    return VIA;
+  } catch (error) {
+    console.log(error);
+  }
 };

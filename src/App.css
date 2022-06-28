@@ -44,3 +44,17 @@
   background: linear-gradient(to right, #eee,#eee,#eee,#eee,#eee,#fff,#fff,#fff,#fff, #fff);
 
 }
+
+.MuiInput-root > .MuiSelect-select  {
+  display: flex;
+  align-items: center;
+}
+
+div.backup .MuiSelect-select {
+  font-size: 14px;
+  word-break: break-word;
+  text-overflow: inherit;
+  overflow: auto;
+  width: 241px;
+  white-space: inherit;
+}

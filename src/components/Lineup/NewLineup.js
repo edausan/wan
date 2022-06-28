@@ -18,6 +18,7 @@ import Media from '../Modals/Media';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { AddLineup, UpdateLineup } from '../../Firebase/songsApi';
 import moment from 'moment';
 import { useHistory, useParams } from 'react-router-dom';
@@ -44,8 +45,8 @@ const NewLineup = () => {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    console.log({ lineupData });
-  }, [lineupData]);
+    getSundayOfCurrentWeek();
+  }, []);
 
   useEffect(() => {
     if (params.id) {
@@ -122,6 +123,16 @@ const NewLineup = () => {
         history.push('/lineup');
       }, 1000);
     }, 1000);
+  };
+
+  const getSundayOfCurrentWeek = () => {
+    const today = new Date();
+    const first = today.getDate() - today.getDay() + 1;
+    const last = first + 6;
+
+    const sunday = new Date(today.setDate(last));
+    setDate(sunday);
+    return sunday;
   };
 
   const ModalContent = () => {
@@ -203,8 +214,9 @@ const NewLineup = () => {
       <Grid container justifyContent='center' spacing={2}>
         <Grid item xs={12} md={12}>
           <Card sx={{ p: 2 }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
               <MobileDatePicker
+                inputFormat='dddd LL'
                 label='Date'
                 value={date}
                 onChange={(value) => handleDateChange(value)}
