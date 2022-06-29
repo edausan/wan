@@ -186,6 +186,9 @@ const LINEUP = [
 	}
 ]
 
+const ASSIGNER = "k4gcy3yNWqa02aUfhw8J4fn7sS63"
+const ADMIN = "Hfhcau8TAiXR4T4FEAXp7eipDvz2"
+
 const Glass = theme => ({background: `${theme.palette.background.paper}90`, backdropFilter: "blur(5px)"})
 
-export {VIA, LINEUP, WAN_LOGO, YOUTUBE_LOGO, Glass}
+export {VIA, LINEUP, WAN_LOGO, YOUTUBE_LOGO, Glass, ASSIGNER, ADMIN}
