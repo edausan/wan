@@ -22,30 +22,26 @@ const auth = getAuth(FirebaseApp);
 export const AddLineup = async ({ lineup }) => {
   try {
     const id = serverTimestamp();
-    console.log({ lineup, id });
     const saved = await addDoc(collection(Firestore, 'lineups'), {
       ...lineup,
+      heart: [],
     });
-
-    console.log({ saved_id: saved.id });
     return saved;
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
   }
 };
 
 export const UpdateLineup = async ({ id, lineup }) => {
-  console.log({ id, lineup });
   try {
     const ref = doc(Firestore, 'lineups', id);
     const updated = await updateDoc(ref, {
       ...lineup,
     });
 
-    console.log({ updated });
     return updated;
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
   }
 };
 
@@ -58,12 +54,9 @@ export const GetLineup = async ({ id }) => {
   const querySnapshot = await getDocs(q);
   const lineups = [];
   querySnapshot.forEach((doc) => {
-    console.log(doc.id, ' => ', doc.data());
     lineups.push({ ...doc.data(), id: doc.id });
     // doc.data() is never undefined for query doc snapshots
   });
-
-  console.log({ lineups });
 
   return lineups;
 };
@@ -73,10 +66,8 @@ export const GetSingleLineup = async ({ id }) => {
   // const q = query(collection(Firestore, "lineups", id), where("id", "==", id))
 
   const lineup = await getDoc(ref);
-  console.log({ GetSingleLineup: lineup });
 
   if (lineup.exists()) {
-    console.log('LINEUP DATA:', lineup.data());
     return lineup.data();
   } else {
     console.log('No such document!');
@@ -84,6 +75,7 @@ export const GetSingleLineup = async ({ id }) => {
 };
 
 export const HeartLineup = async ({ lineupId, userIds }) => {
+  console.log({ lineupId, userIds });
   try {
     const ref = doc(Firestore, 'lineups', lineupId);
 
@@ -91,10 +83,9 @@ export const HeartLineup = async ({ lineupId, userIds }) => {
       heart: userIds,
     });
 
-    console.log({ updated });
     return updated;
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
   }
 };
 
@@ -103,12 +94,66 @@ export const DeleteLineup = async ({ id }) => {
     const ref = doc(Firestore, 'lineups', id);
     await deleteDoc(ref);
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
   }
 };
 
+export const AddSongs = ({ songs }) => {
+  console.log({ songs });
+  songs.forEach(async (song) => {
+    try {
+      await addDoc(collection(Firestore, 'songs'), {
+        ...song,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  });
+};
+export const UpdateSong = async ({ id, song }) => {
+  try {
+    const ref = doc(Firestore, 'songs', id);
+    const updated_song = await updateDoc(ref, {
+      ...song,
+    });
+
+    console.log({ updated_song });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const RealtimeSongs = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    try {
+      onSnapshot(
+        collection(Firestore, 'songs'),
+
+        (snapshot) => {
+          const docs = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          if (docs.length > 0) {
+            console.log({ docs });
+            //   localStorage.setItem('orders', JSON.stringify(docs));
+            //   const local_orders = JSON.parse(localStorage.getItem('orders'));
+            setData(docs);
+          }
+        }
+      );
+    } catch (error) {
+      console.log({ RealtimeMetadata_ERROR: error });
+    }
+  }, []);
+
+  return { data };
+};
+
 export const RealtimeLineups = () => {
-  const user = auth.currentUser;
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -121,8 +166,6 @@ export const RealtimeLineups = () => {
             id: doc.id,
             ...doc.data(),
           }));
-
-          console.log({ docs });
 
           if (docs.length > 0) {
             //   localStorage.setItem('orders', JSON.stringify(docs));

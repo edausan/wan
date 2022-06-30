@@ -16,12 +16,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { RealtimeLineups } from '../../Firebase/songsApi';
 
 const Lineup = () => {
-  const { currentUser, setLineups } = useContext(AppCtx);
+  const { currentUser, setLineups, scrollToTop } = useContext(AppCtx);
   const { data } = RealtimeLineups();
   const location = useLocation();
   const [lineups, setLineup] = useState([]);
 
   useEffect(() => {
+    scrollToTop();
     setLineups(data);
     setLineup(data);
   }, [data]);
