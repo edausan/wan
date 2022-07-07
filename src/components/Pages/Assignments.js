@@ -28,20 +28,19 @@ const Assignments = () => {
 					return <SetAssignment assignment={a} isViewing={true} />
 				})}
 
-			{user.uid === ASSIGNER ||
-				(user.uid === ADMIN && (
-					<Link to={`/assignments/new`} style={{textDecoration: "none", color: "inherit"}}>
-						<Fab
-							sx={{
-								position: "fixed",
-								bottom: 66,
-								right: 16
-							}}
-						>
-							<Add />
-						</Fab>
-					</Link>
-				))}
+			{(user.uid === ASSIGNER || user.uid === ADMIN) && (
+				<Link to={`/assignments/new`} style={{textDecoration: "none", color: "inherit"}}>
+					<Fab
+						sx={{
+							position: "fixed",
+							bottom: 66,
+							right: 16
+						}}
+					>
+						<Add />
+					</Fab>
+				</Link>
+			)}
 		</Grid>
 	)
 }

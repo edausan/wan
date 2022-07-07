@@ -198,7 +198,7 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 						}
 						title={
 							<Link to={`/profile/${lineup.user?.uid}`} style={{textDecoration: "none", color: "inherit"}}>
-								{lineup.worship_leader}
+								{lineup.worship_leader}	
 							</Link>
 						}
 						subheader={
