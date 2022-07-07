@@ -1,4 +1,4 @@
-import { FirebaseApp, Firestore } from '../Firebase';
+import { FirebaseApp, Firestore } from '.';
 import { useEffect, useState } from 'react';
 import {
   collection,
@@ -16,25 +16,61 @@ import {
   getDocs,
 } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import moment from 'moment';
 
 const auth = getAuth(FirebaseApp);
 
+const lineupRef = collection(Firestore, 'test_lineup');
+const songsRef = collection(Firestore, 'test_songs');
+
+/**
+ * TODO: ADD lineup
+ */
 export const AddLineup = async ({ lineup }) => {
+  const filtered_songs = lineup.songs.filter((s) => s.song);
+
   try {
-    const id = serverTimestamp();
-    const saved = await addDoc(collection(Firestore, 'lineups'), {
-      ...lineup,
-      heart: [],
+    const saved_songs = filtered_songs.map((song) => {
+      const id = song.song.split(' ').join('-').toLowerCase();
+
+      setDoc(doc(Firestore, 'test_songs', id), {
+        title: song.song,
+        artist: song.artist,
+        album: song.album,
+        lyrics: song.lyrics,
+        chords: song.chords,
+        media: song.media || null,
+        date_created: moment(new Date()).format('dddd LL'),
+        tags: [...song.tags, song.label.split(' ')[0]],
+        id,
+      });
+
+      return {
+        id,
+        title: song.song,
+        label: song.label,
+      };
     });
-    return saved;
+
+    if (saved_songs.length > 0) {
+      const saved = await addDoc(lineupRef, {
+        ...lineup,
+        songs: saved_songs,
+        heart: [],
+      });
+      return saved;
+    }
   } catch (error) {
     console.log(error.message);
   }
 };
 
+/**
+ * TODO: UPDATE lineup
+ */
 export const UpdateLineup = async ({ id, lineup }) => {
   try {
-    const ref = doc(Firestore, 'lineups', id);
+    const ref = doc(lineupRef, id);
     const updated = await updateDoc(ref, {
       ...lineup,
     });
@@ -45,11 +81,11 @@ export const UpdateLineup = async ({ id, lineup }) => {
   }
 };
 
+/**
+ * TODO: GET lineup per user
+ */
 export const GetLineup = async ({ id }) => {
-  const q = query(
-    collection(Firestore, 'lineups'),
-    where('user.uid', '==', id)
-  );
+  const q = query(lineupRef, where('user.uid', '==', id));
 
   const querySnapshot = await getDocs(q);
   const lineups = [];
@@ -61,10 +97,11 @@ export const GetLineup = async ({ id }) => {
   return lineups;
 };
 
+/**
+ * TODO: GET single lineup
+ */
 export const GetSingleLineup = async ({ id }) => {
-  const ref = doc(Firestore, 'lineups', id);
-  // const q = query(collection(Firestore, "lineups", id), where("id", "==", id))
-
+  const ref = doc(lineupRef, id);
   const lineup = await getDoc(ref);
 
   if (lineup.exists()) {
@@ -74,10 +111,13 @@ export const GetSingleLineup = async ({ id }) => {
   }
 };
 
+/**
+ * TODO: Heart lineup
+ */
 export const HeartLineup = async ({ lineupId, userIds }) => {
   console.log({ lineupId, userIds });
   try {
-    const ref = doc(Firestore, 'lineups', lineupId);
+    const ref = doc(lineupRef, lineupId);
 
     const updated = await updateDoc(ref, {
       heart: userIds,
@@ -89,40 +129,55 @@ export const HeartLineup = async ({ lineupId, userIds }) => {
   }
 };
 
+/**
+ * TODO: DELETE lineup
+ */
 export const DeleteLineup = async ({ id }) => {
   try {
-    const ref = doc(Firestore, 'lineups', id);
+    const ref = doc(lineupRef, id);
     await deleteDoc(ref);
   } catch (error) {
     console.log(error.message);
   }
 };
 
-export const AddSongs = ({ songs }) => {
-  console.log({ songs });
-  songs.forEach(async (song) => {
-    try {
-      await addDoc(collection(Firestore, 'songs'), {
-        ...song,
-      });
-    } catch (error) {
-      console.log(error.message);
-    }
-  });
-};
-export const UpdateSong = async ({ id, song }) => {
+/**
+ * TODO: UPDATE single song
+ * @param song
+ */
+export const UpdateSong = async ({ song }) => {
   try {
-    const ref = doc(Firestore, 'songs', id);
-    const updated_song = await updateDoc(ref, {
+    const ref = doc(songsRef, song.id);
+
+    const updated = await updateDoc(ref, {
       ...song,
     });
 
-    console.log({ updated_song });
+    return updated;
   } catch (error) {
     console.log(error.message);
   }
 };
 
+/**
+ * TODO: GET single song
+ */
+export const GetSong = async ({ song }) => {
+  console.log({ GetSong: song });
+  const ref = doc(songsRef, song.id);
+  const lineup = await getDoc(ref);
+
+  if (lineup.exists()) {
+    console.log(lineup.data());
+    return lineup.data();
+  } else {
+    console.log('No such document!');
+  }
+};
+
+/**
+ * TODO: REALTIME songs
+ */
 export const RealtimeSongs = () => {
   const [data, setData] = useState([]);
 
@@ -153,13 +208,16 @@ export const RealtimeSongs = () => {
   return { data };
 };
 
+/**
+ * TODO: REALTIME lineups
+ */
 export const RealtimeLineups = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     try {
       onSnapshot(
-        collection(Firestore, 'lineups'),
+        lineupRef,
 
         (snapshot) => {
           const docs = snapshot.docs.map((doc) => ({

@@ -25,7 +25,6 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import {
   AddLineup,
-  AddSongs,
   RealtimeSongs,
   UpdateLineup,
 } from '../../Firebase/songsApi';
@@ -34,7 +33,7 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from '../../Firebase';
-import { MusicNoteTwoTone, Save } from '@mui/icons-material';
+import { Save } from '@mui/icons-material';
 
 const NewLineup = () => {
   const params = useParams();
@@ -47,7 +46,7 @@ const NewLineup = () => {
     song_title: null,
   });
 
-  const { index, setIndex, lineups, scrollToTop } = useContext(AppCtx);
+  const { lineups, scrollToTop } = useContext(AppCtx);
   const [date, setDate] = useState(new Date());
   const [lineupData, setLineupData] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -59,7 +58,7 @@ const NewLineup = () => {
 
   useEffect(() => {
     scrollToTop();
-    setSongs(data);
+    data && setSongs(data);
   }, [data]);
 
   useEffect(() => {
@@ -70,9 +69,9 @@ const NewLineup = () => {
     if (params.id) {
       const filtered = lineups.filter((l) => l.id === params.id)[0];
       console.log({ filtered });
-      setService(filtered.service);
-      setDate(filtered.date);
-      setLineupData(filtered.songs);
+      setService(filtered?.service);
+      setDate(filtered?.date);
+      setLineupData(filtered?.songs);
     } else {
       setLineupData(LINEUP);
     }
@@ -84,72 +83,36 @@ const NewLineup = () => {
   };
 
   const handleSave = async () => {
-    console.log({ song: lineupData[0].song });
+    console.log({ song: lineupData[0]?.song });
     if (lineupData[0].song) {
       setSaving(true);
 
-      const saved = await AddLineup({
-        lineup: {
-          date_created: moment(new Date()).format('LLLL'),
-          songs: lineupData,
-          worship_leader: user.displayName,
-          user: {
-            uid: user.uid,
-            photoURL: user.photoURL,
-            displayName: user.displayName,
+      if (lineupData[0]?.song) {
+        const saved = await AddLineup({
+          lineup: {
+            date_created: moment(new Date()).format('LLLL'),
+            songs: lineupData.filter((l) => l.song),
+            worship_leader: {
+              uid: user.uid,
+              photoURL: user.photoURL,
+              displayName: user.displayName,
+            },
+            date: moment(date).format('LLLL'),
+            service,
           },
-          date: moment(date).format('LLLL'),
-          service,
-        },
-      });
+        });
 
-      handleSaveSongs();
+        if (saved?.id) {
+          setSaving(false);
+          setSaved(true);
 
-      console.log({ saved });
-
-      if (saved.id) {
-        setSaving(false);
-        setSaved(true);
-
-        setTimeout(() => {
-          setSaved(false);
-          history.push('/lineup');
-        }, 1000);
+          setTimeout(() => {
+            setSaved(false);
+            history.push('/lineup');
+          }, 1000);
+        }
       }
     }
-  };
-
-  const handleSaveSongs = () => {
-    const filtered = lineupData
-      .map((l) => {
-        const idx = songs.findIndex((s) => s.label === l.song);
-        // if (idx >= 0 && l.lyrics === null) {
-
-        // }
-
-        if (idx === -1) {
-          return l;
-        }
-        return null;
-      })
-      .filter((l) => l !== null);
-
-    console.log({ filtered });
-
-    const updated_songs = filtered
-      .map((lineup) => {
-        delete lineup.id;
-        return {
-          ...lineup,
-          label: lineup.song,
-          id: lineup.song?.toLowerCase().split(' ').join('-'),
-          date_created: moment(new Date()).format('LLLL'),
-        };
-      })
-      .filter((l) => l.song);
-
-    console.log({ updated_songs });
-    AddSongs({ songs: updated_songs });
   };
 
   const handleUpdate = async () => {
@@ -233,6 +196,8 @@ const NewLineup = () => {
   const handleClose = () => {
     setSaved(false);
   };
+
+  console.log({ lineupData });
 
   return (
     <section

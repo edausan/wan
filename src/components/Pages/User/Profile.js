@@ -133,8 +133,6 @@ const Profile = () => {
     setOpen(false);
   };
 
-  console.log({ user, currentUser });
-
   return (
     <>
       <FriendsModal

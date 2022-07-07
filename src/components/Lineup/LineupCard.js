@@ -45,6 +45,7 @@ const LineupCard = ({
     lyrics: null,
     chords: null,
     media: null,
+    from: null,
   });
 
   const [category, setCategory] = useState({
@@ -54,6 +55,10 @@ const LineupCard = ({
     album: null,
     id: null,
   });
+
+  useEffect(() => {
+    console.log({ cardData });
+  }, [cardData]);
 
   const [filteredSongs, setFilteredSongs] = useState([]);
 
@@ -65,7 +70,6 @@ const LineupCard = ({
   }, [songs]);
 
   useEffect(() => {
-    console.log({ cat, songs });
     setCategory(cat);
   }, [cat]);
 
@@ -92,7 +96,8 @@ const LineupCard = ({
             freeSolo
             id='song-auto'
             options={
-              filteredSongs.sort((a, b) => b.label.localeCompare(a.label)) || []
+              filteredSongs.sort((a, b) => b.label?.localeCompare(a.label)) ||
+              []
             }
             fullWidth
             size='small'
@@ -103,12 +108,14 @@ const LineupCard = ({
                 setCardData({
                   ...cardData,
                   songs: value,
+                  from: "typeof value === 'string'",
                 });
               } else if (value && value.inputValue) {
                 // Create a new value from the user input
                 setCardData({
                   ...cardData,
                   song: value.inputValue,
+                  from: 'value && value.inputValue',
                 });
               } else {
                 setCardData({
@@ -118,6 +125,7 @@ const LineupCard = ({
                   artist: value.artist || cardData.artist,
                   album: value.album || cardData.album,
                   media: null,
+                  from: 'else',
                 });
               }
             }}

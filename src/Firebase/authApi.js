@@ -5,7 +5,7 @@ import {
   signOut,
   updateProfile,
 } from 'firebase/auth';
-import { FirebaseApp, Firestore } from '../Firebase';
+import { FirebaseApp, Firestore } from '.';
 import {
   collection,
   doc,
@@ -36,7 +36,7 @@ export const GetUserMetadata = async ({ id }) => {
   const docRef = doc(Firestore, 'user_metadata', id);
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
-    console.log('Document data:', docSnap.data());
+    // console.log('Document data:', docSnap.data());
   } else {
     // doc.data() will be undefined in this case
     console.log('No such document!');
@@ -179,7 +179,6 @@ export const RealtimeMetadata = () => {
     if (user?.uid) {
       try {
         onSnapshot(doc(Firestore, 'user_metadata', user.uid), (doc) => {
-          console.log('Current data: ', doc.data());
           setData(doc.data());
         });
       } catch (error) {

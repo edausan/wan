@@ -54,7 +54,7 @@ import moment from 'moment';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from '../../../Firebase';
-import { GetVIA } from './../../../Firebase/authApi';
+import { GetVIA } from '../../../Firebase/authApi';
 import { SetAssignments } from '../../../Firebase/assignmentApi';
 import { Link, useHistory } from 'react-router-dom';
 import { AppCtx } from '../../../App';

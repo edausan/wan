@@ -63,9 +63,10 @@ import ClickAwayListener from '@mui/base/ClickAwayListener';
 import { useHistory, Link } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from './../../Firebase';
-import { DeleteLineup, HeartLineup } from './../../Firebase/songsApi';
+import { DeleteLineup, GetSong, HeartLineup } from '../../Firebase/songsApi';
 import { useEffect } from 'react';
 import { GetUserMetadata } from '../../Firebase/authApi';
+import SongModal from './SongModal';
 
 const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
   const auth = getAuth(FirebaseApp);
@@ -78,16 +79,27 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [open, setOpen] = useState(false);
-  const [worshipLeaderDetails, setWorshipLeaderDetails] = useState(null);
+  const [lineupSongs, setLineupSongs] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState({ song: null, status: false });
 
   useEffect(() => {
-    lineup?.user?.uid && handleGetUser();
-  }, []);
+    lineup.songs.length > 0 && GetSongsData();
+  }, [lineup.songs]);
 
-  const handleGetUser = async () => {
-    const user = await GetUserMetadata({ id: lineup?.user?.uid });
-    setWorshipLeaderDetails(user);
+  const GetSongsData = async () => {
+    const lineup_songs = [];
+    lineup.songs.map(async (song) => {
+      const songs_data = await GetSong({ song });
+      lineup_songs.push({ ...songs_data, label: song.label });
+    });
+
+    console.log({ lineup_songs });
+    setLineupSongs(lineup_songs);
   };
+
+  useEffect(() => {
+    console.log({ lineupSongs });
+  }, [lineupSongs]);
 
   const handleExpandClick = (song, id) => {
     setDrawerData({ song, id });
@@ -138,11 +150,17 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
 
   useEffect(() => {
     const date = moment(lineup.date).diff(new Date()) < 0;
-    console.log({ date });
   }, []);
+
+  console.log({ lineup });
 
   return (
     <>
+      <SongModal
+        isOpen={isModalOpen}
+        setIsOpen={setIsModalOpen}
+        getData={GetSongsData}
+      />
       <Card
         sx={{
           maxWidth: '100%',
@@ -157,7 +175,7 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
             sx={{ pb: 0 }}
             avatar={
               <Link
-                to={`/profile/${lineup.user?.uid}`}
+                to={`/profile/${lineup?.worship_leader?.uid}`}
                 style={{ textDecoration: 'none', color: 'inherit' }}
               >
                 <Avatar
@@ -166,15 +184,16 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                     color: '#fff',
                   }}
                   aria-label='recipe'
-                  src={worshipLeaderDetails?.photoURL}
+                  src={lineup?.worship_leader?.photoURL}
                 >
-                  {lineup.worship_leader.split('')[0]}
+                  {lineup?.worship_leader.displayName.split('')[0]}
                 </Avatar>
               </Link>
             }
             action={
               <>
-                {(user.uid === lineup.user?.uid || user.uid === ADMIN) && (
+                {(user.uid === lineup.worship_leader?.uid ||
+                  user.uid === ADMIN) && (
                   <IconButton
                     aria-label='settings'
                     onClick={(event) =>
@@ -209,7 +228,7 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                           Edit
                         </Button>
                       </ListItem>
-                      {user.uid === lineup.user?.uid && (
+                      {user.uid === lineup.worship_leader?.uid && (
                         <ListItem sx={{ py: 0 }}>
                           <Button
                             startIcon={<Delete fontSize='small' />}
@@ -227,10 +246,10 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
             }
             title={
               <Link
-                to={`/profile/${worshipLeaderDetails?.uid}`}
+                to={`/profile/${lineup.worship_leader?.uid}`}
                 style={{ textDecoration: 'none', color: 'inherit' }}
               >
-                {worshipLeaderDetails?.displayName}
+                {lineup.worship_leader?.displayName}
               </Link>
             }
             subheader={
@@ -291,12 +310,18 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
               </AccordionSummary>
               <Divider />
               <AccordionDetails sx={{ px: 0 }}>
-                {lineup.songs
-                  .filter((s) => s.song)
+                {lineupSongs
+                  // .filter((s) => s.title)
                   .map((s) => {
                     return (
                       <ListItem key={s.id}>
-                        <ListItemText primary={s.song} secondary={s.label} />
+                        <ListItemText
+                          primary={s.title}
+                          secondary={s.label}
+                          onClick={() =>
+                            setIsModalOpen({ song: s, status: true })
+                          }
+                        />
                         <IconButton
                           color='primary'
                           disabled={!s.lyrics?.verse}
@@ -335,13 +360,6 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
           <small style={{ marginLeft: 6, fontSize: 14 }}>
             {lineup?.heart?.length}
           </small>
-          {/* <AvatarGroup max={4} sx={{"& > .MuiAvatarGroup-avatar": {width: 18, height: 18, fontSize: 12}}}>
-						<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-						<Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-						<Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-						<Avatar alt="Agnes Walker" src="/static/images/avatar/4.jpg" />
-						<Avatar alt="Trevor Henderson" src="/static/images/avatar/5.jpg" />
-					</AvatarGroup> */}
           <a
             href={`https://m.me/j/Aba8ddZutv5MvPbi/`}
             style={{ textDecoration: 'none', color: 'inherit' }}
@@ -401,7 +419,7 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                 secondary={
                   <div>
                     <div style={{ marginBottom: 8 }}>
-                      <strong>{drawerData?.song?.song}</strong>
+                      <strong>{drawerData?.song?.title}</strong>
                     </div>
                     <div>
                       <small style={{ textTransform: 'capitalize' }}>

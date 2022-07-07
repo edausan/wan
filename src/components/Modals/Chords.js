@@ -24,7 +24,7 @@ const Chords = ({ setLineupData, song, lineupData, setOpen }) => {
   }, []);
 
   useEffect(() => {
-    if (chords.verse) {
+    if (chords.chorus || chords.verse) {
       const updated = lineupData.map((lineup) => {
         if (lineup.id === song.category.id) {
           return {

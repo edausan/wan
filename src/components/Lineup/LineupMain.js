@@ -22,10 +22,13 @@ const Lineup = () => {
   const [lineups, setLineup] = useState([]);
 
   useEffect(() => {
+    console.log({ data });
     scrollToTop();
     setLineups(data);
     setLineup(data);
   }, [data]);
+
+  const handleGetSong = () => {};
 
   const actions = [
     { icon: <Cancel />, name: 'Cancel', action: () => {} },
@@ -36,8 +39,6 @@ const Lineup = () => {
   const sorted = lineups.sort(
     (a, b) => new Date(b.date_created) - new Date(a.date_created)
   );
-
-  console.log({ sorted });
 
   return (
     <section style={{ paddingBottom: 100 }}>
