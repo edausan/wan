@@ -46,7 +46,7 @@ const EditProfile = () => {
 
   const theme = useTheme();
   const history = useHistory();
-  const { currentUser } = useContext(AppCtx);
+  const { currentUser, scrollToTop } = useContext(AppCtx);
   const [userDetails, setUserDetails] = useState({
     displayName: currentUser.user.displayName,
     life_verse: currentUser?.user_metadata?.life_verse,
@@ -60,6 +60,7 @@ const EditProfile = () => {
   const [photoURL, setPhotoURL] = useState(null);
 
   useEffect(() => {
+    scrollToTop();
     if (imageUpload === null) return;
     handleUploadPhoto();
   }, [imageUpload]);
@@ -152,7 +153,7 @@ const EditProfile = () => {
       />
       <CardContent sx={{ position: 'relative', mt: '-65px', pb: 0 }}>
         <Avatar
-          alt='Remy Sharp'
+          alt={currentUser?.user?.displayName}
           src={currentUser?.user?.photoURL}
           sx={{
             width: 100,
@@ -228,7 +229,7 @@ const EditProfile = () => {
                   variant='standard'
                   labelId='ministry'
                   size='small'
-                  disabled={updating}
+                  disabled
                   value={userDetails.ministry}
                   sx={{ fontSize: 14 }}
                   onChange={(e) =>

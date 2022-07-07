@@ -7,6 +7,10 @@ import {
   SpeedDial,
   Snackbar,
   Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 
 import { LINEUP } from '../../data';
@@ -19,7 +23,11 @@ import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { AddLineup, UpdateLineup } from '../../Firebase/songsApi';
+import {
+  AddLineup,
+  RealtimeSongs,
+  UpdateLineup,
+} from '../../Firebase/songsApi';
 import moment from 'moment';
 import { useHistory, useParams } from 'react-router-dom';
 
@@ -38,11 +46,20 @@ const NewLineup = () => {
     song_title: null,
   });
 
-  const { index, setIndex, lineups } = useContext(AppCtx);
+  const { lineups, scrollToTop } = useContext(AppCtx);
   const [date, setDate] = useState(new Date());
   const [lineupData, setLineupData] = useState([]);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [service, setService] = useState(null);
+  const [songs, setSongs] = useState([]);
+
+  const { data } = RealtimeSongs();
+
+  useEffect(() => {
+    scrollToTop();
+    data && setSongs(data);
+  }, [data]);
 
   useEffect(() => {
     getSundayOfCurrentWeek();
@@ -52,11 +69,13 @@ const NewLineup = () => {
     if (params.id) {
       const filtered = lineups.filter((l) => l.id === params.id)[0];
       console.log({ filtered });
-      setLineupData(filtered.songs);
+      setService(filtered?.service);
+      setDate(filtered?.date);
+      setLineupData(filtered?.songs);
     } else {
       setLineupData(LINEUP);
     }
-  }, [LINEUP]);
+  }, [LINEUP, params.id]);
 
   const handleDateChange = (newValue) => {
     console.log({ newValue });
@@ -64,30 +83,34 @@ const NewLineup = () => {
   };
 
   const handleSave = async () => {
-    console.log({ song: lineupData[0].song });
+    console.log({ song: lineupData[0]?.song });
     if (lineupData[0].song) {
       setSaving(true);
 
-      const saved = await AddLineup({
-        lineup: {
-          date_created: moment(new Date()).format('LLLL'),
-          songs: lineupData,
-          worship_leader: user.displayName,
-          user: { uid: user.uid, photoURL: user.photoURL },
-          date: moment(date).format('LLLL'),
-        },
-      });
+      if (lineupData[0]?.song) {
+        const saved = await AddLineup({
+          lineup: {
+            date_created: moment(new Date()).format('LLLL'),
+            songs: lineupData.filter((l) => l.song),
+            worship_leader: {
+              uid: user.uid,
+              photoURL: user.photoURL,
+              displayName: user.displayName,
+            },
+            date: moment(date).format('LLLL'),
+            service,
+          },
+        });
 
-      console.log({ saved });
+        if (saved?.id) {
+          setSaving(false);
+          setSaved(true);
 
-      if (saved.id) {
-        setSaving(false);
-        setSaved(true);
-
-        setTimeout(() => {
-          setSaved(false);
-          history.push('/lineup');
-        }, 1000);
+          setTimeout(() => {
+            setSaved(false);
+            history.push('/lineup');
+          }, 1000);
+        }
       }
     }
   };
@@ -100,6 +123,7 @@ const NewLineup = () => {
     const res = await UpdateLineup({
       id: params.id,
       lineup: {
+        service,
         songs: lineupData,
         date: moment(date).format('LLLL'),
         date_updated: moment(new Date()).format('LLLL'),
@@ -173,6 +197,8 @@ const NewLineup = () => {
     setSaved(false);
   };
 
+  console.log({ lineupData });
+
   return (
     <section
       style={{
@@ -193,7 +219,7 @@ const NewLineup = () => {
         </Alert>
       </Snackbar>
 
-      {lineupData[0]?.song && (
+      {lineupData[0]?.song && service && (
         <SpeedDial
           onClick={params.id ? handleUpdate : handleSave}
           color={lineupData[0]?.song ? 'primary' : '#ccc'}
@@ -202,20 +228,44 @@ const NewLineup = () => {
           icon={<Save />}
         />
       )}
+      {/* <SpeedDial
+        onClick={handleSaveSongs}
+        color='success'
+        ariaLabel='Save Songs'
+        sx={{ position: 'fixed', bottom: 130, right: 16 }}
+        icon={<MusicNoteTwoTone />}
+      /> */}
 
       <Modal
         open={open.status}
         onClose={() => setOpen({ id: null, status: false, song_title: null })}
-        // keepMounted
       >
         {ModalContent()}
       </Modal>
 
       <Grid container justifyContent='center' spacing={2}>
         <Grid item xs={12} md={12}>
-          <Card sx={{ p: 2 }}>
+          <Card sx={{ p: 2, mb: 2 }}>
+            <FormControl fullWidth variant='standard' required sx={{ mb: 2 }}>
+              <InputLabel id='service-type'>Service</InputLabel>
+              <Select
+                labelId='service-type'
+                value={service}
+                onChange={(e) => setService(e.target.value)}
+              >
+                <MenuItem value='Worship Service | Belleview'>
+                  Worship Service | Belleview
+                </MenuItem>
+                <MenuItem value='Worship Service | Lumina'>
+                  Worship Service | Lumina
+                </MenuItem>
+                <MenuItem value='Youth Service'>Youth Service</MenuItem>
+              </Select>
+            </FormControl>
+
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <MobileDatePicker
+                required
                 inputFormat='dddd LL'
                 label='Date'
                 value={date}
@@ -238,6 +288,7 @@ const NewLineup = () => {
             lineupData.map((category, idx) => {
               return (
                 <LineupCard
+                  songs={songs}
                   saving={saving}
                   setLineupData={setLineupData}
                   key={category.id + idx}

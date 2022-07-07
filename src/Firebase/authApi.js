@@ -1,250 +1,314 @@
 import {
-	getAuth,
-	createUserWithEmailAndPassword,
-	signInWithEmailAndPassword,
-	signOut,
-	updateProfile
-} from "firebase/auth"
-import {FirebaseApp, Firestore} from "../Firebase"
-import {collection, doc, setDoc, getDoc, onSnapshot, updateDoc, query, where, getDocs} from "firebase/firestore"
-import {getStorage, ref, getDownloadURL, uploadBytes} from "firebase/storage"
-import {useEffect, useState} from "react"
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from 'firebase/auth';
+import { FirebaseApp, Firestore } from '.';
+import {
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+  query,
+  where,
+  getDocs,
+} from 'firebase/firestore';
+import { getStorage, ref, getDownloadURL, uploadBytes } from 'firebase/storage';
+import { useEffect, useState } from 'react';
 
-const auth = getAuth(FirebaseApp)
-const user = auth.currentUser
+const auth = getAuth(FirebaseApp);
+const user = auth.currentUser;
 
-export const SetUserMetadata = async ({id, life_verse, ministry}) => {
-	const metadata = await setDoc(doc(Firestore, "user_metadata", id), {
-		life_verse,
-		ministry
-	})
+export const SetUserMetadata = async ({ metadata }) => {
+  const meta_data = await setDoc(doc(Firestore, 'user_metadata', metadata.id), {
+    ...metadata,
+  });
 
-	console.log({metadata})
-}
+  console.log({ meta_data });
+};
 
-export const GetUserMetadata = async ({id}) => {
-	// console.log({ id });
-	const docRef = doc(Firestore, "user_metadata", id)
-	const docSnap = await getDoc(docRef)
-	if (docSnap.exists()) {
-		console.log("Document data:", docSnap.data())
-	} else {
-		// doc.data() will be undefined in this case
-		console.log("No such document!")
-	}
-	return docSnap.data()
-}
+export const GetUserMetadata = async ({ id }) => {
+  // console.log({ id });
+  const docRef = doc(Firestore, 'user_metadata', id);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    // console.log('Document data:', docSnap.data());
+  } else {
+    // doc.data() will be undefined in this case
+    console.log('No such document!');
+  }
+  return docSnap.data();
+};
 
-export const CreateAccount = async ({email, password, ministry}) => {
-	try {
-		const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+export const CreateAccount = async ({ email, password, ministry }) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
-		const user = userCredential.user
-		console.log({user})
+    const user = userCredential.user;
+    console.log({ user });
 
-		const user_metadata = await SetUserMetadata({
-			id: user.uid,
-			ministry,
-			life_verse: ""
-		})
-		console.log({user_metadata})
+    const meta = {
+      id: user.uid,
+      ministry,
+      life_verse: '',
+      photoHeart: [],
+      photoURL: user.photoURL,
+      displayName: user.displayName,
+      email: user.email,
+      assignments: [],
+      notifications: [],
+    };
 
-		return {user_metadata, user}
-	} catch (error) {
-		console.log({error})
-		return error
-	}
-}
+    const user_metadata = await SetUserMetadata({ metadata: meta });
+    console.log({ user_metadata });
 
-export const SignIn = async ({email, password}) => {
-	try {
-		const userCredential = await signInWithEmailAndPassword(auth, email, password)
-		const user = userCredential.user
-		console.log({user})
+    return { user_metadata, user };
+  } catch (error) {
+    console.log({ error });
+    return error;
+  }
+};
 
-		const metadata = await GetUserMetadata({id: user.uid})
-		const updatedMetadata = await UpdateUserMetadata({
-			life_verse: metadata.life_verse,
-			ministry: metadata.ministry
-		})
+export const SignIn = async ({ email, password }) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
+    console.log({ user });
 
-		console.log({SignIn_metadata: metadata, updatedMetadata})
+    const metadata = await GetUserMetadata({ id: user.uid });
+    const metas = {
+      life_verse: metadata.life_verse,
+      ministry: metadata.ministry,
+      photoHeart: metadata.photoHeart || [],
+      photoURL: user.photoURL,
+      displayName: user.displayName,
+      email: user.email,
+      assignments: metadata.assignments || [],
+      notifications: metadata.notifications || [],
+    };
+    const updatedMetadata = await UpdateUserMetadata({ metadata: metas });
 
-		return {user_metadata: metadata, user}
-	} catch (error) {
-		return error
-	}
-}
+    console.log({ SignIn_metadata: metadata, updatedMetadata });
 
-export const SignOut = async () => {
-	try {
-		const userCredential = await signOut(auth)
-		console.log({userCredential})
-	} catch (error) {
-		console.log(error)
-	}
-}
+    return { user_metadata: metadata, user };
+  } catch (error) {
+    return error;
+  }
+};
 
-export const UpdateProfile = async ({displayName, phoneNumber, photoURL, life_verse, ministry}) => {
-	try {
-		const userCredential = await updateProfile(auth.currentUser, {
-			displayName,
-			photoURL,
-			phoneNumber
-		})
+export const SignOut = () => {
+  try {
+    signOut(auth);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-		const update = await UpdateUserMetadata({
-			life_verse,
-			ministry
-		})
+export const UpdateProfile = async ({
+  displayName,
+  phoneNumber,
+  photoURL,
+  life_verse,
+  ministry,
+}) => {
+  try {
+    const userCredential = await updateProfile(auth.currentUser, {
+      displayName,
+      photoURL,
+      phoneNumber,
+    });
 
-		console.log({userCredential, update})
+    const metadata = await GetUserMetadata({ id: user.uid });
 
-		return userCredential
-	} catch (error) {
-		return error
-	}
-}
+    const metas = {
+      life_verse,
+      ministry,
+      photoHeart: metadata.photoHeart || [],
+      posts: metadata.posts || [],
+      photoURL: user.photoURL,
+      displayName: user.displayName,
+      email: user.email,
+      assignments: metadata.assignments || [],
+      notifications: metadata.notifications || [],
+    };
+
+    const update = await UpdateUserMetadata({
+      metadata: metas,
+    });
+
+    console.log({ userCredential, update });
+
+    return userCredential;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const HeartProfile = async ({ id, heart }) => {
+  console.log({ heart });
+  try {
+    const user = auth.currentUser;
+    const userRef = doc(Firestore, 'user_metadata', id);
+    const updated = await updateDoc(userRef, {
+      ...heart,
+    });
+
+    console.log({ HeartProfile: updated });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 export const RealtimeMetadata = () => {
-	const user = auth.currentUser
-	const [data, setData] = useState([])
+  const user = auth.currentUser;
+  const [data, setData] = useState([]);
 
-	useEffect(() => {
-		if (user?.uid) {
-			try {
-				onSnapshot(doc(Firestore, "user_metadata", user.uid), doc => {
-					console.log("Current data: ", doc.data())
-					setData(doc.data())
-				})
-			} catch (error) {
-				console.log({RealtimeMetadata_ERROR: error})
-			}
-		}
-	}, [user])
+  useEffect(() => {
+    if (user?.uid) {
+      try {
+        onSnapshot(doc(Firestore, 'user_metadata', user.uid), (doc) => {
+          setData(doc.data());
+        });
+      } catch (error) {
+        console.log({ RealtimeMetadata_ERROR: error });
+      }
+    }
+  }, [user]);
 
-	return {data}
-}
+  return { data };
+};
 
-const UpdatePhotoURL = async ({photoURL}) => {
-	try {
-		const user = await updateProfile(auth.currentUser, {
-			photoURL,
-			displayName: auth.currentUser.displayName,
-			uid: auth.currentUser.uid
-		})
-		console.log({user})
-	} catch (error) {
-		console.log(error)
-	}
-}
+const UpdatePhotoURL = async ({ photoURL }) => {
+  try {
+    const user = await updateProfile(auth.currentUser, {
+      photoURL,
+      displayName: auth.currentUser.displayName,
+      uid: auth.currentUser.uid,
+    });
+    console.log({ user });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-export const UpdateUserMetadata = async ({life_verse, ministry}) => {
-	console.log({life_verse, ministry})
-	try {
-		const user = auth.currentUser
-		const userRef = doc(Firestore, "user_metadata", user.uid)
-		const updated = await updateDoc(userRef, {
-			email: user.email,
-			displayName: user.displayName,
-			uid: user.uid,
-			life_verse,
-			ministry,
-			posts: []
-		})
+export const UpdateUserMetadata = async ({ metadata }) => {
+  //   console.log({ life_verse, ministry });
+  try {
+    const user = auth.currentUser;
+    const userRef = doc(Firestore, 'user_metadata', user.uid);
+    const updated = await updateDoc(userRef, {
+      ...metadata,
+    });
 
-		console.log({UpdateUserMetadata: updated})
+    return updated;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-		return updated
-	} catch (error) {
-		console.log(error)
-	}
-}
+export const UploadPhoto = async ({ id, imageUpload }) => {
+  const storage = getStorage(FirebaseApp);
 
-export const UploadPhoto = async ({id, imageUpload}) => {
-	const storage = getStorage(FirebaseApp)
+  /**
+   * TODO: REFERENCE TO FIRESTORE user_metadata COLLECTION WITH uid
+   */
+  const userRef = doc(Firestore, 'user_metadata', auth.currentUser.uid);
 
-	/**
-	 * TODO: REFERENCE TO FIRESTORE user_metadata COLLECTION WITH uid
-	 */
-	const userRef = doc(Firestore, "user_metadata", auth.currentUser.uid)
+  /**
+   * TODO: REFERENCE TO FIREBASE STORAGE FOLDER AND FILENAME
+   */
+  const imgRef = ref(storage, `profile/${imageUpload.name}`);
 
-	/**
-	 * TODO: REFERENCE TO FIREBASE STORAGE FOLDER AND FILENAME
-	 */
-	const imgRef = ref(storage, `profile/${imageUpload.name}`)
+  /**
+   * TODO: UPLOADING TO FIREBASE STORAGE
+   */
+  const uploaded = await uploadBytes(imgRef, imageUpload);
 
-	/**
-	 * TODO: UPLOADING TO FIREBASE STORAGE
-	 */
-	const uploaded = await uploadBytes(imgRef, imageUpload)
+  /**
+   * TODO:  GET PHOTO DOWNLOAD URL
+   */
+  const photoURL = await getDownloadURL(uploaded.ref);
 
-	/**
-	 * TODO:  GET PHOTO DOWNLOAD URL
-	 */
-	const photoURL = await getDownloadURL(uploaded.ref)
+  /**
+   * TODO: UPDATE USER'S METADATA photoURL
+   */
+  const updated_user_metadata = await updateDoc(userRef, {
+    photoURL,
+    uid: auth.currentUser.uid,
+  });
 
-	/**
-	 * TODO: UPDATE USER'S METADATA photoURL
-	 */
-	const updated_user_metadata = await updateDoc(userRef, {photoURL})
+  console.log({ updated_user_metadata });
 
-	console.log({updated_user_metadata})
+  /**
+   * TODO: UPDATE USER'S photoURL
+   */
+  const updateProfile = await UpdatePhotoURL({ photoURL });
 
-	/**
-	 * TODO: UPDATE USER'S photoURL
-	 */
-	const updateProfile = await UpdatePhotoURL({photoURL})
-
-	console.log({updateProfile})
-	return {photoURL, updateProfile}
-}
+  console.log({ updateProfile });
+  return { photoURL, updateProfile };
+};
 
 export const RealtimeUsers = () => {
-	const user = auth.currentUser
-	const [data, setData] = useState([])
+  const user = auth.currentUser;
+  const [data, setData] = useState([]);
 
-	useEffect(() => {
-		try {
-			onSnapshot(
-				collection(Firestore, "user_metadata"),
+  useEffect(() => {
+    try {
+      onSnapshot(
+        collection(Firestore, 'user_metadata'),
 
-				snapshot => {
-					const docs = snapshot.docs.map(doc => ({
-						id: doc.id,
-						...doc.data()
-					}))
+        (snapshot) => {
+          const docs = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
 
-					console.log({docs})
+          console.log({ docs });
 
-					if (docs.length > 0) {
-						//   localStorage.setItem('orders', JSON.stringify(docs));
-						//   const local_orders = JSON.parse(localStorage.getItem('orders'));
-						setData(docs)
-					}
-				}
-			)
-		} catch (error) {
-			console.log({RealtimeMetadata_ERROR: error})
-		}
-	}, [])
+          if (docs.length > 0) {
+            //   localStorage.setItem('orders', JSON.stringify(docs));
+            //   const local_orders = JSON.parse(localStorage.getItem('orders'));
+            setData(docs);
+          }
+        }
+      );
+    } catch (error) {
+      console.log({ RealtimeMetadata_ERROR: error });
+    }
+  }, []);
 
-	return {data}
-}
+  return { data };
+};
 
 export const GetVIA = async () => {
-	try {
-		const q = query(collection(Firestore, "user_metadata"), where("ministry", "==", "VIA"), where("uid", "!=", null))
+  try {
+    const q = query(
+      collection(Firestore, 'user_metadata'),
+      where('ministry', '==', 'VIA'),
+      where('uid', '!=', null)
+    );
 
-		const querySnapshot = await getDocs(q)
-		const VIA = []
-		querySnapshot.forEach(doc => {
-			VIA.push({...doc.data(), id: doc.id})
-			// doc.data() is never undefined for query doc snapshots
-		})
+    const querySnapshot = await getDocs(q);
+    const VIA = [];
+    querySnapshot.forEach((doc) => {
+      VIA.push({ ...doc.data(), id: doc.id });
+      // doc.data() is never undefined for query doc snapshots
+    });
 
-		return VIA
-	} catch (error) {
-		console.log(error)
-	}
-}
+    return VIA;
+  } catch (error) {
+    console.log(error);
+  }
+};

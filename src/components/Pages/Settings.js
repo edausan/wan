@@ -22,7 +22,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useContext, useState } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { AppCtx } from '../../App';
@@ -33,8 +33,12 @@ import Profile from './User/Profile';
 const Settings = () => {
   const history = useHistory();
   const theme = useTheme();
-  const { setMode, mode, currentUser } = useContext(AppCtx);
+  const { setMode, mode, currentUser, scrollToTop } = useContext(AppCtx);
   const [toggleMode, setToggleMode] = useState(false);
+
+  useEffect(() => {
+    scrollToTop();
+  }, []);
 
   return (
     <section style={{ paddingBottom: 100 }}>

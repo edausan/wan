@@ -58,3 +58,14 @@ div.backup .MuiSelect-select {
   width: 241px;
   white-space: inherit;
 }
+
+.MuiAutocomplete-listbox {
+  /* background-color: #121212; */
+}
+
+.MuiPaper-root {
+  backdrop-filter: blur(5px);
+}
+.MuiBackdrop-root {
+  backdrop-filter: blur(2px);
+}

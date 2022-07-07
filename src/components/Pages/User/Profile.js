@@ -22,17 +22,23 @@ import {
   Chip,
   hexToRgb,
   Grid,
+  Modal,
+  CardHeader,
+  ListItemAvatar,
 } from '@mui/material';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { AppCtx } from './../../../App';
 import BG from '../../../assets/bg.jpg';
 import { Ministries } from './../Auth/Signup';
 import {
+  AccountCircle,
   AccountCircleOutlined,
+  CachedTwoTone,
   ChevronRight,
   Edit,
   Favorite,
   FavoriteBorderOutlined,
+  FavoriteTwoTone,
   FormatQuote,
   FormatQuoteOutlined,
   GroupOutlined,
@@ -40,13 +46,19 @@ import {
   VerifiedUser,
   VisibilityOutlined,
 } from '@mui/icons-material';
-import { GetUserMetadata, RealtimeUsers } from '../../../Firebase/authApi';
+import {
+  GetUserMetadata,
+  HeartProfile,
+  RealtimeUsers,
+} from '../../../Firebase/authApi';
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from './../../../Firebase';
 import { GetLineup } from '../../../Firebase/songsApi';
 import LineupItem from './../../Lineup/LineupItem';
 import WritePost from './WritePost';
 import { Glass } from '../../../data';
+import BasicTabs from './Tabs';
+import FriendsModal from './FriendsModal';
 
 const Profile = () => {
   const theme = useTheme();
@@ -56,23 +68,24 @@ const Profile = () => {
 
   const params = useParams();
   const history = useHistory();
-  const { currentUser } = useContext(AppCtx);
-  console.log({ currentUser });
+  const { currentUser, bodyRef, scrollToTop } = useContext(AppCtx);
   const [user, setUser] = useState(null);
   const [userlineup, setUserlineup] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
   const [friends, setFriends] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [openFriends, setOpenFriends] = useState(false);
 
   const { data } = RealtimeUsers();
 
   useEffect(() => {
+    setOpen(false);
+    scrollToTop();
     setFriends(data);
-    console.log({ USERS: data });
   }, [data]);
 
   useEffect(() => {
-    console.log(params.id);
-    handleLineups();
+    currentUser?.user_metadata?.ministry === 'VIA' && handleLineups();
     if (params.id !== 'undefined' && currentUser.user.uid !== params.id) {
       handleGetUser();
     } else {
@@ -96,15 +109,98 @@ const Profile = () => {
         (a, b) => new Date(b.date_created) - new Date(a.date_created)
       )
     );
-    console.log({ userLineups });
   };
 
-  useEffect(() => {
+  const handleHeart = () => {
     console.log({ user });
-  }, [user]);
+    const idx = user?.photoHeart?.findIndex((h) => h === userProfile.uid);
+
+    if (idx === -1) {
+      HeartProfile({
+        heart: {
+          photoHeart: user?.photoHeart
+            ? [...user?.photoHeart, userProfile?.uid]
+            : [userProfile?.uid],
+        },
+        id: params.id,
+      });
+
+      handleGetUser();
+    }
+  };
+
+  const handleToOther = () => {
+    setOpen(false);
+  };
 
   return (
     <>
+      <FriendsModal
+        open={openFriends}
+        setOpen={setOpenFriends}
+        user={user}
+        friends={friends}
+      />
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <Card
+          sx={{
+            // p: 2,
+            width: '90%',
+            minWidth: 300,
+            maxWidth: 400,
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            boxSizing: 'border-box',
+            maxHeight: 400,
+          }}
+        >
+          <CardContent sx={{ alignItems: 'center' }}>
+            <IconButton sx={{ p: 0, mr: '6px' }}>
+              <Favorite color='error' />
+            </IconButton>
+            <Typography variant='caption' sx={{ color: '#f44336' }}>
+              {user?.photoHeart?.length}
+            </Typography>
+          </CardContent>
+          <Divider />
+
+          <CardContent>
+            <List>
+              {user?.photoHeart?.map((h) => {
+                return (
+                  <Link
+                    to={`/profile/${
+                      friends?.filter((f) => f.uid === h)[0]?.uid
+                    }`}
+                    onClick={handleToOther}
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                  >
+                    <ListItem>
+                      <ListItemAvatar>
+                        <Avatar
+                          src={friends?.filter((f) => f.uid === h)[0]?.photoURL}
+                        >
+                          <AccountCircle />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={
+                          friends?.filter((f) => f.uid === h)[0]?.displayName
+                        }
+                        // secondary={
+                        //   friends?.filter((f) => f.uid === h)[0]?.ministry
+                        // }
+                      />
+                    </ListItem>
+                  </Link>
+                );
+              })}
+            </List>
+          </CardContent>
+        </Card>
+      </Modal>
       <Card
         sx={{
           mb: 2,
@@ -121,10 +217,17 @@ const Profile = () => {
           </IconButton>
         )}
 
+        <IconButton
+          sx={{ position: 'absolute', top: 8, right: 50, color: '#fff' }}
+          onClick={() => window.location.reload()}
+        >
+          <CachedTwoTone />
+        </IconButton>
+
         <CardMedia component='img' height='140' image={BG} alt='green iguana' />
         <CardContent sx={{ position: 'relative', mt: '-70px', pb: 0 }}>
           <Avatar
-            alt='Remy Sharp'
+            alt={user?.displayName}
             src={user?.photoURL}
             sx={{
               width: 100,
@@ -153,8 +256,22 @@ const Profile = () => {
                   background: '#757575ba',
                 },
               }}
+              onClick={handleHeart}
             >
-              <FavoriteBorderOutlined />
+              {user?.photoHeart?.length > 0 ? (
+                <Favorite
+                  color='error'
+                  onClick={
+                    user?.photoHeart?.findIndex(
+                      (h) => h === userProfile.uid
+                    ) === -1
+                      ? handleHeart
+                      : () => setOpen(true)
+                  }
+                />
+              ) : (
+                <FavoriteBorderOutlined />
+              )}
             </IconButton>
           </label>
         </CardContent>
@@ -192,9 +309,7 @@ const Profile = () => {
               <ListItemText
                 primaryTypographyProps={{ sx: { fontSize: 14 } }}
                 primary={
-                  user?.life_verse || (
-                    <Skeleton variant='rectangular' width={210} height={118} />
-                  )
+                  user?.life_verse || <Skeleton variant='text' height={50} />
                 }
                 secondary={'Life Verse'}
               />
@@ -204,25 +319,49 @@ const Profile = () => {
         <Divider />
 
         <CardContent>
-          <Typography variant='body2' sx={{ mb: 1 }}>
-            Friends
+          <Typography
+            variant='body2'
+            sx={{ mb: 1, alignItems: 'center', display: 'flex' }}
+            onClick={() => setOpenFriends(true)}
+          >
+            Friends •{' '}
+            {
+              friends.filter((f) => f.uid !== params.id).filter((f) => f.uid)
+                .length
+            }
+            <Button
+              size='small'
+              variant='text'
+              sx={{
+                fontSize: 12,
+                ml: 1,
+                pb: 0,
+                pt: '2px',
+                textTransform: 'capitalize',
+              }}
+              onClick={() => setOpenFriends(true)}
+            >
+              Show more
+            </Button>
           </Typography>
           <Grid
             container
             spacing={1}
-            justifyContent='left'
+            justifyContent='center'
             alignItems='stretch'
           >
             {friends
               .filter((f) => f.uid !== params.id)
               .filter((f) => f.uid)
+              .slice(0, 5)
               .map((f) => {
                 return (
                   <Grid
                     item
                     alignItems='stretch'
                     display='flex'
-                    sx={{ width: 75 }}
+                    justifyContent='center'
+                    sx={{ width: 60 }}
                   >
                     {f.uid ? (
                       <Link
@@ -238,6 +377,7 @@ const Profile = () => {
                             justifyContent: 'center',
                             display: 'flex',
                             flexDirection: 'column',
+                            position: 'relative',
                           }}
                           variant='outlined'
                         >
@@ -246,7 +386,7 @@ const Profile = () => {
                               component='img'
                               alt={f.displayName}
                               src={f.photoURL}
-                              height={55}
+                              height={60}
                               sx={{ p: 0 }}
                             />
                           ) : (
@@ -255,8 +395,14 @@ const Profile = () => {
 
                           <CardContent
                             sx={{
-                              padding: '8px',
-                              paddingBottom: '8px !important',
+                              padding: '2px',
+                              position: 'absolute',
+                              bottom: 0,
+                              left: 0,
+                              width: '100%',
+                              paddingBottom: '2px !important',
+                              background: theme.palette.background.paper,
+                              backdropFilter: 'blur(1px)',
                             }}
                           >
                             <Typography
@@ -266,12 +412,13 @@ const Profile = () => {
                                 width: 50,
                                 textAlign: 'center',
                                 whiteSpace: 'nowrap',
+                                fontSize: 12,
                               }}
                             >
                               <div
                                 style={{
                                   textOverflow: 'ellipsis',
-                                  width: 50,
+                                  // width: 50,
                                   textAlign: 'center',
                                   whiteSpace: 'nowrap',
                                   overflow: 'hidden',
@@ -361,7 +508,7 @@ const Profile = () => {
       {params.id === userProfile?.uid && <WritePost />}
 
       <Card>
-        <BasicTabs userlineup={userlineup} userPosts={userPosts} />
+        <BasicTabs userlineup={userlineup} userPosts={userPosts} user={user} />
       </Card>
 
       {/* {params.id === userProfile?.uid && (
@@ -387,93 +534,6 @@ const Profile = () => {
         </Card>
       )} */}
     </>
-  );
-};
-
-const TabPanel = (props) => {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role='tabpanel'
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box
-          sx={{
-            p: 1,
-            justifyContent: 'center',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-};
-
-const a11yProps = (index) => {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-};
-
-const BasicTabs = ({ userlineup, userPosts }) => {
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label='basic tabs example'
-        >
-          <Tab label='Lineup' {...a11yProps(0)} />
-          <Tab label='Posts' {...a11yProps(1)} />
-        </Tabs>
-      </Box>
-      <TabPanel value={value} index={0}>
-        {userlineup.length > 0 ? (
-          userlineup.map((l, i) => {
-            console.log({ l });
-            return (
-              <LineupItem
-                key={l.id}
-                lineup={l}
-                isBordered
-                isLast={userlineup.length - 1 === i}
-              />
-            );
-          })
-        ) : (
-          <Typography variant='body2' sx={{ textAlign: 'center' }}>
-            No lineup yet.
-          </Typography>
-        )}
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        {userPosts.length > 0 ? (
-          userPosts.map((p) => {
-            return <LineupItem key={p.id} lineup={p} isBordered />;
-          })
-        ) : (
-          <Typography variant='body2' sx={{ textAlign: 'center' }}>
-            No post yet.
-          </Typography>
-        )}
-      </TabPanel>
-    </Box>
   );
 };
 

@@ -10,6 +10,7 @@ import {ADMIN, ASSIGNER} from "../../data"
 import {GetRealtimeAssignments} from "../../Firebase/assignmentApi"
 
 const Assignments = () => {
+	const {scrollToTop} = useContext(AppCtx)
 	const {data} = GetRealtimeAssignments()
 	const auth = getAuth(FirebaseApp)
 	const user = auth.currentUser
@@ -17,6 +18,7 @@ const Assignments = () => {
 	const [assignments, setAssignments] = useState([])
 
 	useEffect(() => {
+		scrollToTop()
 		setAssignments(data)
 	}, [data])
 

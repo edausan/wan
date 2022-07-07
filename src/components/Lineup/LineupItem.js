@@ -1,6 +1,10 @@
 import React, {useState} from "react"
 import {
 	Add,
+	Check,
+	CheckCircleOutline,
+	CheckCircleOutlineTwoTone,
+	CheckCircleTwoTone,
 	ContentCopy,
 	Delete,
 	Edit,
@@ -59,12 +63,10 @@ import ClickAwayListener from "@mui/base/ClickAwayListener"
 import {useHistory, Link} from "react-router-dom"
 import {getAuth} from "firebase/auth"
 import {FirebaseApp} from "./../../Firebase"
-import {DeleteLineup, HeartLineup} from "./../../Firebase/songsApi"
+import {DeleteLineup, GetSong, HeartLineup} from "../../Firebase/songsApi"
 import {useEffect} from "react"
-
-const avatar_url =
-	"https://scontent.fmnl8-2.fna.fbcdn.net/v/t39.30808-6/280194017_7362509033822685_908075910970226655_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=7uZOrEvaygMAX_gt8ZW&_nc_ht=scontent.fmnl8-2.fna&oh=00_AT8yHI4Ps0WBFxq1pLmV6C1OUnXdTgT2JDT4rG0GvaYO9w&oe=62AE53AB"
-const coverImg = "https://jilworldwide.org/wp-content/uploads/2022/05/wallpaper-hd.jpg"
+import {GetUserMetadata} from "../../Firebase/authApi"
+import SongModal from "./SongModal"
 
 const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 	const auth = getAuth(FirebaseApp)
@@ -76,8 +78,28 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 	const [drawerData, setDrawerData] = useState({song: null, id: null})
 	const [anchorEl, setAnchorEl] = useState(null)
 	const [isExpanded, setIsExpanded] = useState(false)
-	const [copy, setCopy] = useState(false)
 	const [open, setOpen] = useState(false)
+	const [lineupSongs, setLineupSongs] = useState([])
+	const [isModalOpen, setIsModalOpen] = useState({song: null, status: false})
+
+	useEffect(() => {
+		lineup.songs.length > 0 && GetSongsData()
+	}, [lineup.songs])
+
+	const GetSongsData = async () => {
+		const lineup_songs = []
+		lineup.songs.map(async song => {
+			const songs_data = await GetSong({song})
+			lineup_songs.push({...songs_data, label: song.label})
+		})
+
+		console.log({lineup_songs})
+		setLineupSongs(lineup_songs)
+	}
+
+	useEffect(() => {
+		console.log({lineupSongs})
+	}, [lineupSongs])
 
 	const handleExpandClick = (song, id) => {
 		setDrawerData({song, id})
@@ -92,19 +114,16 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 		DeleteLineup({id: lineup.id})
 	}
 
-	const handleHeart = async () => {
+	const handleHeart = () => {
 		const idx = lineup?.heart?.findIndex(h => h === user.uid)
-		if (idx === -1) {
+		console.log("HEARt", {idx, lineup})
+		if (idx === -1 || idx === undefined) {
 			HeartLineup({
 				lineupId: lineup.id,
 				userIds: [...lineup?.heart, user.uid]
 			})
 		}
 	}
-
-	useEffect(() => {
-		copy && handleCopy()
-	}, [copy])
 
 	const handleCopy = () => {
 		const verse = document.querySelector("#verse")
@@ -129,9 +148,15 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 
 	const handleClose = () => {}
 
+	useEffect(() => {
+		const date = moment(lineup.date).diff(new Date()) < 0
+	}, [])
+
 	console.log({lineup})
+
 	return (
 		<>
+			<SongModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} getData={GetSongsData} />
 			<Card
 				sx={{
 					maxWidth: "100%",
@@ -145,22 +170,22 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 					<CardHeader
 						sx={{pb: 0}}
 						avatar={
-							<Link to={`/profile/${lineup.user?.uid}`} style={{textDecoration: "none", color: "inherit"}}>
+							<Link to={`/profile/${lineup?.worship_leader?.uid}`} style={{textDecoration: "none", color: "inherit"}}>
 								<Avatar
 									sx={{
 										background: `linear-gradient(45deg, ${pink}, ${blue})`,
 										color: "#fff"
 									}}
 									aria-label="recipe"
-									src={lineup.user?.photoURL}
+									src={lineup?.worship_leader?.photoURL}
 								>
-									{lineup.worship_leader.split("")[0]}
+									{lineup?.worship_leader.displayName.split("")[0]}
 								</Avatar>
 							</Link>
 						}
 						action={
 							<>
-								{(user.uid === lineup.user?.uid || user.uid === ADMIN) && (
+								{(user.uid === lineup.worship_leader?.uid || user.uid === ADMIN) && (
 									<IconButton
 										aria-label="settings"
 										onClick={event => (isOpen ? setAnchorEl(null) : setAnchorEl(event.currentTarget))}
@@ -184,7 +209,7 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 													Edit
 												</Button>
 											</ListItem>
-											{user.uid === lineup.user?.uid && (
+											{user.uid === lineup.worship_leader?.uid && (
 												<ListItem sx={{py: 0}}>
 													<Button startIcon={<Delete fontSize="small" />} color="inherit" onClick={handleDelete}>
 														Delete
@@ -197,8 +222,8 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 							</>
 						}
 						title={
-							<Link to={`/profile/${lineup.user?.uid}`} style={{textDecoration: "none", color: "inherit"}}>
-								{lineup.worship_leader}	
+							<Link to={`/profile/${lineup.worship_leader?.uid}`} style={{textDecoration: "none", color: "inherit"}}>
+								{lineup.worship_leader?.displayName}
 							</Link>
 						}
 						subheader={
@@ -215,7 +240,7 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 				</ClickAwayListener>
 
 				<CardContent sx={{py: 0}}>
-					<List sx={{py: 0}}>
+					<List sx={{py: 0, mt: 1}}>
 						<Accordion
 							expanded={isExpanded || isSongsExpanded}
 							disableGutters
@@ -230,12 +255,20 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 							>
 								<ListItem sx={{py: 0}}>
 									<ListItemIcon>
-										<Event fontSize="small" />
+										{moment(lineup.date).diff(new Date()) < 0 ? (
+											<CheckCircleTwoTone color="success" />
+										) : (
+											<Event
+												fontSize="small"
+												color={moment(lineup.date).diff(new Date()) >= 0 ? "warning" : "inherit"}
+											/>
+										)}
 									</ListItemIcon>
 									<ListItemText
 										primary={
 											<small>
-												{moment(lineup.date).format("LL")} • {moment(lineup.date).format("dddd")}
+												{lineup?.service} •{" "}
+												<span style={{color: theme.palette.text.secondary}}>{moment(lineup.date).format("LL")}</span>
 											</small>
 										}
 										// secondary={<small>Lineup Date</small>}
@@ -244,12 +277,16 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 							</AccordionSummary>
 							<Divider />
 							<AccordionDetails sx={{px: 0}}>
-								{lineup.songs
-									.filter(s => s.song)
+								{lineupSongs
+									// .filter((s) => s.title)
 									.map(s => {
 										return (
 											<ListItem key={s.id}>
-												<ListItemText primary={s.song} secondary={s.label} />
+												<ListItemText
+													primary={s.title}
+													secondary={s.label}
+													onClick={() => setIsModalOpen({song: s, status: true})}
+												/>
 												<IconButton
 													color="primary"
 													disabled={!s.lyrics?.verse}
@@ -279,16 +316,9 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 
 				<CardActions disableSpacing>
 					<IconButton aria-label="add to favorites" onClick={handleHeart}>
-						{lineup?.heart?.length > 0 ? <Favorite color="error" /> : <FavoriteBorder />}{" "}
+						{lineup?.heart?.length > 0 ? <Favorite color="error" /> : <FavoriteBorder onClick={handleHeart} />}{" "}
 					</IconButton>
 					<small style={{marginLeft: 6, fontSize: 14}}>{lineup?.heart?.length}</small>
-					{/* <AvatarGroup max={4} sx={{"& > .MuiAvatarGroup-avatar": {width: 18, height: 18, fontSize: 12}}}>
-						<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-						<Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-						<Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-						<Avatar alt="Agnes Walker" src="/static/images/avatar/4.jpg" />
-						<Avatar alt="Trevor Henderson" src="/static/images/avatar/5.jpg" />
-					</AvatarGroup> */}
 					<a
 						href={`https://m.me/j/Aba8ddZutv5MvPbi/`}
 						style={{textDecoration: "none", color: "inherit"}}
@@ -336,28 +366,42 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 						</Alert>
 					</Snackbar>
 					<List>
-						{
-							<ListItem>
-								<ListItemText
-									primary="Song Title:"
-									secondary={drawerData?.song?.song}
-									primaryTypographyProps={{
-										sx: {
-											fontSize: "0.875rem",
-											color: theme.palette.text.primary,
-											opacity: 0.7
-										}
-									}}
-									secondaryTypographyProps={{
-										sx: {
-											fontSize: "1rem",
-											color: theme.palette.text.primary,
-											textTransform: "uppercase"
-										}
-									}}
-								/>
-							</ListItem>
-						}
+						<ListItem>
+							<ListItemText
+								primary="Song Title:"
+								secondary={
+									<div>
+										<div style={{marginBottom: 8}}>
+											<strong>{drawerData?.song?.title}</strong>
+										</div>
+										<div>
+											<small style={{textTransform: "capitalize"}}>
+												<span style={{color: theme.palette.text.secondary}}>Artist:</span> {drawerData?.song?.artist}
+											</small>
+										</div>
+										<div>
+											<small style={{textTransform: "capitalize"}}>
+												<span style={{color: theme.palette.text.secondary}}>Album:</span> {drawerData?.song?.album}
+											</small>
+										</div>
+									</div>
+								}
+								primaryTypographyProps={{
+									sx: {
+										fontSize: "0.875rem",
+										color: theme.palette.text.primary,
+										opacity: 0.7
+									}
+								}}
+								secondaryTypographyProps={{
+									sx: {
+										fontSize: "1rem",
+										color: theme.palette.text.primary,
+										textTransform: "uppercase"
+									}
+								}}
+							/>
+						</ListItem>
 
 						{(drawerData?.song?.lyrics?.verse || drawerData?.song?.chords?.verse) && (
 							<ListItem>

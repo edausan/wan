@@ -1,8 +1,16 @@
 import { Card, Typography, Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { UploadPhoto } from '../../Firebase/authApi';
+import { AppCtx } from './../../App';
 
 const Home = () => {
+  const { scrollToTop } = useContext(AppCtx);
+
+  useEffect(() => {
+    scrollToTop();
+  }, []);
+
   return (
     <Grid
       container
