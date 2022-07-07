@@ -82,8 +82,10 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 	const [lineupSongs, setLineupSongs] = useState([])
 	const [isModalOpen, setIsModalOpen] = useState({song: null, status: false})
 
+	console.log({lineupSongs})
+
 	useEffect(() => {
-		lineup.songs.length > 0 && GetSongsData()
+		lineup.songs.length > 0 && lineup.songs[0].title && GetSongsData()
 	}, [lineup.songs])
 
 	const GetSongsData = async () => {
@@ -153,6 +155,8 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 	}, [])
 
 	console.log({lineup})
+
+	const lineup_songs = lineup.songs[0].title ? lineupSongs : lineup.songs
 
 	return (
 		<>
@@ -277,13 +281,14 @@ const LineupItem = ({lineup, isBordered, isLast, isSongsExpanded}) => {
 							</AccordionSummary>
 							<Divider />
 							<AccordionDetails sx={{px: 0}}>
-								{lineupSongs
-									// .filter((s) => s.title)
+								{lineup_songs
+									.filter(s => s.song || s.title)
 									.map(s => {
+										console.log({s})
 										return (
 											<ListItem key={s.id}>
 												<ListItemText
-													primary={s.title}
+													primary={s.title || s.song}
 													secondary={s.label}
 													onClick={() => setIsModalOpen({song: s, status: true})}
 												/>
