@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, createContext } from 'react';
 import {
   Grid,
   TextField,
@@ -34,6 +34,8 @@ import { useHistory, useParams } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from '../../Firebase';
 import { Save } from '@mui/icons-material';
+
+export const NewLineupCtx = createContext(null);
 
 const NewLineup = () => {
   const params = useParams();
@@ -77,48 +79,46 @@ const NewLineup = () => {
     }
   }, [LINEUP, params.id]);
 
+  useEffect(() => {
+    console.log({ EDIT: lineupData });
+  }, [lineupData]);
+
   const handleDateChange = (newValue) => {
-    console.log({ newValue });
     setDate(newValue);
   };
 
   const handleSave = async () => {
-    console.log({ song: lineupData[0]?.song });
-    if (lineupData[0].song) {
+    if (lineupData[0].title) {
       setSaving(true);
 
-      if (lineupData[0]?.song) {
-        const saved = await AddLineup({
-          lineup: {
-            date_created: moment(new Date()).format('LLLL'),
-            songs: lineupData.filter((l) => l.song),
-            worship_leader: {
-              uid: user.uid,
-              photoURL: user.photoURL,
-              displayName: user.displayName,
-            },
-            date: moment(date).format('LLLL'),
-            service,
+      const saved = await AddLineup({
+        lineup: {
+          date_created: moment(new Date()).format('LLLL'),
+          songs: lineupData.filter((l) => l.title),
+          worship_leader: {
+            uid: user.uid,
+            photoURL: user.photoURL,
+            displayName: user.displayName,
           },
-        });
+          date: moment(date).format('LLLL'),
+          service,
+        },
+      });
 
-        if (saved?.id) {
-          setSaving(false);
-          setSaved(true);
+      if (saved?.id) {
+        setSaving(false);
+        setSaved(true);
 
-          setTimeout(() => {
-            setSaved(false);
-            history.push('/lineup');
-          }, 1000);
-        }
+        setTimeout(() => {
+          setSaved(false);
+          history.push('/lineup');
+        }, 1000);
       }
     }
   };
 
   const handleUpdate = async () => {
     setSaving(true);
-
-    console.log({ user });
 
     const res = await UpdateLineup({
       id: params.id,
@@ -135,8 +135,6 @@ const NewLineup = () => {
         },
       },
     });
-
-    console.log({ res });
 
     setTimeout(() => {
       setSaving(false);
@@ -197,8 +195,6 @@ const NewLineup = () => {
     setSaved(false);
   };
 
-  console.log({ lineupData });
-
   return (
     <section
       style={{
@@ -219,7 +215,7 @@ const NewLineup = () => {
         </Alert>
       </Snackbar>
 
-      {lineupData[0]?.song && service && (
+      {lineupData[0]?.title && service && (
         <SpeedDial
           onClick={params.id ? handleUpdate : handleSave}
           color={lineupData[0]?.song ? 'primary' : '#ccc'}
@@ -284,19 +280,24 @@ const NewLineup = () => {
         </Grid>
 
         <Grid item xs={12} md={12}>
-          {lineupData.length > 0 &&
-            lineupData.map((category, idx) => {
+          <NewLineupCtx.Provider
+            value={{ songs, saving, setLineupData, setOpen }}
+          >
+            {LINEUP.map((category, idx) => {
               return (
                 <LineupCard
-                  songs={songs}
-                  saving={saving}
                   setLineupData={setLineupData}
                   key={category.id + idx}
                   category={category}
-                  setOpen={setOpen}
+                  songs={songs}
+                  songData={
+                    lineupData?.filter((s) => s?.label === category?.label)[0]
+                  }
+                  isEdit={params?.id}
                 />
               );
             })}
+          </NewLineupCtx.Provider>
         </Grid>
       </Grid>
     </section>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useContext, useState, useEffect } from 'react';
 import {
   FormControl,
   Grid,
@@ -16,6 +16,10 @@ import {
   Autocomplete,
   createFilterOptions,
   useTheme,
+  Switch,
+  FormGroup,
+  FormControlLabel,
+  Modal,
 } from '@mui/material';
 import {
   NoteAlt,
@@ -25,163 +29,175 @@ import {
   Close,
   TextSnippet,
 } from '@mui/icons-material';
-import { useEffect } from 'react';
+import AutocompleteSong from './AutocompleteSong';
+import { NewLineupCtx } from './NewLineup';
+import Lyrics from '../Modals/Lyrics';
+import Chords from '../Modals/Chords';
+import { GetSong } from '../../Firebase/songsApi';
 
 const filter = createFilterOptions();
 
-const LineupCard = ({
-  category: cat,
-  setOpen,
-  setLineupData,
-  saving,
-  songs,
-}) => {
-  // const params = useParams();
-  const theme = useTheme();
-  const [cardData, setCardData] = useState({
-    song: null,
-    artist: null,
-    album: null,
-    lyrics: null,
-    chords: null,
-    media: null,
-    from: null,
-  });
+const initialState = {
+  song_title: null,
+  artist: null,
+  album: null,
+  lyrics: null,
+  chords: null,
+  media: null,
+  from: null,
+  song_id: null,
+  is_new: false,
+};
 
-  const [category, setCategory] = useState({
-    label: null,
-    song: null,
-    artist: null,
-    album: null,
-    id: null,
-  });
+const LineupCard = ({ category, setLineupData, songs, isEdit, songData }) => {
+  const { saving } = useContext(NewLineupCtx);
+  const [cardData, setCardData] = useState(initialState);
 
-  useEffect(() => {
-    console.log({ cardData });
-  }, [cardData]);
-
+  const [newSong, setNewSong] = useState(false);
+  const [open, setOpen] = useState({ modal: null, status: false });
   const [filteredSongs, setFilteredSongs] = useState([]);
 
   useEffect(() => {
-    if (songs?.length > 0) {
-      const filtered = songs.filter((song) => song.tags[0] === cat.tags[0]);
+    if (isEdit) {
+      const song = songs.filter((s) => s.id === songData?.id)[0];
+
+      console.log({ song, label: category.label });
+      setCardData(song);
+    } else {
+      setCardData(initialState);
+    }
+  }, [songs, isEdit, songData]);
+
+  useEffect(() => {
+    setCardData(initialState);
+  }, [newSong]);
+
+  const handleFilterSongs = useCallback(() => {
+    if (songs?.length > 0 && category.id) {
+      const filtered = songs?.filter(
+        (song) => song?.tags[0] === category?.tags[0]
+      );
       setFilteredSongs(filtered);
     }
   }, [songs]);
 
   useEffect(() => {
-    setCategory(cat);
-  }, [cat]);
+    handleFilterSongs();
+  }, [songs, handleFilterSongs]);
 
-  useEffect(() => {
+  const handleSetLineup = () => {
     setLineupData((lineupdata) => {
+      console.log({ lineupdata, category });
       return lineupdata.map((song) => {
-        if (song.id === category.id) {
-          return {
-            ...song,
-            ...cardData,
-          };
+        if (song.label === category.label) {
+          return cardData.title
+            ? {
+                ...song,
+                ...cardData,
+                is_new: newSong,
+              }
+            : category;
         }
 
         return song;
       });
     });
-  }, [cardData]);
+  };
+
+  useEffect(() => {
+    handleSetLineup();
+  }, [cardData, newSong]);
+
+  const handleUpdateCard = useCallback(
+    (value) => {
+      console.log({ value });
+      setLineupData((lineupdata) => {
+        console.log({ lineupdata });
+        return lineupdata.map((song) => {
+          console.log({ song, category });
+          if (song.id === category.id) {
+            return {
+              ...song,
+              ...value,
+            };
+          }
+
+          return song;
+        });
+      });
+      // setCardData(value);
+    },
+    [category]
+  );
 
   return (
     <Grid item xs={12} md={12}>
+      <Modal
+        open={open.status}
+        onClose={() => setOpen({ modal: null, status: false })}
+      >
+        {open.modal === 'lyrics' ? (
+          <Lyrics
+            setCardData={setCardData}
+            setOpen={setOpen}
+            open={open}
+            cardData={cardData}
+            category={category}
+          />
+        ) : (
+          <Chords />
+        )}
+      </Modal>
+
       <Card sx={{ mb: 2 }}>
         <CardContent>
-          <Autocomplete
-            freeSolo
-            id='song-auto'
-            options={
-              filteredSongs.sort((a, b) => b.label?.localeCompare(a.label)) ||
-              []
-            }
-            fullWidth
-            size='small'
-            value={cardData.song || category.song}
-            // groupBy={(option) => option.tags[0]}
-            onChange={(e, value) => {
-              if (typeof value === 'string') {
-                setCardData({
-                  ...cardData,
-                  songs: value,
-                  from: "typeof value === 'string'",
-                });
-              } else if (value && value.inputValue) {
-                // Create a new value from the user input
-                setCardData({
-                  ...cardData,
-                  song: value.inputValue,
-                  from: 'value && value.inputValue',
-                });
-              } else {
-                setCardData({
-                  song: value.label || e.target.value,
-                  lyrics: value.lyrics || cardData.lyrics,
-                  chords: value.chords || cardData.chords,
-                  artist: value.artist || cardData.artist,
-                  album: value.album || cardData.album,
-                  media: null,
-                  from: 'else',
-                });
-              }
-            }}
-            renderInput={(params) => {
-              return (
-                <TextField
-                  variant='standard'
-                  {...params}
-                  label={category.label}
-                />
-              );
-            }}
-            renderOption={(props, option) => (
-              <li {...props}>{option.title || option.label}</li>
-            )}
-            filterOptions={(options, params) => {
-              const filtered = filter(options, params);
-
-              const { inputValue } = params;
-              // Suggest the creation of a new value
-              const isExisting = options.some(
-                (option) => inputValue === option.label
-              );
-
-              if (inputValue !== '' && !isExisting) {
-                filtered.push({
-                  inputValue,
-                  title: `Add "${inputValue}"`,
-                });
-              }
-
-              return filtered;
-            }}
-            getOptionLabel={(option) => {
-              // Value selected with enter, right from the input
-              if (typeof option === 'string') {
-                return option;
-              }
-              // Add "xxx" option created dynamically
-              if (option.inputValue) {
-                return option.inputValue;
-              }
-              // Regular option
-              return option.label;
-            }}
-          />
-
-          {/* <TextField
-            label={category.label}
-            fullWidth
-            size='small'
-            variant='standard'
-            disabled={saving}
-            value={cardData.song || category.song}
-            onChange={(e) => setCardData({ ...cardData, song: e.target.value })}
+          {/* <AutocompleteSong
+            songs={filteredSongs}
+            category={category}
+            handleUpdateCard={handleUpdateCard}
           /> */}
+
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={newSong}
+                  onChange={() => setNewSong(!newSong)}
+                />
+              }
+              label='New'
+            />
+          </FormGroup>
+
+          {newSong ? (
+            <TextField
+              label={category.label}
+              fullWidth
+              size='small'
+              variant='standard'
+              value={cardData.title || cardData.song_title}
+              disabled={saving}
+              onChange={(e) =>
+                setCardData({ ...cardData, title: e.target.value })
+              }
+            />
+          ) : (
+            <FormControl variant='standard' fullWidth>
+              <InputLabel>{category.label}</InputLabel>
+              <Select
+                onChange={(e) =>
+                  setCardData({
+                    ...songs?.filter((s) => s.id === e.target.value)[0],
+                  })
+                }
+              >
+                {filteredSongs.map((song) => {
+                  return <MenuItem value={song.id}>{song.title}</MenuItem>;
+                })}
+              </Select>
+            </FormControl>
+          )}
+
           <Grid
             container
             sx={{ mt: 1, width: '100%' }}
@@ -194,7 +210,7 @@ const LineupCard = ({
                 fullWidth
                 size='small'
                 variant='standard'
-                value={cardData.artist || category.artist}
+                value={cardData?.artist}
                 disabled={saving}
                 onChange={(e) =>
                   setCardData({ ...cardData, artist: e.target.value })
@@ -207,7 +223,7 @@ const LineupCard = ({
                 fullWidth
                 size='small'
                 variant='standard'
-                value={cardData.album || category.album}
+                value={cardData?.album}
                 disabled={saving}
                 onChange={(e) =>
                   setCardData({ ...cardData, album: e.target.value })
@@ -220,37 +236,23 @@ const LineupCard = ({
         <CardActions>
           <Button
             variant='text'
-            color={!category.lyrics?.verse ? 'inherit' : 'primary'}
+            color={!cardData.lyrics?.verse ? 'inherit' : 'primary'}
             disableElevation
             size='small'
             disabled={saving}
             sx={{ minWidth: '40px !important' }}
-            onClick={() =>
-              setOpen({
-                id: 'Lyrics',
-                status: true,
-                song_title: cardData.song || category.label,
-                category,
-              })
-            }
+            onClick={() => setOpen({ modal: 'lyrics', status: true })}
           >
             <TextSnippet fontSize='small' />
           </Button>
           <Button
             variant='text'
-            color={!category.chords ? 'inherit' : 'secondary'}
+            color={!cardData.chords ? 'inherit' : 'secondary'}
             disableElevation
             size='small'
             disabled={saving}
             sx={{ minWidth: '40px !important' }}
-            onClick={() =>
-              setOpen({
-                id: 'Chords',
-                status: true,
-                song_title: cardData.song || category.label,
-                category,
-              })
-            }
+            onClick={() => setOpen({ modal: 'chords', status: true })}
           >
             <MusicNote fontSize='small' />
           </Button>
@@ -261,7 +263,9 @@ const LineupCard = ({
             size='small'
             disabled={saving}
             sx={{ minWidth: '40px !important' }}
-            onClick={() =>
+            onClick={() =>import { NewLineupCtx } from './NewLineup';
+import Lyrics from './../Modals/Lyrics';
+
               setOpen({
                 id: 'Media',
                 status: true,
@@ -278,4 +282,4 @@ const LineupCard = ({
   );
 };
 
-export default LineupCard;
+export default React.memo(LineupCard);

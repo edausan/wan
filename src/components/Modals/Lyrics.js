@@ -13,7 +13,7 @@ import { Add } from '@mui/icons-material';
 import PopperUnstyled from '@mui/base/PopperUnstyled';
 import ClickAwayListener from '@mui/base/ClickAwayListener';
 
-const Lyrics = ({ setLineupData, song, lineupData, setOpen }) => {
+const Lyrics = ({ setCardData, cardData, setOpen, open, category }) => {
   const [lyrics, setLyrics] = useState({
     verse: null,
     pre_chorus: null,
@@ -22,32 +22,36 @@ const Lyrics = ({ setLineupData, song, lineupData, setOpen }) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
 
-  console.log({ lineupData });
+  console.log({ Lyrics: cardData });
 
   useEffect(() => {
-    if (song.category.lyrics?.verse) {
-      console.log(song.category.lyrics);
-      setLyrics(song.category.lyrics);
+    if (cardData.lyrics?.verse) {
+      console.log(cardData.lyrics);
+      setLyrics(cardData.lyrics);
     }
   }, []);
 
   useEffect(() => {
-    if (lyrics.verse || lyrics.chorus) {
-      const updated = lineupData.map((lineup) => {
-        if (lineup.id === song.category.id) {
-          return {
-            ...lineup,
-            lyrics,
-          };
-        }
-        return lineup;
-      });
-
-      console.log({ lyrics, updated });
-
-      setLineupData(updated);
-    }
+    setCardData((cardData) => ({ ...cardData, lyrics }));
   }, [lyrics]);
+
+  // useEffect(() => {
+  //   if (lyrics.verse || lyrics.chorus) {
+  //     const updated = lineupData.map((lineup) => {
+  //       if (lineup.id === song.category.id) {
+  //         return {
+  //           ...lineup,
+  //           lyrics,
+  //         };
+  //       }
+  //       return lineup;
+  //     });
+
+  //     console.log({ lyrics, updated });
+
+  //     setLineupData(updated);
+  //   }
+  // }, [lyrics]);
 
   const isOpen = Boolean(anchorEl);
   const id = isOpen ? 'about-popper' : undefined;
@@ -67,7 +71,7 @@ const Lyrics = ({ setLineupData, song, lineupData, setOpen }) => {
       }}
     >
       <Typography variant='h6' sx={{ mb: 2 }}>
-        {song.song_title} <small>| Lyrics</small>
+        {cardData.title || category.label} <small>| Lyrics</small>
       </Typography>
 
       <TextField

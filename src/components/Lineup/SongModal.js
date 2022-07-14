@@ -57,7 +57,7 @@ const SongModal = ({ isOpen, setIsOpen, getData }) => {
     if (lyrics.verse || lyrics.chorus) {
       setEdit(false);
       const res = UpdateSong({ song: { ...isOpen?.song, lyrics } });
-      getData();
+      // getData();
       console.log({ handleUpdateSong: res });
 
       setTimeout(() => {

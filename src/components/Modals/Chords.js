@@ -14,7 +14,7 @@ const Chords = ({ setLineupData, song, lineupData, setOpen }) => {
     chorus: null,
   });
 
-  console.log({ lineupData });
+  console.log({ Chords: lineupData });
 
   useEffect(() => {
     if (song.category.chords?.verse) {
