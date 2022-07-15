@@ -82,8 +82,6 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
   const [lineupSongs, setLineupSongs] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState({ song: null, status: false });
 
-  console.log({ lineupSongs });
-
   useEffect(() => {
     lineup.songs.length > 0 && lineup.songs[0].title && GetSongsData();
   }, [lineup.songs]);
@@ -95,13 +93,8 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
       lineup_songs.push({ ...songs_data, label: song.label });
     });
 
-    console.log({ lineup_songs });
     setLineupSongs(lineup_songs);
   };
-
-  useEffect(() => {
-    console.log({ lineupSongs });
-  }, [lineupSongs]);
 
   const handleExpandClick = (song, id) => {
     setDrawerData({ song, id });
@@ -118,7 +111,6 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
 
   const handleHeart = () => {
     const idx = lineup?.heart?.findIndex((h) => h === user.uid);
-    console.log('HEARt', { idx, lineup });
     if (idx === -1 || idx === undefined) {
       HeartLineup({
         lineupId: lineup.id,
@@ -153,8 +145,6 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
   useEffect(() => {
     const date = moment(lineup.date).diff(new Date()) < 0;
   }, []);
-
-  console.log({ lineup });
 
   const lineup_songs = lineup.songs[0].title ? lineupSongs : lineup.songs;
 
@@ -278,14 +268,14 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
               sx={{ boxShadow: 'none', py: 0, background: 'none' }}
             >
               <AccordionSummary
-                sx={{ px: 0 }}
+                sx={{ px: 0, pr: 1 }}
                 expandIcon={<ExpandMore />}
                 aria-controls='panel1a-content'
                 id='panel1a-header'
                 onClick={() => setIsExpanded(!isExpanded)}
               >
                 <ListItem sx={{ py: 0 }}>
-                  <ListItemIcon>
+                  <ListItemIcon sx={{ minWidth: 35 }}>
                     {moment(lineup.date).diff(new Date()) < 0 ? (
                       <CheckCircleTwoTone color='success' />
                     ) : (
@@ -302,7 +292,7 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                   <ListItemText
                     primary={
                       <small>
-                        {lineup?.service} •{' '}
+                        {lineup?.service}
                         <div style={{ color: theme.palette.text.secondary }}>
                           {moment(lineup.date).format('LL')}
                         </div>
@@ -322,11 +312,8 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                         <ListItemText
                           primary={s.title || s.song}
                           secondary={s.label}
-                          onClick={
-                            user.uid === ADMIN ||
-                            user.uid === lineup.worship_leader?.uid
-                              ? () => setIsModalOpen({ song: s, status: true })
-                              : () => {}
+                          onClick={() =>
+                            setIsModalOpen({ song: s, status: true })
                           }
                         />
                         <IconButton
@@ -367,29 +354,27 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
           <small style={{ marginLeft: 6, fontSize: 14 }}>
             {lineup?.heart?.length}
           </small>
-          <a
-            href={`https://m.me/j/Aba8ddZutv5MvPbi/`}
-            style={{ textDecoration: 'none', color: 'inherit' }}
-            onClick={() => {
-              navigator.clipboard.writeText(
-                `https://wan-belleview.web.app/lineup/${lineup.id}`
-              );
-            }}
-          >
-            <IconButton aria-label='share'>
-              <Share />
-            </IconButton>
-          </a>
-          {!isSongsExpanded && (
-            <IconButton
-              aria-label='view'
-              onClick={() => history.push(`/lineup/${lineup.id}`)}
-              name='View Lineup'
-              sx={{ marginLeft: 'auto' }}
-            >
-              <OpenInNewTwoTone />
-            </IconButton>
-          )}
+          {/* <a
+						href={`https://m.me/j/Aba8ddZutv5MvPbi/`}
+						style={{textDecoration: "none", color: "inherit"}}
+						onClick={() => {
+							navigator.clipboard.writeText(`https://wan-belleview.web.app/lineup/${lineup.id}`)
+						}}
+					>
+						<IconButton aria-label="share">
+							<Share />
+						</IconButton>
+					</a>
+					{!isSongsExpanded && (
+						<IconButton
+							aria-label="view"
+							onClick={() => history.push(`/lineup/${lineup.id}`)}
+							name="View Lineup"
+							sx={{marginLeft: "auto"}}
+						>
+							<OpenInNewTwoTone />
+						</IconButton>
+					)} */}
         </CardActions>
       </Card>
 

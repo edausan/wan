@@ -1,29 +1,30 @@
 import './App.css';
+import { useRef } from 'react';
 import { Grid, Typography, Zoom } from '@mui/material';
-import Navigation from './components/Navigation';
 import { useState, createContext, useEffect } from 'react';
-import Home from './components/Pages/Home';
-import Assignments from './components/Pages/Assignments';
-import Lineup from './components/Lineup/LineupMain';
 import { WAN_LOGO } from './data';
 import { createAccount, RealtimeMetadata } from './Firebase/authApi';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import NewLineup from './components/Lineup/NewLineup';
 import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
-import Settings from './components/Pages/Settings';
-import Login from './components/Pages/Auth/Login';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { FirebaseApp, Firestore } from './Firebase';
+import { doc, onSnapshot, collection } from 'firebase/firestore';
+import Navigation from './components/Navigation';
+import Home from './components/Pages/Home';
+import Assignments from './components/Pages/Assignments';
+import Lineup from './components/Lineup/LineupMain';
+import NewLineup from './components/Lineup/NewLineup';
+import EditLineup from './components/Lineup/EditLineup';
+import Settings from './components/Pages/Settings';
+import Login from './components/Pages/Auth/Login';
 import Splash from './components/Pages/Auth/Splash';
 import EditProfile from './components/Pages/EditProfile';
-import { doc, onSnapshot, collection } from 'firebase/firestore';
 import ProfilePage from './components/Pages/Profile';
 import APP_BG from './assets/bg.jpg';
 import APP_BG_3 from './assets/bg3.jpg';
 import ViewLineup from './components/Lineup/ViewLineup';
 import SetAssignment from './components/Pages/Assignment/SetAssignment';
 import Profile from './components/Pages/User/Profile';
-import { useRef } from 'react';
 import Notification from './components/Pages/Notification/Notification';
 
 export const AppCtx = createContext();
@@ -52,6 +53,16 @@ function App() {
   const scrollToTop = () => {
     bodyRef.current.scroll({ top: 0 });
   };
+
+  useEffect(() => {
+    if (
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      )
+    ) {
+      console.log('PHONE!!!');
+    }
+  }, []);
 
   useEffect(() => {
     setCurrentUser({ ...currentUser, user_metadata: data });
@@ -89,7 +100,7 @@ function App() {
     palette: {
       mode: mode ? 'light' : 'dark',
       background: {
-        paper: mode ? '#ffffff85' : '#121212db',
+        paper: mode ? '#ffffff85' : '#121212e6',
         // default: mode ? "#ffffff85" : "#121212c9"
       },
     },
@@ -120,8 +131,8 @@ function App() {
                 ref={bodyRef}
                 sx={{
                   justifyContent: 'center',
-                  // backgroundSize: 'cover',
-                  // backgroundAttachment: 'fixed',
+                  backgroundSize: 'cover',
+                  backgroundAttachment: 'fixed',
                   overflow: 'auto',
                   maxHeight: '100vh',
                   backgroundOpacity: 0.5,
@@ -142,7 +153,7 @@ function App() {
                     transform: 'translate(-50%, -50%)',
                   },
                   '& .MuiCard-root': {
-                    backdropFilter: 'blur(5px)',
+                    backdropFilter: 'blur(8px)',
                   },
                 }}
               >
@@ -172,7 +183,7 @@ function App() {
                     <Route exact path='/lineup' component={Lineup} />
                     <Route path='/lineup/new' component={NewLineup} />
                     <Route exact path='/lineup/:id' component={ViewLineup} />
-                    <Route path='/lineup/edit/:id' component={NewLineup} />
+                    <Route path='/lineup/edit/:id' component={EditLineup} />
                     <Route path='/settings' component={Settings} />
                     <Route path='/edit_profile' component={EditProfile} />
                     <Route path='/profile/:id' component={Profile} />
