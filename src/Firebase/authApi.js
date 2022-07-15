@@ -129,7 +129,8 @@ export const UpdateProfile = async ({
       photoURL,
       phoneNumber,
     });
-
+    const user = auth.currentUser;
+    console.log({ user });
     const metadata = await GetUserMetadata({ id: user.uid });
 
     const metas = {

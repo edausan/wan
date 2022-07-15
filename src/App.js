@@ -19,6 +19,7 @@ import EditProfile from './components/Pages/EditProfile';
 import { doc, onSnapshot, collection } from 'firebase/firestore';
 import ProfilePage from './components/Pages/Profile';
 import APP_BG from './assets/bg.jpg';
+import APP_BG_3 from './assets/bg3.jpg';
 import ViewLineup from './components/Lineup/ViewLineup';
 import SetAssignment from './components/Pages/Assignment/SetAssignment';
 import Profile from './components/Pages/User/Profile';
@@ -88,7 +89,7 @@ function App() {
     palette: {
       mode: mode ? 'light' : 'dark',
       background: {
-        paper: mode ? '#ffffff85' : '#121212a1',
+        paper: mode ? '#ffffff85' : '#121212db',
         // default: mode ? "#ffffff85" : "#121212c9"
       },
     },
@@ -119,8 +120,8 @@ function App() {
                 ref={bodyRef}
                 sx={{
                   justifyContent: 'center',
-                  backgroundSize: 'cover',
-                  backgroundAttachment: 'fixed',
+                  // backgroundSize: 'cover',
+                  // backgroundAttachment: 'fixed',
                   overflow: 'auto',
                   maxHeight: '100vh',
                   backgroundOpacity: 0.5,
@@ -128,15 +129,17 @@ function App() {
                   pb: 100,
                   '&::before': {
                     position: 'fixed',
-                    top: 0,
-                    left: 0,
+                    top: '50%',
+                    left: '50%',
                     content: '""',
                     width: '100%',
                     height: '100%',
-                    background: `url(${APP_BG})`,
-                    backgroundSize: 'cover',
+                    background: `url(${APP_BG_3}) no-repeat`,
+                    backgroundSize: 'auto 100%',
+                    backgroundPosition: 'center',
                     zIndex: 1000,
-                    opacity: 0.2,
+                    opacity: 0.5,
+                    transform: 'translate(-50%, -50%)',
                   },
                   '& .MuiCard-root': {
                     backdropFilter: 'blur(5px)',

@@ -303,9 +303,9 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                     primary={
                       <small>
                         {lineup?.service} •{' '}
-                        <span style={{ color: theme.palette.text.secondary }}>
+                        <div style={{ color: theme.palette.text.secondary }}>
                           {moment(lineup.date).format('LL')}
-                        </span>
+                        </div>
                       </small>
                     }
                     // secondary={<small>Lineup Date</small>}
@@ -322,8 +322,11 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                         <ListItemText
                           primary={s.title || s.song}
                           secondary={s.label}
-                          onClick={() =>
-                            setIsModalOpen({ song: s, status: true })
+                          onClick={
+                            user.uid === ADMIN ||
+                            user.uid === lineup.worship_leader?.uid
+                              ? () => setIsModalOpen({ song: s, status: true })
+                              : () => {}
                           }
                         />
                         <IconButton
