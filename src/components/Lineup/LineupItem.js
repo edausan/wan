@@ -345,7 +345,7 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
 
         <CardActions disableSpacing>
           <IconButton aria-label='add to favorites' onClick={handleHeart}>
-            {lineup?.heart?.length > 0 ? (
+            {lineup?.heart?.findIndex((h) => h === user.uid) >= 0 ? (
               <Favorite color='error' />
             ) : (
               <FavoriteBorder onClick={handleHeart} />

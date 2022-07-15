@@ -59,6 +59,7 @@ import WritePost from './WritePost';
 import { Glass } from '../../../data';
 import BasicTabs from './Tabs';
 import FriendsModal from './FriendsModal';
+import PhotoHeart from './PhotoHeart';
 
 const Profile = () => {
   const theme = useTheme();
@@ -85,6 +86,7 @@ const Profile = () => {
   }, [data]);
 
   useEffect(() => {
+    setOpenFriends(false);
     currentUser?.user_metadata?.ministry === 'VIA' && handleLineups();
     if (params.id !== 'undefined' && currentUser.user.uid !== params.id) {
       handleGetUser();
@@ -92,6 +94,11 @@ const Profile = () => {
       setUser({ ...currentUser.user, ...currentUser.user_metadata });
     }
   }, [params, currentUser]);
+
+  // useEffect(() => {
+  //   console.log({ params });
+
+  // }, [params])
 
   const handleGetUser = async () => {
     try {
@@ -104,6 +111,7 @@ const Profile = () => {
 
   const handleLineups = async () => {
     const userLineups = await GetLineup({ id: params.id });
+    console.log({ userLineups });
     setUserlineup(
       userLineups.sort(
         (a, b) => new Date(b.date_created) - new Date(a.date_created)
@@ -141,71 +149,19 @@ const Profile = () => {
         user={user}
         friends={friends}
       />
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <Card
-          sx={{
-            // p: 2,
-            width: '90%',
-            minWidth: 300,
-            maxWidth: 400,
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            boxSizing: 'border-box',
-            maxHeight: 400,
-          }}
-        >
-          <CardContent sx={{ alignItems: 'center' }}>
-            <IconButton sx={{ p: 0, mr: '6px' }}>
-              <Favorite color='error' />
-            </IconButton>
-            <Typography variant='caption' sx={{ color: '#f44336' }}>
-              {user?.photoHeart?.length}
-            </Typography>
-          </CardContent>
-          <Divider />
 
-          <CardContent>
-            <List>
-              {user?.photoHeart?.map((h) => {
-                return (
-                  <Link
-                    to={`/profile/${
-                      friends?.filter((f) => f.uid === h)[0]?.uid
-                    }`}
-                    onClick={handleToOther}
-                    style={{ textDecoration: 'none', color: 'inherit' }}
-                  >
-                    <ListItem>
-                      <ListItemAvatar>
-                        <Avatar
-                          src={friends?.filter((f) => f.uid === h)[0]?.photoURL}
-                        >
-                          <AccountCircle />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={
-                          friends?.filter((f) => f.uid === h)[0]?.displayName
-                        }
-                        // secondary={
-                        //   friends?.filter((f) => f.uid === h)[0]?.ministry
-                        // }
-                      />
-                    </ListItem>
-                  </Link>
-                );
-              })}
-            </List>
-          </CardContent>
-        </Card>
-      </Modal>
+      <PhotoHeart
+        friends={friends}
+        handleToOther={handleToOther}
+        open={open}
+        setOpen={setOpen}
+        user={user}
+      />
+
       <Card
         sx={{
           mb: 2,
           position: 'relative',
-          backdropFilter: 'blur(5px)',
         }}
       >
         {params.id === userProfile?.uid && (
@@ -224,27 +180,37 @@ const Profile = () => {
           <CachedTwoTone />
         </IconButton>
 
-        <CardMedia component='img' height='140' image={BG} alt='green iguana' />
+        <CardMedia
+          component='img'
+          height='140'
+          image={BG}
+          alt='A Healing Hope'
+          className='min-h-[140px]'
+        />
+        {/* <button className='absolute bottom-10 right-10 p-2 bg-white text-black'>
+          + Add Theme
+        </button> */}
         <CardContent sx={{ position: 'relative', mt: '-70px', pb: 0 }}>
           <Avatar
+            onClick={() => setOpen(true)}
             alt={user?.displayName}
             src={user?.photoURL}
+            className='w-[100px] h-[100px]'
             sx={{
-              width: 100,
-              height: 100,
               border: `6px solid ${
-                theme.palette.mode === 'dark' ? '#1e1e1e' : '#fff'
+                theme.palette.mode === 'dark' ? '#282828' : '#fff'
               }`,
             }}
           />
           <label
+            className='absolute top-[80px] left-[80px] opacity-[0.8]'
             htmlFor='icon-button-file'
-            style={{
-              position: 'absolute',
-              top: 80,
-              left: 94,
-              opacity: 0.8,
-            }}
+            // style={{
+            //   position: 'absolute',
+            //   top: 80,
+            //   left: 94,
+            //   opacity: 0.8,
+            // }}
           >
             <IconButton
               color='inherit'
@@ -258,7 +224,8 @@ const Profile = () => {
               }}
               onClick={handleHeart}
             >
-              {user?.photoHeart?.length > 0 ? (
+              {user?.photoHeart?.findIndex((h) => h === userProfile.uid) >=
+              0 ? (
                 <Favorite
                   color='error'
                   onClick={
@@ -378,6 +345,9 @@ const Profile = () => {
                             display: 'flex',
                             flexDirection: 'column',
                             position: 'relative',
+                            minHeight: 62,
+                            maxHeight: 62,
+                            overflow: 'hidden',
                           }}
                           variant='outlined'
                         >
@@ -390,7 +360,7 @@ const Profile = () => {
                               sx={{ p: 0 }}
                             />
                           ) : (
-                            <Avatar sx={{ margin: '10px auto 5px' }} />
+                            <Avatar sx={{ m: 'auto', mt: '3px' }} />
                           )}
 
                           <CardContent

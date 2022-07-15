@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
+import FriendsTab from './FriendsTab';
 
 const FriendsModal = ({ open, setOpen, user, friends, handleToOther }) => {
   const theme = useTheme();
@@ -34,7 +35,7 @@ const FriendsModal = ({ open, setOpen, user, friends, handleToOther }) => {
           boxSizing: 'border-box',
         }}
       >
-        <CardContent
+        {/* <CardContent
           sx={{
             alignItems: 'center',
             position: 'fixed',
@@ -57,10 +58,10 @@ const FriendsModal = ({ open, setOpen, user, friends, handleToOther }) => {
                 .length
             }
           </Typography>
-        </CardContent>
+        </CardContent> */}
         {/* <Divider /> */}
 
-        <CardContent
+        {/* <CardContent
           sx={{
             maxHeight: 400,
             overflow: 'auto',
@@ -69,38 +70,8 @@ const FriendsModal = ({ open, setOpen, user, friends, handleToOther }) => {
             pt: '57px',
           }}
         >
-          <List>
-            {friends
-              .filter((f) => f.uid !== params.id)
-              .filter((f) => f.uid)
-              .map((friend) => {
-                return (
-                  <Link
-                    to={`/profile/${friend?.uid}`}
-                    style={{ textDecoration: 'none', color: 'inherit' }}
-                  >
-                    <ListItem onClick={() => setOpen(false)}>
-                      <ListItemAvatar>
-                        <Avatar src={friend?.photoURL}>
-                          <AccountCircle />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={
-                          friend?.displayName
-                            ? friend?.displayName
-                            : friend?.email
-                        }
-                        // secondary={
-                        //   friends?.filter((f) => f.uid === h)[0]?.ministry
-                        // }
-                      />
-                    </ListItem>
-                  </Link>
-                );
-              })}
-          </List>
-        </CardContent>
+        </CardContent> */}
+        <FriendsTab friends={friends} />
       </Card>
     </Modal>
   );

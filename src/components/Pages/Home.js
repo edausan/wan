@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useContext } from 'react';
 import { UploadPhoto } from '../../Firebase/authApi';
 import { AppCtx } from './../../App';
+import PostsMain from './Home/PostsMain';
+import Theme from './Home/Theme';
 
 const Home = () => {
   const { scrollToTop } = useContext(AppCtx);
@@ -15,12 +17,14 @@ const Home = () => {
     <Grid
       container
       justifyContent='center'
-      alignItems='center'
+      alignItems='start'
       sx={{ height: '100vh' }}
     >
-      <Card sx={{ p: 2 }}>
+      <Theme />
+      <PostsMain />
+      {/* <Card sx={{ p: 2 }}>
         <Typography>Home</Typography>
-      </Card>
+      </Card> */}
     </Grid>
   );
 };

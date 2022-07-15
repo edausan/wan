@@ -161,7 +161,7 @@ function App() {
                 <Grid
                   item
                   sx={{
-                    p: 2,
+                    p: 1,
                     mt: 1,
                     // maxHeight: '100vh',
                     maxWidth: 500,

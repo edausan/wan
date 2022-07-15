@@ -8,6 +8,10 @@ import {
   SpeakerNotes,
   Topic,
   NotificationsOutlined,
+  HomeTwoTone,
+  AssignmentTwoTone,
+  SpeakerNotesTwoTone,
+  AccountCircleTwoTone,
 } from '@mui/icons-material';
 import {
   BottomNavigation,
@@ -18,6 +22,7 @@ import {
   useTheme,
   IconButton,
   Button,
+  Avatar,
 } from '@mui/material';
 import React, { useEffect, useState, useContext } from 'react';
 import { Link, useLocation, useRouteMatch } from 'react-router-dom';
@@ -49,6 +54,7 @@ const Navigation = () => {
         transform: 'translateX(-50%)',
         zIndex: 1002,
         boxShadow: '0 -5px 10px rgba(0,0,0,.1)',
+        borderRadius: 0,
       }}
     >
       <Grid
@@ -73,7 +79,7 @@ const Navigation = () => {
                   : 'inherit',
             }}
           >
-            <Home />
+            <HomeTwoTone />
           </Link>
         </Grid>
         <Grid item flex={1}>
@@ -91,7 +97,7 @@ const Navigation = () => {
                   : 'inherit',
             }}
           >
-            <Assignment />
+            <AssignmentTwoTone />
           </Link>
         </Grid>
         <Grid item flex={1}>
@@ -109,7 +115,7 @@ const Navigation = () => {
                   : 'inherit',
             }}
           >
-            <SpeakerNotes />
+            <SpeakerNotesTwoTone />
           </Link>
         </Grid>
         {/* <Grid item flex={1}>
@@ -145,7 +151,12 @@ const Navigation = () => {
                   : 'inherit',
             }}
           >
-            <AccountCircle />
+            {/* <AccountCircleTwoTone /> */}
+            <Avatar
+              src={user.photoURL}
+              alt={user.displayName}
+              sx={{ width: 26, height: 26 }}
+            />
           </Link>
         </Grid>
       </Grid>
