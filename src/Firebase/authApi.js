@@ -17,8 +17,15 @@ import {
   where,
   getDocs,
 } from 'firebase/firestore';
-import { getStorage, ref, getDownloadURL, uploadBytes } from 'firebase/storage';
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+  uploadBytes,
+  uploadString,
+} from 'firebase/storage';
 import { useEffect, useState } from 'react';
+import moment from 'moment';
 
 const auth = getAuth(FirebaseApp);
 const user = auth.currentUser;
@@ -191,7 +198,7 @@ export const RealtimeMetadata = () => {
   return { data };
 };
 
-const UpdatePhotoURL = async ({ photoURL }) => {
+export const UpdatePhotoURL = async ({ photoURL }) => {
   try {
     const user = await updateProfile(auth.currentUser, {
       photoURL,
@@ -230,12 +237,15 @@ export const UploadPhoto = async ({ id, imageUpload }) => {
   /**
    * TODO: REFERENCE TO FIREBASE STORAGE FOLDER AND FILENAME
    */
-  const imgRef = ref(storage, `profile/${imageUpload.name}`);
+  const imgRef = ref(
+    storage,
+    `profile/${auth.currentUser.uid}~${moment().valueOf()}`
+  );
 
   /**
    * TODO: UPLOADING TO FIREBASE STORAGE
    */
-  const uploaded = await uploadBytes(imgRef, imageUpload);
+  const uploaded = await uploadString(imgRef, imageUpload, 'data_url');
 
   /**
    * TODO:  GET PHOTO DOWNLOAD URL

@@ -26,6 +26,7 @@ import ViewLineup from './components/Lineup/ViewLineup';
 import SetAssignment from './components/Pages/Assignment/SetAssignment';
 import Profile from './components/Pages/User/Profile';
 import Notification from './components/Pages/Notification/Notification';
+import Post from './components/Pages/Home/Post';
 
 export const AppCtx = createContext();
 
@@ -188,6 +189,7 @@ function App() {
                     <Route path='/edit_profile' component={EditProfile} />
                     <Route path='/profile/:id' component={Profile} />
                     <Route path='/notifications' component={Notification} />
+                    <Route path='/post/:id' component={Post} />
                   </Switch>
                 </Grid>
               </Grid>

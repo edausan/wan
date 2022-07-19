@@ -27,7 +27,11 @@ import {
 import { AppCtx } from './../../App';
 import BG from '../../assets/bg.jpg';
 import wallpaper from '../../assets/wallpaper-hd.jpg';
-import { UpdateProfile, UploadPhoto } from '../../Firebase/authApi';
+import {
+  UpdatePhotoURL,
+  UpdateProfile,
+  UploadPhoto,
+} from '../../Firebase/authApi';
 import { Ministries } from './Auth/Signup';
 import { useHistory } from 'react-router-dom';
 import {
@@ -39,6 +43,7 @@ import {
 import { uploadBytes } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from './../../Firebase';
+import useResize from '../../hooks/useResize';
 
 const EditProfile = () => {
   const auth = getAuth(FirebaseApp);
@@ -59,16 +64,23 @@ const EditProfile = () => {
   const [imageUpload, setImageUpload] = useState(null);
   const [photoURL, setPhotoURL] = useState(null);
 
+  const { resized, processfile } = useResize({ quality: 0.9 });
+
   useEffect(() => {
     scrollToTop();
     if (imageUpload === null) return;
-    handleUploadPhoto();
+    // handleUploadPhoto();
+    imageUpload && processfile(imageUpload);
   }, [imageUpload]);
+
+  useEffect(() => {
+    resized && handleUploadPhoto();
+  }, [resized]);
 
   const handleUploadPhoto = async () => {
     const { photoURL, updateProfile } = await UploadPhoto({
       id: currentUser.user?.uid,
-      imageUpload,
+      imageUpload: resized,
     });
 
     console.log({ photoURL, updateProfile });
@@ -77,6 +89,13 @@ const EditProfile = () => {
       setImageUpload(null);
       setPhotoURL(photoURL);
     }
+
+    // try {
+    //   const photo = await UpdatePhotoURL({ photoURL: resized });
+    //   console.log({ photo });
+    // } catch (err) {
+    //   console.log(err.message);
+    // }
   };
 
   useEffect(() => {

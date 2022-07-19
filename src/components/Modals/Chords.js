@@ -7,38 +7,22 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-const Chords = ({ setLineupData, song, lineupData, setOpen }) => {
+const Chords = ({ setCardData, cardData, category, setOpen }) => {
   const [chords, setChords] = useState({
     verse: null,
     pre_chorus: null,
     chorus: null,
   });
 
-  console.log({ Chords: lineupData });
-
   useEffect(() => {
-    if (song.category.chords?.verse) {
-      console.log(song.category.chords);
-      setChords(song.category.chords);
+    if (cardData.chords?.verse) {
+      console.log(cardData.chords);
+      setChords(cardData.chords);
     }
   }, []);
 
   useEffect(() => {
-    if (chords.chorus || chords.verse) {
-      const updated = lineupData.map((lineup) => {
-        if (lineup.id === song.category.id) {
-          return {
-            ...lineup,
-            chords,
-          };
-        }
-        return lineup;
-      });
-
-      console.log({ chords, updated });
-
-      setLineupData(updated);
-    }
+    setCardData((data) => ({ ...data, chords }));
   }, [chords]);
 
   return (
@@ -56,7 +40,7 @@ const Chords = ({ setLineupData, song, lineupData, setOpen }) => {
       }}
     >
       <Typography variant='h6' sx={{ mb: 2 }}>
-        {song?.song_title} <small>| Chords</small>
+        {cardData.title || category.label} <small>| Chords</small>
       </Typography>
 
       <TextField

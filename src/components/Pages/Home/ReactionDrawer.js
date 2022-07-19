@@ -15,7 +15,7 @@ const ReactionDrawer = ({ open, setOpen, setReaction, reaction, post }) => {
           <div
             onClick={() => setReaction('love')}
             className={`p-2 rounded-md ${
-              reaction === 'heart' ? 'bg-white/10' : ''
+              reaction === 'love' ? 'bg-white/10' : ''
             }`}
           >
             <FavoriteTwoTone className='text-red-500' />{' '}

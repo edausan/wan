@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Avatar,
   AvatarGroup,
@@ -10,14 +10,19 @@ import {
   CardMedia,
   Divider,
   IconButton,
+  Modal,
+  TextField,
 } from '@mui/material';
-import { GetUserMetadata } from '../../../Firebase/authApi';
+import { GetUserMetadata, RealtimeUsers } from '../../../Firebase/authApi';
 import {
+  CommentTwoTone,
   DeleteTwoTone,
   EmojiEmotionsTwoTone,
   FavoriteTwoTone,
   MoreVert,
+  SendTwoTone,
   SentimentVeryDissatisfiedTwoTone,
+  ShareTwoTone,
   ThumbUpOffAlt,
   ThumbUpOffAltOutlined,
   ThumbUpOffAltTwoTone,
@@ -27,35 +32,77 @@ import PostDrawer from './PostDrawer';
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from '../../../Firebase';
 import ReactionDrawer from './ReactionDrawer';
-import { ReactPost } from '../../../Firebase/postsApi';
+import { GetPost, ReactPost } from '../../../Firebase/postsApi';
+import { Link, useParams } from 'react-router-dom';
+import ReactionsModal from './ReactionsModal';
+import { AppCtx } from '../../../App';
+import PostComments from './PostComments';
+import TextArea from './../../CustomComponents/TextArea';
 
-const Post = ({ post, friends }) => {
+const Post = ({ post: current, friends: wan }) => {
+  const params = useParams();
   const auth = getAuth(FirebaseApp);
   const userProfile = auth.currentUser;
+  const { scrollToTop } = useContext(AppCtx);
   const [user, setUser] = useState(null);
   const [open, setOpen] = useState(false);
   const [reaction, setReaction] = useState(null);
   const [reactionsOpen, setReactionsOpen] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [hashtags, setHashtags] = useState([]);
+  const [openReacions, setOpenReactions] = useState(false);
+  const [openComments, setOpenComments] = useState(false);
+  const [post, setPost] = useState(null);
+  const [friends, setFriends] = useState([]);
+
+  const { data } = RealtimeUsers();
+
+  useEffect(() => {
+    setMsg(current?.message.split('#')[0].trim());
+    const tags = current?.message.split('#').filter((t, i) => i !== 0);
+    setHashtags(tags);
+    setPost(current);
+  }, [current]);
+
+  useEffect(() => {
+    setFriends(wan || data);
+  }, [wan, data]);
 
   useEffect(() => {
     handleUSer();
   }, [post]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    params.id && getPost();
+  }, [params]);
 
   useEffect(() => {
     setReactionsOpen(false);
     reaction && handleReact();
   }, [reaction]);
 
+  const getPost = async () => {
+    scrollToTop();
+    try {
+      const post = await GetPost({ id: params.id });
+      console.log({ post });
+      setPost(post);
+      setMsg(post?.message.split('#')[0].trim());
+      const tags = post?.message.split('#').filter((t, i) => i !== 0);
+      setHashtags(tags);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   const handleReact = async () => {
     try {
       const idx =
-        post.reactions?.findIndex((r) => r.uid === userProfile.uid) === -1;
+        post?.reactions?.findIndex((r) => r.uid === userProfile.uid) === -1;
       const reacts =
         idx === -1
-          ? post.reactions
-          : post.reactions.filter((r) => r.uid !== userProfile.uid);
+          ? post?.reactions
+          : post?.reactions.filter((r) => r.uid !== userProfile.uid);
       const reactions = [
         ...reacts,
         {
@@ -63,7 +110,7 @@ const Post = ({ post, friends }) => {
           reaction,
         },
       ];
-      const res = await ReactPost({ postId: post.id, reactions });
+      const res = await ReactPost({ postId: post?.id, reactions });
       console.log({ handleReact: res });
       setReaction(null);
     } catch (error) {
@@ -101,13 +148,12 @@ const Post = ({ post, friends }) => {
           icon: null,
           color: '#ccc',
         };
-        break;
     }
   };
 
   const handleUSer = async () => {
     try {
-      const user = await GetUserMetadata({ id: post.uid });
+      const user = await GetUserMetadata({ id: post?.uid });
       setUser(user);
     } catch (error) {
       console.log(error.message);
@@ -118,33 +164,80 @@ const Post = ({ post, friends }) => {
 
   return (
     <Card>
+      <ReactionsModal
+        setOpen={setOpenReactions}
+        open={openReacions}
+        friends={friends}
+        reactions={post?.reactions}
+        handleReactions={handleReactions}
+      />
       <CardHeader
         avatar={
-          <Avatar src={user?.photoURL} aria-label='recipe'>
-            {user?.displayName.split('')[0]}
-          </Avatar>
+          <Link to={`/profile/${post?.uid}`}>
+            <Avatar src={user?.photoURL} aria-label='recipe'>
+              {user?.displayName.split('')[0]}
+            </Avatar>
+          </Link>
         }
         action={
-          post?.uid === userProfile?.uid && (
-            <IconButton aria-label='settings' onClick={() => setOpen(true)}>
-              <MoreVert />
-            </IconButton>
-          )
+          <IconButton aria-label='settings' onClick={() => setOpen(true)}>
+            <MoreVert />
+          </IconButton>
         }
-        title={user?.displayName}
-        subheader={post?.date_created}
+        title={
+          <Link to={`/profile/${post?.uid}`}>
+            <span className='text-sm'>{user?.displayName}</span>
+          </Link>
+        }
+        subheader={<span className='text-xs'>{post?.date_created}</span>}
       />
-      {post.media && <CardMedia src={post.media} component='img' />}
+      {post?.media && <CardMedia src={post?.media} component='img' />}
       <CardContent>
-        <p>{post.message}</p>
+        <TextArea value={msg} />
+        {/* <TextField
+          disabled
+          multiline
+          value={msg}
+          fullWidth
+          className='first:px-0'
+          sx={{
+            border: 'none',
+            '& > .MuiOutlinedInput-root': {
+              p: 0,
+              border: 'none',
+              '& textarea': {
+                border: 'none',
+                '-webkit-text-fill-color': '#fff',
+                fontSize: '0.875rem',
+              },
+              '& fieldset': {
+                border: 'none',
+              },
+            },
+          }}
+        /> */}
+
+        <div>
+          {hashtags?.map((hash) => {
+            return (
+              <Link to='#' className='no-underline text-sky-500 italic'>
+                #{hash}
+              </Link>
+            );
+          })}
+        </div>
+        {/* <p className='text-sm'>{post?.message}</p> */}
       </CardContent>
       {post?.reactions?.length > 0 && (
         <>
           <Divider />
-          <CardContent className='p-2 flex flex-row'>
+          <CardContent
+            onClick={() => setOpenReactions(true)}
+            className='p-2 flex flex-row items-center'
+          >
             <AvatarGroup
               className='self-start'
-              max={4}
+              max={5}
               sx={{
                 '& > .MuiAvatar-root': {
                   width: 20,
@@ -152,6 +245,9 @@ const Post = ({ post, friends }) => {
                 },
                 '& .MuiAvatarGroup-avatar': {
                   border: '3px solid #282626',
+                  '&:first-child': {
+                    display: post?.reactions?.length > 3 ? 'none' : 'flex',
+                  },
                   //   p: '.25rem',
                   //   background: '#333',
                 },
@@ -172,18 +268,41 @@ const Post = ({ post, friends }) => {
                 );
               })}
             </AvatarGroup>
+            <div className='text-xs ml-2'>
+              {post?.reactions?.map((r, i) => {
+                const user = friends?.filter((f) => f.uid === r?.uid)[0];
+                if (i <= 1) {
+                  return (
+                    <>
+                      <span>
+                        {i >= 1 && ', '}
+                        {user?.displayName}
+                      </span>
+                    </>
+                  );
+                }
+              })}
+
+              {post?.reactions?.length > 2 && (
+                <span>
+                  {' '}
+                  and {post?.reactions?.length - 2} other
+                  {post?.reactions?.length - 2 > 1 && 's'}
+                </span>
+              )}
+            </div>
           </CardContent>
         </>
       )}
       <Divider />
 
-      <CardActions>
+      <CardActions className='justify-center grid grid-cols-3 p-0'>
         <Button
+          className='col-span-1 ml-0'
           variant='text'
-          aria-label='add to favorites'
           onClick={() => setReactionsOpen(true)}
           startIcon={
-            post?.reactions.findIndex((r) => r.uid === userProfile.uid) !==
+            post?.reactions.findIndex((r) => r?.uid === userProfile?.uid) !==
               -1 || reaction ? (
               handleReactions(
                 reaction ||
@@ -191,12 +310,15 @@ const Post = ({ post, friends }) => {
                     ?.reaction
               )?.icon
             ) : (
-              <ThumbUpOffAltOutlined onClick={handleHeart} />
+              <ThumbUpOffAltOutlined
+                className='text-white/40'
+                onClick={handleHeart}
+              />
             )
           }
         >
           <span
-            className={`!capitalize ${
+            className={`!capitalize text-xs ${
               handleReactions(
                 reaction ||
                   post?.reactions?.filter((r) => r?.uid === userProfile?.uid)[0]
@@ -211,11 +333,52 @@ const Post = ({ post, friends }) => {
                 .toUpperCase() +
                 post?.reactions
                   ?.filter((r) => r?.uid === userProfile?.uid)[0]
-                  ?.reaction?.slice(1) ||
-              'React'}
+                  ?.reaction?.slice(1) || (
+                <span className='text-white/40'>Like</span>
+              )}
           </span>
         </Button>
+        <Button
+          variant='text'
+          className={`!ml-0 ${
+            post?.comments?.length > 0 ? 'text-sky-500' : 'text-white/40'
+          } col-span-1`}
+          startIcon={<CommentTwoTone className='w-[16px] h-[16px]' />}
+          onClick={() => setOpenComments(true)}
+        >
+          <span className='!capitalize text-xs'>
+            Comment
+            {post?.comments?.length > 1 ? (
+              <span className='lowercase'>s</span>
+            ) : (
+              ''
+            )}{' '}
+            <span>({post?.comments?.length})</span>
+          </span>
+        </Button>
+        <Button
+          variant='text'
+          color='inherit'
+          className='ml-0 text-white/40 col-span-1'
+          startIcon={<ShareTwoTone className='w-[16px] h-[16px]' />}
+        >
+          <span className='!capitalize text-xs'>Share</span>
+        </Button>
       </CardActions>
+
+      {post?.comments?.length > 0 && (
+        <>
+          <Divider />
+          <CardContent className='!pb-1 p-1'>
+            <PostComments
+              open={openComments}
+              setOpen={setOpenComments}
+              post={post}
+              preview
+            />
+          </CardContent>
+        </>
+      )}
 
       <ReactionDrawer
         open={reactionsOpen}
@@ -229,6 +392,7 @@ const Post = ({ post, friends }) => {
         post={post}
       />
       <PostDrawer open={open} setOpen={setOpen} post={post} />
+      <PostComments open={openComments} setOpen={setOpenComments} post={post} />
     </Card>
   );
 };

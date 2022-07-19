@@ -1,6 +1,7 @@
 import { Box, Tab, Tabs, Typography } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import LineupItem from '../../Lineup/LineupItem';
+import PostsMain from '../Home/PostsMain';
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -36,8 +37,8 @@ const a11yProps = (index) => {
   };
 };
 
-const BasicTabs = ({ userlineup, userPosts, user }) => {
-  const [value, setValue] = React.useState(0);
+const UserTabs = ({ userlineup, userPosts, user }) => {
+  const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -52,32 +53,37 @@ const BasicTabs = ({ userlineup, userPosts, user }) => {
           aria-label='basic tabs example'
         >
           {user?.ministry === 'VIA' && <Tab label='Lineup' {...a11yProps(0)} />}
-          <Tab label='Posts' {...a11yProps(1)} />
+          {/* <Tab
+            label='Lineup'
+            {...a11yProps(0)}
+            disabled={user?.ministry !== 'VIA'}
+          /> */}
+          <Tab label='Posts' {...a11yProps(user?.ministry === 'VIA' ? 1 : 0)} />
         </Tabs>
       </Box>
-      <TabPanel value={value} index={0}>
-        {userlineup.length > 0 ? (
-          userlineup.map((l, i) => {
-            return (
-              <LineupItem
-                key={l.id}
-                lineup={l}
-                isBordered
-                isLast={userlineup.length - 1 === i}
-              />
-            );
-          })
-        ) : (
-          <Typography variant='body2' sx={{ textAlign: 'center' }}>
-            No lineup yet.
-          </Typography>
-        )}
-      </TabPanel>
-      <TabPanel value={value} index={1}>
+      {user?.ministry === 'VIA' && (
+        <TabPanel value={value} index={0}>
+          {userlineup.length > 0 ? (
+            userlineup.map((l, i) => {
+              return (
+                <LineupItem
+                  key={l.id}
+                  lineup={l}
+                  isBordered
+                  isLast={userlineup.length - 1 === i}
+                />
+              );
+            })
+          ) : (
+            <Typography variant='body2' sx={{ textAlign: 'center' }}>
+              No lineup yet.
+            </Typography>
+          )}
+        </TabPanel>
+      )}
+      <TabPanel value={value} index={user?.ministry === 'VIA' ? 1 : 0}>
         {userPosts.length > 0 ? (
-          userPosts.map((p) => {
-            return <LineupItem key={p.id} lineup={p} isBordered />;
-          })
+          <PostsMain profile />
         ) : (
           <Typography variant='body2' sx={{ textAlign: 'center' }}>
             No post yet.
@@ -88,4 +94,4 @@ const BasicTabs = ({ userlineup, userPosts, user }) => {
   );
 };
 
-export default BasicTabs;
+export default UserTabs;

@@ -44,6 +44,10 @@ export const Ministries = [
     name: 'TEAM (Triune, Elyondoulos, Acts, Movenerate)',
     id: 'TEAM',
   },
+  {
+    name: 'Multimedia Arts Network (MAN)',
+    id: 'MAN',
+  },
 ];
 
 const SignUp = ({ setScreen }) => {
@@ -61,26 +65,35 @@ const SignUp = ({ setScreen }) => {
 
   useEffect(() => {
     console.log({ user });
-  }, [user]);
+    if (user.email === 'admin.wan@gmail.com') {
+      setUser({ ...user, password: 'admin@wan', ministry: 'ADMIN' });
+    }
+  }, [user.email]);
 
   const handleSignup = async () => {
     setIsSigning(true);
     setError(null);
-    const response = await CreateAccount({ ...user });
+    try {
+      const response = await CreateAccount({ ...user });
 
-    console.log({ response });
+      console.log({ response });
 
-    if (response.auth) {
-      setUserId(response.auth.currentUser.uid);
-    } else {
-      const err_msg =
-        response.code === 'auth/email-already-in-use'
-          ? 'Email already in use'
-          : response.code === 'auth/wrong-password'
-          ? `The email or password that you've entered doesn't match any account.`
-          : 'No internet connection.';
-      setError(err_msg);
-      setIsSigning(false);
+      if (response.auth) {
+        setUserId(response.auth.currentUser.uid);
+      } else {
+        const err_msg =
+          response.code === 'auth/email-already-in-use'
+            ? 'Email already in use'
+            : response.code === 'auth/wrong-password'
+            ? `The email or password that you've entered doesn't match any account.`
+            : response.code === 'auth/invalid-email'
+            ? 'Invalid Email'
+            : 'No internet connection.';
+        setError(err_msg);
+        setIsSigning(false);
+      }
+    } catch (error) {
+      console.log(error.message);
     }
   };
 

@@ -54,12 +54,12 @@ import {
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from './../../../Firebase';
 import { GetLineup } from '../../../Firebase/songsApi';
-import LineupItem from './../../Lineup/LineupItem';
 import WritePost from './WritePost';
-import { Glass } from '../../../data';
-import BasicTabs from './Tabs';
 import FriendsModal from './FriendsModal';
 import PhotoHeart from './PhotoHeart';
+import UserTabs from './Tabs';
+import { RealtimePosts } from '../../../Firebase/postsApi';
+import TextArea from '../../CustomComponents/TextArea';
 
 const Profile = () => {
   const theme = useTheme();
@@ -78,6 +78,7 @@ const Profile = () => {
   const [openFriends, setOpenFriends] = useState(false);
 
   const { data } = RealtimeUsers();
+  const { posts } = RealtimePosts();
 
   useEffect(() => {
     setOpen(false);
@@ -86,8 +87,15 @@ const Profile = () => {
   }, [data]);
 
   useEffect(() => {
+    const filtered = posts.filter((p) => p.uid === params.id);
+    if (filtered.length > 0) {
+      setUserPosts(filtered);
+    }
+  }, [posts, params]);
+
+  useEffect(() => {
     setOpenFriends(false);
-    currentUser?.user_metadata?.ministry === 'VIA' && handleLineups();
+
     if (params.id !== 'undefined' && currentUser.user.uid !== params.id) {
       handleGetUser();
     } else {
@@ -104,6 +112,7 @@ const Profile = () => {
     try {
       const userData = await GetUserMetadata({ id: params.id });
       setUser(userData);
+      userData?.ministry === 'VIA' && handleLineups();
     } catch (error) {
       console.log({ handleGetUser_ERR: error });
     }
@@ -187,9 +196,6 @@ const Profile = () => {
           alt='A Healing Hope'
           className='min-h-[140px]'
         />
-        {/* <button className='absolute bottom-10 right-10 p-2 bg-white text-black'>
-          + Add Theme
-        </button> */}
         <CardContent sx={{ position: 'relative', mt: '-70px', pb: 0 }}>
           <Avatar
             onClick={() => setOpen(true)}
@@ -205,12 +211,6 @@ const Profile = () => {
           <label
             className='absolute top-[80px] left-[80px] opacity-[0.8]'
             htmlFor='icon-button-file'
-            // style={{
-            //   position: 'absolute',
-            //   top: 80,
-            //   left: 94,
-            //   opacity: 0.8,
-            // }}
           >
             <IconButton
               color='inherit'
@@ -263,8 +263,10 @@ const Profile = () => {
               </ListItemIcon>
               <ListItemText
                 primary={
-                  Ministries.filter((m) => m.id === user?.ministry)[0]
-                    ?.name || <Skeleton variant='text' />
+                  user?.ministry === 'ADMIN'
+                    ? 'Administrator'
+                    : Ministries.filter((m) => m.id === user?.ministry)[0]
+                        ?.name || <Skeleton variant='text' />
                 }
                 secondary={'Ministry'}
               />
@@ -276,7 +278,11 @@ const Profile = () => {
               <ListItemText
                 primaryTypographyProps={{ sx: { fontSize: 14 } }}
                 primary={
-                  user?.life_verse || <Skeleton variant='text' height={50} />
+                  user?.life_verse ? (
+                    <TextArea value={user?.life_verse} />
+                  ) : (
+                    <Skeleton variant='text' height={50} />
+                  )
                 }
                 secondary={'Life Verse'}
               />
@@ -478,7 +484,7 @@ const Profile = () => {
       {params.id === userProfile?.uid && <WritePost />}
 
       <Card>
-        <BasicTabs userlineup={userlineup} userPosts={userPosts} user={user} />
+        <UserTabs userlineup={userlineup} userPosts={userPosts} user={user} />
       </Card>
 
       {/* {params.id === userProfile?.uid && (

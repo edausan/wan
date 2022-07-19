@@ -13,7 +13,7 @@ import { Add } from '@mui/icons-material';
 import PopperUnstyled from '@mui/base/PopperUnstyled';
 import ClickAwayListener from '@mui/base/ClickAwayListener';
 
-const Lyrics = ({ setCardData, cardData, setOpen, open, category }) => {
+const Lyrics = ({ setCardData, cardData, setOpen, category }) => {
   const [lyrics, setLyrics] = useState({
     verse: null,
     pre_chorus: null,
@@ -34,24 +34,6 @@ const Lyrics = ({ setCardData, cardData, setOpen, open, category }) => {
   useEffect(() => {
     setCardData((cardData) => ({ ...cardData, lyrics }));
   }, [lyrics]);
-
-  // useEffect(() => {
-  //   if (lyrics.verse || lyrics.chorus) {
-  //     const updated = lineupData.map((lineup) => {
-  //       if (lineup.id === song.category.id) {
-  //         return {
-  //           ...lineup,
-  //           lyrics,
-  //         };
-  //       }
-  //       return lineup;
-  //     });
-
-  //     console.log({ lyrics, updated });
-
-  //     setLineupData(updated);
-  //   }
-  // }, [lyrics]);
 
   const isOpen = Boolean(anchorEl);
   const id = isOpen ? 'about-popper' : undefined;

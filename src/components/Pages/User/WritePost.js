@@ -1,4 +1,8 @@
-import { ImageTwoTone, Send } from '@mui/icons-material';
+import {
+  ImageTwoTone,
+  Send,
+  SignalCellularNullOutlined,
+} from '@mui/icons-material';
 import {
   Button,
   Card,
@@ -13,10 +17,13 @@ import { getAuth } from 'firebase/auth';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { FirebaseApp } from '../../../Firebase';
 import { CreatePost, UploadPostMedia } from '../../../Firebase/postsApi';
+import useResize from '../../../hooks/useResize';
 
 const WritePost = () => {
+  const history = useHistory();
   const auth = getAuth(FirebaseApp);
   const user = auth.currentUser;
   // const reader = new FileReader();
@@ -24,8 +31,19 @@ const WritePost = () => {
   const [img, setImg] = useState(null);
   const [message, setMessage] = useState(null);
   const [photoURL, setPhotoURL] = useState(null);
-  const [success, setSuccess] = useState(false);
+  // const [success, setSuccess] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const { resized, processfile } = useResize({ quality: 1 });
+
+  useEffect(() => {
+    imageUpload && processfile(imageUpload);
+    console.log({ imageUpload });
+  }, [imageUpload]);
+
+  useEffect(() => {
+    console.log({ resized });
+    setPhotoURL(resized);
+  }, [resized]);
 
   const handlePost = async () => {
     setUploading(true);
@@ -34,59 +52,54 @@ const WritePost = () => {
         uid: user.uid,
         message,
         media: photoURL,
-        date_created: moment().format('dddd LL'),
+        date_created: moment().format('LLLL'),
         reactions: [],
         comments: [],
       };
       const res = await CreatePost({ post });
-      console.log({ res });
+      console.log({ id: res.id });
 
       if (res?.id) {
-        setSuccess(true);
-        setUploading(false);
+        // setSuccess(true);
+        setTimeout(() => {
+          setMessage(null);
+          setImageUpload(null);
+          setPhotoURL(null);
+          setUploading(false);
+          history.push(`/profile/${user.uid}`);
+        }, 500);
+        // setSuccess(false);
       }
     } catch (error) {
       console.log(error.message);
     }
   };
 
-  useEffect(() => {
-    photoURL && handlePost();
-  }, [photoURL]);
-
-  const handleUploadMedia = async () => {
-    if (imageUpload) {
-      const { photoURL } = await UploadPostMedia({ imageUpload });
-      setPhotoURL(photoURL);
-    }
-  };
-
   const displayImage = (e) => {
     if (e.target.files[0]) {
       setImageUpload(e.target.files[0]);
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        console.log({ img: e.target.result });
-        setImg(e.target.result);
-        // document.querySelector('#profileDisplay').setAttribute('src', e.target.result);
-      };
-      reader.readAsDataURL(e.target.files[0]);
     }
   };
 
   return (
     <Card sx={{ mb: 2 }}>
-      {img && <CardMedia image={img} />}
-      <CardMedia component='img' src={img} />
+      {photoURL && <CardMedia component='img' image={photoURL} id='preview' />}
+      {/* <CardMedia component='img' src={img} /> */}
       <CardContent sx={{ pb: 0 }}>
-        <TextField
-          fullWidth
-          variant='standard'
-          placeholder={`How's your day? Share it with us.`}
-          multiline
-          onChange={(e) => setMessage(e.target.value)}
-          disabled={uploading}
-        />
+        {/* <div id='preview'></div> */}
+        {uploading ? (
+          <div>{message}</div>
+        ) : (
+          <TextField
+            fullWidth
+            variant='standard'
+            placeholder={`How's your day? Share it with us.`}
+            multiline
+            onChange={(e) => setMessage(e.target.value)}
+            disabled={uploading}
+            value={message}
+          />
+        )}
       </CardContent>
       <CardActions sx={{ justifyContent: 'right' }}>
         <label
@@ -121,7 +134,7 @@ const WritePost = () => {
         </label>
         <Button
           startIcon={<Send />}
-          onClick={imageUpload ? handleUploadMedia : handlePost}
+          onClick={handlePost}
           disabled={uploading || !message}
         >
           Share

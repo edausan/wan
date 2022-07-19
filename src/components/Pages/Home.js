@@ -18,7 +18,7 @@ const Home = () => {
       container
       justifyContent='center'
       alignItems='start'
-      sx={{ height: '100vh' }}
+      sx={{ height: '100vh', pb: 100 }}
     >
       <Theme />
       <PostsMain />
