@@ -31,7 +31,7 @@ const ReactionsModal = ({
             {reactions?.map((react) => {
               const user = friends?.filter((f) => f.uid === react?.uid)[0];
               return (
-                <Link to={`/profile/${user?.uid}`}>
+                <Link key={react?.uid} to={`/profile/${user?.uid}`}>
                   <ListItemButton className='px-2'>
                     <ListItemIcon
                       className={`${

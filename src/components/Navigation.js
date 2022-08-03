@@ -1,48 +1,35 @@
 import {
-  AccountCircle,
-  Assignment,
-  Brightness4,
-  Brightness7,
-  Home,
-  Settings,
-  SpeakerNotes,
-  Topic,
-  NotificationsOutlined,
-  HomeTwoTone,
-  AssignmentTwoTone,
-  SpeakerNotesTwoTone,
-  AccountCircleTwoTone,
+  LibraryMusicOutlined,
+  HomeOutlined,
+  AssignmentOutlined,
+  SpeakerNotesOutlined,
 } from '@mui/icons-material';
-import {
-  BottomNavigation,
-  Paper,
-  BottomNavigationAction,
-  Icon,
-  Grid,
-  useTheme,
-  IconButton,
-  Button,
-  Avatar,
-} from '@mui/material';
-import React, { useEffect, useState, useContext } from 'react';
-import { Link, useLocation, useRouteMatch } from 'react-router-dom';
-import { AppCtx } from './../App';
+import { Paper, Grid, useTheme, Avatar } from '@mui/material';
+import React, { useEffect, useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from './../Firebase';
+import { useDispatch } from 'react-redux';
+import { setPage } from '../redux/slices/appSlice';
+import { AppCtx } from '../App';
 
-const Navigation = () => {
+const Navigation = ({ setPageIndex }) => {
+  // const { setPageIndex } = useContext(AppCtx);
+  const dispatch = useDispatch();
   const auth = getAuth(FirebaseApp);
   const user = auth.currentUser;
 
   const location = useLocation();
   const { pathname } = location;
   const theme = useTheme();
-  const { setMode, mode, currentUser } = useContext(AppCtx);
-  const [page, setPage] = useState('Home');
 
   useEffect(() => {
     // console.log({ location });
   }, [location]);
+
+  const handleSetPage = (page) => {
+    setPageIndex(page);
+  };
 
   return (
     <Paper
@@ -64,7 +51,7 @@ const Navigation = () => {
         }}
         justifyContent='center'
       >
-        <Grid item flex={1}>
+        <Grid item flex={1} onClick={() => handleSetPage(0)}>
           <Link
             to='/'
             style={{
@@ -79,10 +66,10 @@ const Navigation = () => {
                   : 'inherit',
             }}
           >
-            <HomeTwoTone />
+            <HomeOutlined />
           </Link>
         </Grid>
-        <Grid item flex={1}>
+        <Grid item flex={1} onClick={() => handleSetPage(1)}>
           <Link
             to='/assignments'
             style={{
@@ -97,10 +84,10 @@ const Navigation = () => {
                   : 'inherit',
             }}
           >
-            <AssignmentTwoTone />
+            <AssignmentOutlined />
           </Link>
         </Grid>
-        <Grid item flex={1}>
+        <Grid item flex={1} onClick={() => handleSetPage(2)}>
           <Link
             to='/lineup'
             style={{
@@ -115,12 +102,12 @@ const Navigation = () => {
                   : 'inherit',
             }}
           >
-            <SpeakerNotesTwoTone />
+            <SpeakerNotesOutlined />
           </Link>
         </Grid>
-        {/* <Grid item flex={1}>
+        <Grid item flex={1} onClick={() => handleSetPage(3)}>
           <Link
-            to='/notifications'
+            to='/songs'
             style={{
               display: 'flex',
               padding: 16,
@@ -128,15 +115,15 @@ const Navigation = () => {
               alignItems: 'center',
               transition: theme.transitions.easing.easeInOut,
               color:
-                pathname === '/settings'
+                pathname === '/songs'
                   ? theme.palette.primary[theme.palette.mode]
                   : 'inherit',
             }}
           >
-            <NotificationsOutlined />
+            <LibraryMusicOutlined />
           </Link>
-        </Grid> */}
-        <Grid item flex={1}>
+        </Grid>
+        <Grid item flex={1} onClick={() => handleSetPage(4)}>
           <Link
             to={`/profile/${user.uid}`}
             style={{

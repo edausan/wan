@@ -47,6 +47,7 @@ const PhotoHeart = ({ open, setOpen, user, friends, handleToOther }) => {
                 {user?.photoHeart?.map((h) => {
                   return (
                     <Link
+                      key={h}
                       to={`/profile/${
                         friends?.filter((f) => f.uid === h)[0]?.uid
                       }`}
@@ -122,7 +123,13 @@ const PhotoHeart = ({ open, setOpen, user, friends, handleToOther }) => {
             >
               {user?.photoHeart?.map((h) => {
                 const user = friends?.filter((f) => f.uid === h)[0];
-                return <Avatar alt={user?.displayName} src={user?.photoURL} />;
+                return (
+                  <Avatar
+                    key={user?.uid}
+                    alt={user?.displayName}
+                    src={user?.photoURL}
+                  />
+                );
               })}
             </AvatarGroup>
           </CardContent>

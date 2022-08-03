@@ -3,24 +3,20 @@ import { FirebaseApp, Firestore } from '../Firebase';
 import {
   collection,
   doc,
-  setDoc,
-  getDoc,
   onSnapshot,
-  updateDoc,
-  query,
-  where,
-  getDocs,
   addDoc,
+  deleteDoc,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 
 const auth = getAuth(FirebaseApp);
 const user = auth.currentUser;
 
+const assignmentRef = collection(Firestore, 'assignments');
+
 export const SetAssignments = async ({ assignments }) => {
   try {
-    const ref = collection(Firestore, 'assignments');
-    const created = await addDoc(ref, { ...assignments });
+    const created = await addDoc(assignmentRef, { ...assignments });
 
     return created;
   } catch (error) {
@@ -28,8 +24,16 @@ export const SetAssignments = async ({ assignments }) => {
   }
 };
 
+export const DeleteAssignment = async ({ id }) => {
+  try {
+    const ref = doc(assignmentRef, id);
+    await deleteDoc(ref);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 export const GetRealtimeAssignments = () => {
-  const user = auth.currentUser;
   const [data, setData] = useState([]);
 
   useEffect(() => {

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FirebaseApp, Firestore } from '.';
 import { useEffect, useState } from 'react';
 import {
@@ -6,17 +7,22 @@ import {
   setDoc,
   getDoc,
   onSnapshot,
-  serverTimestamp,
   addDoc,
   updateDoc,
   deleteDoc,
-  orderBy,
   query,
   where,
   getDocs,
 } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import moment from 'moment';
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadString,
+  listAll,
+} from 'firebase/storage';
 
 const auth = getAuth(FirebaseApp);
 
@@ -208,6 +214,50 @@ export const UpdateSong = async ({ song }) => {
   }
 };
 
+export const AddNewSong = async ({ song }) => {
+  try {
+    const id = song.title.split(' ').join('-').toLowerCase();
+    const ref = doc(songsRef, id);
+    const res = await setDoc(ref, { ...song, id });
+    return res;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const UpdateSongDetails = async ({ song }) => {
+  try {
+    const ref = doc(songsRef, song.id);
+    return await updateDoc(ref, song);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const UpdateChords = async ({ id, chords }) => {
+  try {
+    const ref = doc(songsRef, id);
+
+    if (id) {
+      return await updateDoc(ref, { chords });
+    }
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+export const UpdateLyrics = async ({ id, lyrics }) => {
+  try {
+    const ref = doc(songsRef, id);
+
+    if (id) {
+      return await updateDoc(ref, { lyrics });
+    }
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
 /**
  * TODO: GET single song
  */
@@ -291,4 +341,68 @@ export const RealtimeLineups = () => {
   }, []);
 
   return { data };
+};
+
+const storage = getStorage(FirebaseApp);
+
+/**
+ * TODO: Upload Album Cover Photo
+ */
+export const UploadAlbumCover = async ({ id, image }) => {
+  /**
+   * TODO: REFERENCE TO FIREBASE STORAGE FOLDER AND FILENAME
+   */
+  const imgRef = ref(storage, `album_cover/${id}`);
+
+  /**
+   * TODO: UPLOADING TO FIREBASE STORAGE
+   */
+  const uploaded = await uploadString(imgRef, image, 'data_url');
+
+  /**
+   * TODO:  GET PHOTO DOWNLOAD URL
+   */
+  const photoURL = await getDownloadURL(uploaded.ref);
+
+  return { photoURL };
+};
+
+const GetDownloadURL = async (ref) => {
+  return await getDownloadURL(ref);
+};
+
+export const GetAllAlbumCovers = () => {
+  const [covers, setCovers] = useState([]);
+  const [photoURL, setPhotoURL] = useState('');
+  const [fileName, setFileName] = useState('');
+
+  useEffect(() => {
+    if (fileName && typeof photoURL === 'string') {
+      const idx = covers.findIndex((c) => c.name === fileName);
+      if (idx === -1) {
+        setCovers([...covers, { name: fileName, photoURL }]);
+      }
+    }
+  }, [photoURL, fileName]);
+
+  const GetCovers = async () => {
+    try {
+      const listRef = ref(storage, 'album_cover');
+
+      const res = await listAll(listRef);
+
+      const covers = res.items.forEach(async (itemRef) => {
+        const photoURL = await GetDownloadURL(itemRef);
+        if (typeof photoURL === 'string') {
+          setPhotoURL(photoURL);
+          setFileName(itemRef.name);
+        }
+      });
+      return covers;
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  return { AlbumCovers: covers, GetCovers };
 };

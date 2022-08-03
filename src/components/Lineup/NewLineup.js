@@ -1,17 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext, createContext } from 'react';
-import {
-  Grid,
-  TextField,
-  Modal,
-  Card,
-  SpeedDial,
-  Snackbar,
-  Alert,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-} from '@mui/material';
+import { Grid, TextField, Modal, Card, Snackbar, Alert } from '@mui/material';
 
 import { LINEUP } from '../../data';
 import { AppCtx } from '../../App';
@@ -21,7 +10,6 @@ import Chords from '../Modals/Chords';
 import Media from '../Modals/Media';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import {
   AddLineup,
@@ -33,7 +21,7 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from '../../Firebase';
-import { Save } from '@mui/icons-material';
+import { SaveTwoTone } from '@mui/icons-material';
 import Service from './Service';
 
 export const NewLineupCtx = createContext(null);
@@ -91,7 +79,7 @@ const NewLineup = () => {
   };
 
   const handleSave = async () => {
-    if (lineupData[0].title) {
+    if (service) {
       setSaving(true);
 
       const saved = await AddLineup({
@@ -198,8 +186,6 @@ const NewLineup = () => {
     setSaved(false);
   };
 
-  console.log({ lineupData });
-
   return (
     <section
       style={{
@@ -220,22 +206,15 @@ const NewLineup = () => {
         </Alert>
       </Snackbar>
 
-      {lineupData?.length > 0 && lineupData[0]?.title && service && (
-        <SpeedDial
+      {lineupData?.length > 0 && service && (
+        <button
+          className='fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-green-500 text-white rounded-full z-50'
           onClick={handleSave}
-          color={lineupData[0]?.song ? 'primary' : '#ccc'}
-          ariaLabel='Save Lineup'
-          sx={{ position: 'fixed', bottom: 66, right: 16 }}
-          icon={<Save />}
-        />
+        >
+          <span className='motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-green-500 text-black rounded-full z-40 opacity-30'></span>
+          <SaveTwoTone />
+        </button>
       )}
-      {/* <SpeedDial
-        onClick={handleSaveSongs}
-        color='success'
-        ariaLabel='Save Songs'
-        sx={{ position: 'fixed', bottom: 130, right: 16 }}
-        icon={<MusicNoteTwoTone />}
-      /> */}
 
       <Modal
         open={open.status}
@@ -259,22 +238,6 @@ const NewLineup = () => {
               service={service}
               setService={setService}
             />
-            {/* <FormControl fullWidth variant='standard' required sx={{ mb: 2 }}>
-              <InputLabel id='service-type'>Service</InputLabel>
-              <Select
-                labelId='service-type'
-                value={service}
-                onChange={(e) => setService(e.target.value)}
-              >
-                <MenuItem value='Worship Service | Belleview'>
-                  Worship Service | Belleview
-                </MenuItem>
-                <MenuItem value='Worship Service | Lumina'>
-                  Worship Service | Lumina
-                </MenuItem>
-                <MenuItem value='Youth Service'>Youth Service</MenuItem>
-              </Select>
-            </FormControl> */}
 
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <MobileDatePicker
@@ -320,4 +283,4 @@ const NewLineup = () => {
   );
 };
 
-export default NewLineup;
+export default React.memo(NewLineup);

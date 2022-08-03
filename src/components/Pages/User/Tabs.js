@@ -1,7 +1,10 @@
 import { Box, Tab, Tabs, Typography } from '@mui/material';
-import React, { useState } from 'react';
-import LineupItem from '../../Lineup/LineupItem';
-import PostsMain from '../Home/PostsMain';
+import React, { Suspense, useState } from 'react';
+// import LineupItem from '../../Lineup/LineupItem';
+// import PostsMain from '../Home/PostsMain';
+
+const LineupItem = React.lazy(() => import('../../Lineup/LineupItem'));
+const PostsMain = React.lazy(() => import('../Home/PostsMain'));
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -38,6 +41,7 @@ const a11yProps = (index) => {
 };
 
 const UserTabs = ({ userlineup, userPosts, user }) => {
+  console.log({ UserTabs: userPosts });
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
@@ -66,12 +70,14 @@ const UserTabs = ({ userlineup, userPosts, user }) => {
           {userlineup.length > 0 ? (
             userlineup.map((l, i) => {
               return (
-                <LineupItem
-                  key={l.id}
-                  lineup={l}
-                  isBordered
-                  isLast={userlineup.length - 1 === i}
-                />
+                <Suspense fallback={<div>Loading...</div>}>
+                  <LineupItem
+                    key={l.id}
+                    lineup={l}
+                    isBordered
+                    isLast={userlineup.length - 1 === i}
+                  />
+                </Suspense>
               );
             })
           ) : (
@@ -82,8 +88,10 @@ const UserTabs = ({ userlineup, userPosts, user }) => {
         </TabPanel>
       )}
       <TabPanel value={value} index={user?.ministry === 'VIA' ? 1 : 0}>
-        {userPosts.length > 0 ? (
-          <PostsMain profile />
+        {userPosts?.length > 0 ? (
+          <Suspense fallback={<div>Loading...</div>}>
+            <PostsMain profile />
+          </Suspense>
         ) : (
           <Typography variant='body2' sx={{ textAlign: 'center' }}>
             No post yet.
@@ -94,4 +102,4 @@ const UserTabs = ({ userlineup, userPosts, user }) => {
   );
 };
 
-export default UserTabs;
+export default React.memo(UserTabs);

@@ -1,17 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useState } from 'react';
 import {
   Card,
   CardActions,
   CardContent,
   CardMedia,
-  Grid,
-  Typography,
   Button,
   TextField,
-  FormControl,
-  InputLabel,
   Input,
-  InputAdornment,
   IconButton,
   Select,
   MenuItem,
@@ -26,12 +22,7 @@ import {
 } from '@mui/material';
 import { AppCtx } from './../../App';
 import BG from '../../assets/bg.jpg';
-import wallpaper from '../../assets/wallpaper-hd.jpg';
-import {
-  UpdatePhotoURL,
-  UpdateProfile,
-  UploadPhoto,
-} from '../../Firebase/authApi';
+import { UpdateProfile, UploadPhoto } from '../../Firebase/authApi';
 import { Ministries } from './Auth/Signup';
 import { useHistory } from 'react-router-dom';
 import {
@@ -40,7 +31,6 @@ import {
   GroupOutlined,
   PhotoCamera,
 } from '@mui/icons-material';
-import { uploadBytes } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from './../../Firebase';
 import useResize from '../../hooks/useResize';
@@ -314,4 +304,4 @@ const EditProfile = () => {
   );
 };
 
-export default EditProfile;
+export default React.memo(EditProfile);

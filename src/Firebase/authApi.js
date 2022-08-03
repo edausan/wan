@@ -34,8 +34,6 @@ export const SetUserMetadata = async ({ metadata }) => {
   const meta_data = await setDoc(doc(Firestore, 'user_metadata', metadata.id), {
     ...metadata,
   });
-
-  console.log({ meta_data });
 };
 
 export const GetUserMetadata = async ({ id }) => {
@@ -44,11 +42,11 @@ export const GetUserMetadata = async ({ id }) => {
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
     // console.log('Document data:', docSnap.data());
+    return docSnap.data();
   } else {
     // doc.data() will be undefined in this case
-    console.log('No such document!');
+    console.log('No user found!');
   }
-  return docSnap.data();
 };
 
 export const CreateAccount = async ({ email, password, ministry }) => {
@@ -60,7 +58,6 @@ export const CreateAccount = async ({ email, password, ministry }) => {
     );
 
     const user = userCredential.user;
-    console.log({ user });
 
     const meta = {
       id: user.uid,
@@ -75,7 +72,6 @@ export const CreateAccount = async ({ email, password, ministry }) => {
     };
 
     const user_metadata = await SetUserMetadata({ metadata: meta });
-    console.log({ user_metadata });
 
     return { user_metadata, user };
   } catch (error) {
@@ -92,7 +88,6 @@ export const SignIn = async ({ email, password }) => {
       password
     );
     const user = userCredential.user;
-    console.log({ user });
 
     const metadata = await GetUserMetadata({ id: user.uid });
     const metas = {
@@ -106,8 +101,6 @@ export const SignIn = async ({ email, password }) => {
       notifications: metadata.notifications || [],
     };
     const updatedMetadata = await UpdateUserMetadata({ metadata: metas });
-
-    console.log({ SignIn_metadata: metadata, updatedMetadata });
 
     return { user_metadata: metadata, user };
   } catch (error) {
@@ -137,7 +130,6 @@ export const UpdateProfile = async ({
       phoneNumber,
     });
     const user = auth.currentUser;
-    console.log({ user });
     const metadata = await GetUserMetadata({ id: user.uid });
 
     const metas = {
@@ -156,8 +148,6 @@ export const UpdateProfile = async ({
       metadata: metas,
     });
 
-    console.log({ userCredential, update });
-
     return userCredential;
   } catch (error) {
     return error;
@@ -165,15 +155,12 @@ export const UpdateProfile = async ({
 };
 
 export const HeartProfile = async ({ id, heart }) => {
-  console.log({ heart });
   try {
     const user = auth.currentUser;
     const userRef = doc(Firestore, 'user_metadata', id);
     const updated = await updateDoc(userRef, {
       ...heart,
     });
-
-    console.log({ HeartProfile: updated });
   } catch (error) {
     console.log(error.message);
   }
@@ -205,7 +192,6 @@ export const UpdatePhotoURL = async ({ photoURL }) => {
       displayName: auth.currentUser.displayName,
       uid: auth.currentUser.uid,
     });
-    console.log({ user });
   } catch (error) {
     console.log(error);
   }
@@ -260,14 +246,11 @@ export const UploadPhoto = async ({ id, imageUpload }) => {
     uid: auth.currentUser.uid,
   });
 
-  console.log({ updated_user_metadata });
-
   /**
    * TODO: UPDATE USER'S photoURL
    */
   const updateProfile = await UpdatePhotoURL({ photoURL });
 
-  console.log({ updateProfile });
   return { photoURL, updateProfile };
 };
 
@@ -285,8 +268,6 @@ export const RealtimeUsers = () => {
             id: doc.id,
             ...doc.data(),
           }));
-
-          console.log({ docs });
 
           if (docs.length > 0) {
             //   localStorage.setItem('orders', JSON.stringify(docs));

@@ -68,7 +68,7 @@ const LineupCard = ({ category, setLineupData, songs, songData, saving }) => {
   const handleFilterSongs = useCallback(() => {
     if (songs?.length > 0 && category.id) {
       const filtered = songs?.filter(
-        (song) => song?.tags[0] === category?.tags[0]
+        (song) => song?.tags?.length > 0 && song?.tags[0] === category?.tags[0]
       );
       setFilteredSongs(filtered);
     }
@@ -151,17 +151,19 @@ const LineupCard = ({ category, setLineupData, songs, songData, saving }) => {
 
       <Card sx={{ mb: 2 }}>
         <CardContent>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={newSong}
-                  onChange={() => setNewSong(!newSong)}
-                />
-              }
-              label='New'
-            />
-          </FormGroup>
+          {/* <div>
+            <FormGroup className='inline-block'>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={newSong}
+                    onChange={() => setNewSong(!newSong)}
+                  />
+                }
+                label='New'
+              />
+            </FormGroup>
+          </div> */}
 
           {newSong ? (
             <TextField
@@ -188,13 +190,13 @@ const LineupCard = ({ category, setLineupData, songs, songData, saving }) => {
                 }
               >
                 {filteredSongs.map((song) => {
-                  return <MenuItem value={song.id}>{song.title}</MenuItem>;
+                  return <MenuItem key={song.id} value={song.id}>{song.title}</MenuItem>;
                 })}
               </Select>
             </FormControl>
           )}
 
-          <Grid
+          {/* <Grid
             container
             sx={{ mt: 1, width: '100%' }}
             spacing={1}
@@ -226,59 +228,8 @@ const LineupCard = ({ category, setLineupData, songs, songData, saving }) => {
                 }
               />
             </Grid>
-          </Grid>
+          </Grid> */}
         </CardContent>
-
-        <CardActions>
-          <Button
-            variant='text'
-            color={
-              songData?.lyrics?.verse || cardData.lyrics?.verse
-                ? 'primary'
-                : 'inherit'
-            }
-            disableElevation
-            size='small'
-            disabled={saving}
-            sx={{ minWidth: '40px !important' }}
-            onClick={() => setOpen({ modal: 'lyrics', status: true })}
-          >
-            <TextSnippet fontSize='small' />
-          </Button>
-          <Button
-            variant='text'
-            color={
-              songData?.chords || cardData.chords ? 'secondary' : 'inherit'
-            }
-            disableElevation
-            size='small'
-            disabled={saving}
-            sx={{ minWidth: '40px !important' }}
-            onClick={() => setOpen({ modal: 'chords', status: true })}
-          >
-            <MusicNote fontSize='small' />
-          </Button>
-          {/* <Button
-            variant='text'
-            color={!category.media ? 'inherit' : 'error'}
-            disableElevation
-            size='small'
-            disabled={saving}
-            sx={{ minWidth: '40px !important' }}
-            onClick={() =>import { NewLineupCtx } from './NewLineup';
-import Lyrics from './../Modals/Lyrics';
-
-              setOpen({
-                id: 'Media',
-                status: true,
-                song_title: cardData.song || category.label,
-                category,
-              })
-            }
-          >
-            <PlayArrow fontSize='small' />
-          </Button> */}
-        </CardActions>
       </Card>
     </Grid>
   );

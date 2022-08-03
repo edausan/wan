@@ -1,49 +1,97 @@
-import {
-  ImageTwoTone,
-  Send,
-  SignalCellularNullOutlined,
-} from '@mui/icons-material';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { AddPhotoAlternateTwoTone, Clear, Send } from '@mui/icons-material';
 import {
   Button,
   Card,
   CardActions,
   CardContent,
   CardMedia,
+  CircularProgress,
+  Dialog,
   IconButton,
-  Input,
   TextField,
 } from '@mui/material';
 import { getAuth } from 'firebase/auth';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 import { FirebaseApp } from '../../../Firebase';
-import { CreatePost, UploadPostMedia } from '../../../Firebase/postsApi';
+import { CreatePost } from '../../../Firebase/postsApi';
 import useResize from '../../../hooks/useResize';
 
+const CLOUDINARY_API = 'https://api.cloudinary.com/v1_1/edausan15';
+const CLOUDINARY_UPLOAD_PRESET = 'uploads';
+
 const WritePost = () => {
-  const history = useHistory();
   const auth = getAuth(FirebaseApp);
   const user = auth.currentUser;
   // const reader = new FileReader();
   const [imageUpload, setImageUpload] = useState(null);
-  const [img, setImg] = useState(null);
   const [message, setMessage] = useState(null);
   const [photoURL, setPhotoURL] = useState(null);
   // const [success, setSuccess] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const { resized, processfile } = useResize({ quality: 1 });
-
-  useEffect(() => {
-    imageUpload && processfile(imageUpload);
-    console.log({ imageUpload });
-  }, [imageUpload]);
+  const { resized, processfile } = useResize({ quality: 0.9 });
+  const [uploadingMedia, setUploadingMedia] = useState(false);
+  const [media, setMedia] = useState({ secure_url: null });
 
   useEffect(() => {
     console.log({ resized });
-    setPhotoURL(resized);
+    setMedia({ secure_url: resized });
   }, [resized]);
+
+  const handleDeleteFromCloud = async () => {
+    setPhotoURL(null);
+    setImageUpload(null);
+    setMedia({ secure_url: null });
+  };
+
+  const handleUploadToCloud = async () => {
+    setUploadingMedia(true);
+
+    console.log({ imageUpload });
+    const form = new FormData();
+
+    try {
+      form.append('file', imageUpload);
+      form.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+      const is_video = imageUpload?.type.includes('video');
+      // const url = `${CLOUDINARY_API}`;
+      const url = `${CLOUDINARY_API}/${is_video ? 'video' : 'image'}/upload`;
+      console.log(url, form.file);
+      const res = await fetch(url, {
+        method: 'POST',
+        body: form,
+        mode: 'cors',
+        // headers: {
+        //   'Content-Type': 'application/x-www-form-urlencoded',
+        //   'Access-Control-Allow-Origin': '*',
+        //   'Access-Control-Allow-Headers': 'Origin',
+        //   'Access-Control-Allow-Credentials': true,
+        // },
+      }).then((r) => r.json());
+
+      if (res) {
+        console.log({ handleUploadToCloud: res });
+        setPhotoURL(res);
+        setUploadingMedia(false);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  useEffect(() => {
+    console.log({ imageUpload });
+    imageUpload &&
+      imageUpload.type.includes('image') &&
+      processfile(imageUpload);
+  }, [imageUpload]);
+
+  useEffect(() => {
+    photoURL && handlePost();
+  }, [photoURL]);
 
   const handlePost = async () => {
     setUploading(true);
@@ -51,10 +99,11 @@ const WritePost = () => {
       const post = {
         uid: user.uid,
         message,
-        media: photoURL,
+        media: photoURL.secure_url,
         date_created: moment().format('LLLL'),
         reactions: [],
         comments: [],
+        media_type: imageUpload.type,
       };
       const res = await CreatePost({ post });
       console.log({ id: res.id });
@@ -62,11 +111,12 @@ const WritePost = () => {
       if (res?.id) {
         // setSuccess(true);
         setTimeout(() => {
+          setMedia({ secure_url: null });
           setMessage(null);
           setImageUpload(null);
           setPhotoURL(null);
           setUploading(false);
-          history.push(`/profile/${user.uid}`);
+          // history.push(`/profile/${user.uid}`);
         }, 500);
         // setSuccess(false);
       }
@@ -76,71 +126,92 @@ const WritePost = () => {
   };
 
   const displayImage = (e) => {
-    if (e.target.files[0]) {
-      setImageUpload(e.target.files[0]);
+    const file = e.target.files[0];
+    console.log({ file });
+    if (file && file.size < 50000000) {
+      setImageUpload(file);
+
+      if (file.type.includes('video')) {
+        const vid = URL.createObjectURL(file);
+        setMedia({ secure_url: vid });
+      }
+    } else {
+      alert('File is too large.');
     }
   };
 
   return (
-    <Card sx={{ mb: 2 }}>
-      {photoURL && <CardMedia component='img' image={photoURL} id='preview' />}
-      {/* <CardMedia component='img' src={img} /> */}
-      <CardContent sx={{ pb: 0 }}>
-        {/* <div id='preview'></div> */}
-        {uploading ? (
-          <div>{message}</div>
-        ) : (
-          <TextField
-            fullWidth
-            variant='standard'
-            placeholder={`How's your day? Share it with us.`}
-            multiline
-            onChange={(e) => setMessage(e.target.value)}
-            disabled={uploading}
-            value={message}
+    <>
+      <Dialog open={uploadingMedia}>
+        <div className='flex flex-col items-center p-4'>
+          <CircularProgress />
+          <span className='animate-pulse text-xs mt-2'>Uploading Media</span>
+        </div>
+      </Dialog>
+      <Card className='mb-4 relative'>
+        {media.secure_url && (
+          <IconButton
+            className='absolute z-[1003] top-[16px] right-[16px] bg-gray-800 hover:bg-gray-700'
+            onClick={handleDeleteFromCloud}
+          >
+            <Clear />
+          </IconButton>
+        )}
+        {media.secure_url && (
+          <CardMedia
+            component={imageUpload?.type.includes('image') ? 'img' : 'video'}
+            image={media.secure_url}
+            id='preview'
+            autoPlay
+            controls
           />
         )}
-      </CardContent>
-      <CardActions sx={{ justifyContent: 'right' }}>
-        <label
-          htmlFor='icon-button-file'
-          // sx={{
-          //   position: 'absolute',
-          //   top: 80,
-          //   left: 94,
-          //   opacity: 0.8,
-          // }}
-        >
-          {/* <Input
-            accept='image/*'
-            id='icon-button-file'
-            type='file'
-            sx={{ display: 'none' }}
-            onChange={(e) => setImageUpload(e.target.files[0])}
-          /> */}
-          <IconButton
-            component='label'
-            aria-label='upload picture'
-            disabled={uploading}
-          >
-            <input
-              hidden
-              accept='image/*'
-              type='file'
-              onChange={displayImage}
+        {/* <CardMedia component='img' src={img} /> */}
+        <CardContent sx={{ pb: 0 }}>
+          {/* <div id='preview'></div> */}
+          {uploading ? (
+            <div>{message}</div>
+          ) : (
+            <TextField
+              fullWidth
+              variant='standard'
+              placeholder={`How's your day? Share it with us.`}
+              multiline
+              onChange={(e) => setMessage(e.target.value)}
+              disabled={uploading}
+              value={message}
             />
-            <ImageTwoTone color='inherit' />
-          </IconButton>
-        </label>
-        <Button
-          startIcon={<Send />}
-          onClick={handlePost}
-          disabled={uploading || !message}
-        >
-          Share
-        </Button>
-      </CardActions>
-    </Card>
+          )}
+        </CardContent>
+        <CardActions className='justify-end'>
+          <label htmlFor='icon-button-file'>
+            <Button
+              component='label'
+              aria-label='upload picture'
+              disabled={uploading}
+              startIcon={<AddPhotoAlternateTwoTone color='success' />}
+            >
+              <input
+                hidden
+                accept='image/*,video/*'
+                type='file'
+                onChange={displayImage}
+              />
+              <span className='!capitalize text-sm text-white/60'>
+                Photo/Video
+              </span>
+            </Button>
+          </label>
+          <Button
+            startIcon={<Send />}
+            onClick={media ? handleUploadToCloud : () => {}}
+            disabled={uploading || !message || !media}
+          >
+            <span className='!capitalize text-sm text-white/60'>Share</span>
+          </Button>
+        </CardActions>
+      </Card>
+    </>
   );
 };
 

@@ -1,14 +1,14 @@
 import React from 'react';
 import { TextField } from '@mui/material';
 
-const TextArea = ({ value }) => {
+const TextArea = ({ value, className, size, styles, color = '#fff' }) => {
   return (
     <TextField
       disabled
       multiline
       value={value}
       fullWidth
-      className='first:px-0'
+      className={`first:px-0 ${className}`}
       sx={{
         border: 'none',
         '& > .MuiOutlinedInput-root': {
@@ -16,8 +16,9 @@ const TextArea = ({ value }) => {
           border: 'none',
           '& textarea': {
             border: 'none',
-            '-webkit-text-fill-color': '#fff',
-            fontSize: '0.875rem',
+            '-webkit-text-fill-color': color,
+            fontSize: size,
+            ...styles,
           },
           '& fieldset': {
             border: 'none',

@@ -1,8 +1,4 @@
-import {
-  MoreVertTwoTone,
-  SendTwoTone,
-  DeleteTwoTone,
-} from '@mui/icons-material';
+import { SendTwoTone, DeleteTwoTone } from '@mui/icons-material';
 import {
   Avatar,
   Card,
@@ -11,22 +7,18 @@ import {
   Drawer,
   FormControl,
   IconButton,
-  Input,
   InputAdornment,
-  InputLabel,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   OutlinedInput,
-  TextField,
 } from '@mui/material';
 import { getAuth } from 'firebase/auth';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { FirebaseApp } from '../../../Firebase';
 import { PostComment } from '../../../Firebase/postsApi';
-import { RealtimeComments } from './../../../Firebase/postsApi';
 
 const PostComments = ({ open, setOpen, post, preview }) => {
   const auth = getAuth(FirebaseApp);
@@ -37,17 +29,12 @@ const PostComments = ({ open, setOpen, post, preview }) => {
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
-    console.log({ PostComments: post });
     setComments(post?.comments?.length > 0 ? post.comments : []);
   }, [post]);
 
-  useEffect(() => {
-    console.log({ comments });
-  }, [comments]);
-
   const handleDelete = async (comment) => {
     try {
-      const res = await PostComment({
+      await PostComment({
         postId: post.id,
         comments: comments.filter(
           (c) =>
@@ -55,8 +42,6 @@ const PostComments = ({ open, setOpen, post, preview }) => {
             c.user.uid === comment.user.uid
         ),
       });
-
-      console.log({ res });
     } catch (error) {
       console.log(error.message);
     }
@@ -74,12 +59,12 @@ const PostComments = ({ open, setOpen, post, preview }) => {
         },
         date_created: moment().valueOf(),
       };
-      console.log({ data });
-      const res = await PostComment({
+
+      await PostComment({
         postId: post.id,
         comments: [...comments, data],
       });
-      console.log({ res });
+
       setSending(false);
       setComment(null);
     } catch (error) {
@@ -110,11 +95,10 @@ const PostComments = ({ open, setOpen, post, preview }) => {
         <CardContent>
           <List>
             {comments
-              .sort(
-                (a, b) => new Date(b.date_created) - new Date(a.date_created)
-              )
+              // .sort(
+              //   (a, b) => new Date(b.date_created) - new Date(a.date_created)
+              // )
               .map((comment, idx) => {
-                console.log({ comment });
                 return (
                   <Comment
                     key={`${idx}${comment.user.uid}`}

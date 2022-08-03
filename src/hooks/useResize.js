@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const useResize = ({ quality = 1 }) => {
@@ -72,7 +72,7 @@ const useResize = ({ quality = 1 }) => {
     return canvas.toDataURL('image/webp', quality); // get the data from canvas as 70% JPG (can be also PNG, etc.)
   };
 
-  return { resized, processfile };
+  return { resized, processfile, resizeMe };
 };
 
 useResize.protoTypes = {

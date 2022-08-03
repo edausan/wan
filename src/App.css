@@ -75,8 +75,8 @@ div.backup .MuiSelect-select {
 }
 
 .MuiPaper-root {
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(2px);
 }
 .MuiBackdrop-root {
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(2px);
 }

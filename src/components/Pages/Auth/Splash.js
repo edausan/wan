@@ -1,38 +1,12 @@
-import {
-  LoginOutlined,
-  Visibility,
-  VisibilityOff,
-  Brightness7,
-  Brightness4,
-} from '@mui/icons-material';
-import {
-  Alert,
-  Button,
-  Card,
-  Divider,
-  Grid,
-  IconButton,
-  Input,
-  InputAdornment,
-  TextField,
-  Typography,
-  useTheme,
-} from '@mui/material';
-import { useContext, useState, useEffect } from 'react';
-import { AppCtx } from '../../../App';
-import { LoadingButton } from '@mui/lab';
+import { Button, Grid } from '@mui/material';
+import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/system';
-import WAN_LOGO_WHITE from '../../../assets/WAN_LOGO_WHITE.png';
 import WAN_LOGO_NEW from '../../../assets/WAN_LOGO_NEW.png';
-import SPLASH_BG from '../../../assets/splash-bg.jpg';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import SPLASH_BG from '../../../assets/splash-bg.webp';
 import Login from './Login';
 import SignUp from './Signup';
 
 const Splash = () => {
-  const params = useParams();
-  const { currentUser } = useContext(AppCtx);
-  const history = useHistory();
   const [screen, setScreen] = useState('splash');
 
   const blue = '#00addd';
@@ -135,4 +109,4 @@ const Splash = () => {
   );
 };
 
-export default Splash;
+export default React.memo(Splash);

@@ -53,7 +53,7 @@ const Theme = () => {
           <a
             href='https://jilworldwide.org/theme/a-healing-hope/'
             target='_black'
-            no-referrerPolicy=''
+            no-referrerpolicy=''
             className='underline text-sky-400'
           >
             jilworldwide.org/theme/a-healing-hope/

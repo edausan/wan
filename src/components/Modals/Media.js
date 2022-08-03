@@ -10,7 +10,6 @@ import {
 import React, { useEffect, useState } from 'react';
 import { Search, ArrowBack } from '@mui/icons-material';
 import Youtube from '../../Youtube';
-import { YOUTUBE_LOGO } from '../../data';
 import VideoItem from '../Video/VideoItem';
 
 const Media = () => {
@@ -41,7 +40,7 @@ const Media = () => {
 
   return (
     <div>
-      <img src={YOUTUBE_LOGO} alt='' style={{ width: '20%' }} />
+      {/* <img src={YOUTUBE_LOGO} alt='' style={{ width: '20%' }} /> */}
 
       <Grid container sx={{ mb: 1 }} alignContent='center'>
         <Grid item xs={12} md={12}>

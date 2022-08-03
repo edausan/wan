@@ -1,72 +1,50 @@
-import React, { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { Suspense, useState } from 'react';
 import {
-  Add,
-  Check,
-  CheckCircleOutline,
-  CheckCircleOutlineTwoTone,
   CheckCircleTwoTone,
-  ContentCopy,
-  Delete,
-  Edit,
   Event,
   ExpandMore,
   Favorite,
   FavoriteBorder,
-  FavoriteOutlined,
-  FormatQuote,
   MoreVert,
   MusicNote,
-  Note,
-  NoteAlt,
   OpenInNewTwoTone,
   PlayArrow,
-  Share,
+  ShareOutlined,
   TextSnippet,
-  VisibilityOutlined,
 } from '@mui/icons-material';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Alert,
   Avatar,
-  AvatarGroup,
-  Box,
-  Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
-  CardMedia,
-  Collapse,
   Divider,
-  Drawer,
   IconButton,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Snackbar,
-  SwipeableDrawer,
-  TextField,
-  Typography,
   useTheme,
 } from '@mui/material';
-import { red } from '@mui/material/colors';
-import BG from '../../assets/bg.jpg';
-import WALL_SD from '../../assets/wallpaper-sd.jpg';
-import { ADMIN, VIA } from '../../data';
+import { ADMIN } from '../../data';
 import moment from 'moment';
 import { pink, blue } from '../Pages/Auth/Login';
-import PopperUnstyled from '@mui/base/PopperUnstyled';
-import ClickAwayListener from '@mui/base/ClickAwayListener';
 import { useHistory, Link } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from './../../Firebase';
 import { DeleteLineup, GetSong, HeartLineup } from '../../Firebase/songsApi';
 import { useEffect } from 'react';
-import { GetUserMetadata } from '../../Firebase/authApi';
-import SongModal from './SongModal';
+// import LineupItemDrawer from './LineupItemDrawer';
+// import SongDetailsDrawer from './SongDetailsDrawer';
+// import EditSong from '../Pages/Songs/EditSong';
+
+const EditSong = React.lazy(() => import('../Pages/Songs/EditSong'));
+const SongDetailsDrawer = React.lazy(() => import('./SongDetailsDrawer'));
+const LineupItemDrawer = React.lazy(() => import('./LineupItemDrawer'));
 
 const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
   const auth = getAuth(FirebaseApp);
@@ -76,11 +54,14 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
   const theme = useTheme();
   const [expanded, setExpanded] = useState(false);
   const [drawerData, setDrawerData] = useState({ song: null, id: null });
-  const [anchorEl, setAnchorEl] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [open, setOpen] = useState(false);
   const [lineupSongs, setLineupSongs] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState({ song: null, status: false });
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [openSongDrawer, setOpenSongDrawer] = useState({
+    song: null,
+    status: false,
+  });
 
   useEffect(() => {
     lineup.songs.length > 0 && lineup.songs[0].title && GetSongsData();
@@ -137,24 +118,38 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
     }, 1000);
   };
 
-  const isOpen = Boolean(anchorEl);
-  const id = isOpen ? 'about-popper' : undefined;
-
   const handleClose = () => {};
-
-  useEffect(() => {
-    const date = moment(lineup.date).diff(new Date()) < 0;
-  }, []);
 
   const lineup_songs = lineup.songs[0].title ? lineupSongs : lineup.songs;
 
   return (
     <>
-      <SongModal
-        isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
-        getData={GetSongsData}
-      />
+      <Suspense fallback={<div></div>}>
+        <SongDetailsDrawer
+          drawerData={drawerData}
+          expanded={expanded}
+          handleClose={handleClose}
+          handleCopy={handleCopy}
+          handleExpandClick={handleExpandClick}
+          open={open}
+        />
+      </Suspense>
+
+      <Suspense fallback={<div></div>}>
+        <EditSong drawer={openSongDrawer} setOpen={setOpenSongDrawer} />
+      </Suspense>
+
+      <Suspense fallback={<div></div>}>
+        <LineupItemDrawer
+          setOpen={setOpenDrawer}
+          open={openDrawer}
+          handleDelete={handleDelete}
+          handleEdit={handleEdit}
+          user={user}
+          lineup={lineup}
+        />
+      </Suspense>
+
       <Card
         sx={{
           maxWidth: '100%',
@@ -164,101 +159,58 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
         }}
         variant={isBordered ? 'outlined' : 'elevation'}
       >
-        <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
-          <CardHeader
-            sx={{ pb: 0 }}
-            avatar={
-              <Link
-                to={`/profile/${lineup?.worship_leader?.uid}`}
-                style={{ textDecoration: 'none', color: 'inherit' }}
+        <CardHeader
+          sx={{ pb: 0 }}
+          avatar={
+            <Link
+              to={`/profile/${lineup?.worship_leader?.uid}`}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <Avatar
+                sx={{
+                  background: `linear-gradient(45deg, ${pink}, ${blue})`,
+                  color: '#fff',
+                }}
+                aria-label='recipe'
+                src={lineup?.worship_leader?.photoURL}
               >
-                <Avatar
-                  sx={{
-                    background: `linear-gradient(45deg, ${pink}, ${blue})`,
-                    color: '#fff',
-                  }}
-                  aria-label='recipe'
-                  src={lineup?.worship_leader?.photoURL}
+                {lineup?.worship_leader.displayName.split('')[0]}
+              </Avatar>
+            </Link>
+          }
+          action={
+            <>
+              {(user.uid === lineup.worship_leader?.uid ||
+                user.uid === ADMIN) && (
+                <IconButton
+                  aria-label='settings'
+                  onClick={() => setOpenDrawer(true)}
                 >
-                  {lineup?.worship_leader.displayName.split('')[0]}
-                </Avatar>
-              </Link>
-            }
-            action={
-              <>
-                {(user.uid === lineup.worship_leader?.uid ||
-                  user.uid === ADMIN) && (
-                  <IconButton
-                    aria-label='settings'
-                    onClick={(event) =>
-                      isOpen
-                        ? setAnchorEl(null)
-                        : setAnchorEl(event.currentTarget)
-                    }
-                  >
-                    <MoreVert />
-                  </IconButton>
-                )}
-                <PopperUnstyled
-                  id={id}
-                  open={isOpen}
-                  anchorEl={anchorEl}
-                  disablePortal
-                  keepMounted
-                  placement='left-end'
-                  style={{ zIndex: 1001 }}
-                >
-                  <Card
-                    variant='outlined'
-                    sx={{ boxShadow: 'md', borderRadius: 'sm', p: 0 }}
-                  >
-                    <List>
-                      <ListItem sx={{ py: 0 }}>
-                        <Button
-                          startIcon={<Edit fontSize='small' />}
-                          color='inherit'
-                          onClick={handleEdit}
-                        >
-                          Edit
-                        </Button>
-                      </ListItem>
-                      {user.uid === lineup.worship_leader?.uid && (
-                        <ListItem sx={{ py: 0 }}>
-                          <Button
-                            startIcon={<Delete fontSize='small' />}
-                            color='inherit'
-                            onClick={handleDelete}
-                          >
-                            Delete
-                          </Button>
-                        </ListItem>
-                      )}
-                    </List>
-                  </Card>
-                </PopperUnstyled>
-              </>
-            }
-            title={
-              <Link
-                to={`/profile/${lineup.worship_leader?.uid}`}
-                style={{ textDecoration: 'none', color: 'inherit' }}
-              >
-                {lineup.worship_leader?.displayName}
-              </Link>
-            }
-            subheader={
-              <small>
-                {moment(lineup.date_created).startOf('minute').fromNow()}{' '}
-                {lineup.date_updated && (
-                  <span style={{ color: '#777' }}>
-                    • Edited:{' '}
-                    {moment(lineup.date_updated).startOf('minute').fromNow()}
-                  </span>
-                )}
-              </small>
-            }
-          />
-        </ClickAwayListener>
+                  <MoreVert />
+                </IconButton>
+              )}
+            </>
+          }
+          title={
+            <Link
+              to={`/profile/${lineup.worship_leader?.uid}`}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              {lineup.worship_leader?.displayName}
+            </Link>
+          }
+          subheader={
+            <small>
+              {moment(lineup.date_created).startOf('minute').fromNow()}{' '}
+              {lineup.date_updated && (
+                <span style={{ color: '#777' }}>
+                  • Edited:{' '}
+                  {moment(lineup.date_updated).startOf('minute').fromNow()}
+                </span>
+              )}
+            </small>
+          }
+        />
 
         <CardContent sx={{ py: 0 }}>
           <List sx={{ py: 0, mt: 1 }}>
@@ -291,9 +243,12 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                   </ListItemIcon>
                   <ListItemText
                     primary={
-                      <small>
+                      <small className='text-xs'>
                         {lineup?.service}
-                        <div style={{ color: theme.palette.text.secondary }}>
+                        <div
+                          style={{ color: theme.palette.text.secondary }}
+                          className='text-xs'
+                        >
                           {moment(lineup.date).format('LL')}
                         </div>
                       </small>
@@ -310,15 +265,28 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                     return (
                       <ListItem key={s.id}>
                         <ListItemText
-                          primary={s.title || s.song}
-                          secondary={s.label}
                           onClick={() =>
-                            setIsModalOpen({ song: s, status: true })
+                            setOpenSongDrawer({ song: s, status: true })
                           }
+                          primary={
+                            <span className='text-sm'>{s.title || s.song}</span>
+                          }
+                          secondary={
+                            <span className='text-xs text-white/40'>
+                              {s.label}
+                            </span>
+                          }
+                          // onClick={() =>
+                          //   setIsModalOpen({ song: s, status: true })
+                          // }
                         />
                         <IconButton
                           color='primary'
-                          disabled={!s.lyrics?.verse}
+                          disabled={
+                            !s.lyrics?.verse &&
+                            !s.lyrics?.pre_chorus &&
+                            !s.lyrics?.chorus
+                          }
                           onClick={() => handleExpandClick(s, 'Lyrics')}
                           sx={{ mr: 1 }}
                         >
@@ -327,12 +295,19 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                         <IconButton
                           color='secondary'
                           onClick={() => handleExpandClick(s, 'Chords')}
-                          disabled={!s.chords}
+                          disabled={
+                            !s.chords?.verse &&
+                            !s.chords?.pre_chorus &&
+                            !s.chords?.chorus
+                          }
                           sx={{ mr: 1 }}
                         >
                           <MusicNote fontSize='small' />
                         </IconButton>
-                        <IconButton color='error' disabled={!s.media}>
+                        <IconButton
+                          color='error'
+                          disabled={!s?.media?.youtube && !s?.media?.spotify}
+                        >
                           <PlayArrow fontSize='small' />
                         </IconButton>
                       </ListItem>
@@ -354,6 +329,20 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
           <small style={{ marginLeft: 6, fontSize: 14 }}>
             {lineup?.heart?.length}
           </small>
+          <a
+            href={`https://m.me/j/Aba8ddZutv5MvPbi/`}
+            style={{ textDecoration: 'none', color: 'inherit' }}
+            onClick={() => {
+              navigator.clipboard.writeText(
+                `https://wan-belleview.web.app/lineup/${lineup.id}`
+              );
+            }}
+            className='ml-2'
+          >
+            <IconButton aria-label='share'>
+              <ShareOutlined fontSize='small' />
+            </IconButton>
+          </a>
           {/* <a
 						href={`https://m.me/j/Aba8ddZutv5MvPbi/`}
 						style={{textDecoration: "none", color: "inherit"}}
@@ -375,225 +364,16 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
 							<OpenInNewTwoTone />
 						</IconButton>
 					)} */}
+          <IconButton
+            aria-label='view'
+            onClick={() => history.push(`/lineup/${lineup.id}`)}
+            name='View Lineup'
+            sx={{ marginLeft: 'auto' }}
+          >
+            <OpenInNewTwoTone fontSize='small' />
+          </IconButton>
         </CardActions>
       </Card>
-
-      <SwipeableDrawer
-        anchor='right'
-        open={expanded}
-        onClose={() => handleExpandClick({ song: null, id: null })}
-        sx={{
-          '& > .MuiDrawer-paper': {
-            background: `${theme.palette.background.default}`,
-          },
-        }}
-      >
-        <Box sx={{ width: 320, p: 2 }}>
-          <Snackbar
-            open={open}
-            autoHideDuration={6000}
-            onClose={handleClose}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            sx={{ zIndex: 2 }}
-          >
-            <Alert
-              onClose={handleClose}
-              severity='success'
-              sx={{ width: '100%' }}
-            >
-              Copied!
-            </Alert>
-          </Snackbar>
-          <List>
-            <ListItem>
-              <ListItemText
-                primary='Song Title:'
-                secondary={
-                  <div>
-                    <div style={{ marginBottom: 8 }}>
-                      <strong>{drawerData?.song?.title}</strong>
-                    </div>
-                    <div>
-                      <small style={{ textTransform: 'capitalize' }}>
-                        <span style={{ color: theme.palette.text.secondary }}>
-                          Artist:
-                        </span>{' '}
-                        {drawerData?.song?.artist}
-                      </small>
-                    </div>
-                    <div>
-                      <small style={{ textTransform: 'capitalize' }}>
-                        <span style={{ color: theme.palette.text.secondary }}>
-                          Album:
-                        </span>{' '}
-                        {drawerData?.song?.album}
-                      </small>
-                    </div>
-                  </div>
-                }
-                primaryTypographyProps={{
-                  sx: {
-                    fontSize: '0.875rem',
-                    color: theme.palette.text.primary,
-                    opacity: 0.7,
-                  },
-                }}
-                secondaryTypographyProps={{
-                  sx: {
-                    fontSize: '1rem',
-                    color: theme.palette.text.primary,
-                    textTransform: 'uppercase',
-                  },
-                }}
-              />
-            </ListItem>
-
-            {(drawerData?.song?.lyrics?.verse ||
-              drawerData?.song?.chords?.verse) && (
-              <ListItem>
-                <ListItemText
-                  primary='Verse:'
-                  secondary={
-                    <TextField
-                      id='verse'
-                      value={
-                        drawerData.id === 'Lyrics'
-                          ? drawerData?.song?.lyrics?.verse
-                          : drawerData?.song?.chords?.verse
-                      }
-                      fullWidth
-                      disabled
-                      variant='standard'
-                      multiline
-                      sx={{
-                        '& textarea.Mui-disabled': {
-                          '-webkit-text-fill-color': theme.palette.text.primary,
-                          textTransform: 'uppercase',
-                        },
-                        '& > .Mui-disabled:before': {
-                          borderBottomStyle: 'none !important',
-                        },
-                      }}
-                    />
-                  }
-                  primaryTypographyProps={{
-                    sx: {
-                      fontSize: '0.875rem',
-                      color: theme.palette.text.primary,
-                      opacity: 0.7,
-                    },
-                  }}
-                  secondaryTypographyProps={{
-                    sx: {
-                      fontSize: '1rem',
-                      color: theme.palette.text.primary,
-                      textTransform: 'uppercase',
-                    },
-                  }}
-                />
-              </ListItem>
-            )}
-
-            {(drawerData?.song?.lyrics?.pre_chorus ||
-              drawerData?.song?.chords?.pre_chorus) && (
-              <ListItem>
-                <ListItemText
-                  secondary={
-                    <TextField
-                      id='pre-chorus'
-                      value={
-                        drawerData.id === 'Lyrics'
-                          ? drawerData?.song?.lyrics?.pre_chorus
-                          : drawerData?.song?.chords?.pre_chorus
-                      }
-                      fullWidth
-                      disabled
-                      variant='standard'
-                      multiline
-                      sx={{
-                        '& textarea.Mui-disabled': {
-                          '-webkit-text-fill-color': theme.palette.text.primary,
-                          textTransform: 'uppercase',
-                        },
-                        '& > .Mui-disabled:before': {
-                          borderBottomStyle: 'none !important',
-                        },
-                      }}
-                    />
-                  }
-                  primary='Pre-chorus:'
-                  primaryTypographyProps={{
-                    sx: {
-                      fontSize: '0.875rem',
-                      color: theme.palette.text.primary,
-                      opacity: 0.7,
-                    },
-                  }}
-                  secondaryTypographyProps={{
-                    sx: {
-                      fontSize: '1rem',
-                      color: theme.palette.text.primary,
-                      textTransform: 'uppercase',
-                    },
-                  }}
-                />
-              </ListItem>
-            )}
-
-            {(drawerData?.song?.lyrics?.chorus ||
-              drawerData?.song?.chords?.chorus) && (
-              <ListItem>
-                <ListItemText
-                  secondary={
-                    <TextField
-                      id='chorus'
-                      value={
-                        drawerData.id === 'Lyrics'
-                          ? drawerData?.song?.lyrics?.chorus
-                          : drawerData?.song?.chords?.chorus
-                      }
-                      fullWidth
-                      disabled
-                      variant='standard'
-                      multiline
-                      sx={{
-                        '& textarea.Mui-disabled': {
-                          '-webkit-text-fill-color': theme.palette.text.primary,
-                          textTransform: 'uppercase',
-                        },
-                        '& > .Mui-disabled:before': {
-                          borderBottomStyle: 'none !important',
-                        },
-                      }}
-                    />
-                  }
-                  primary='Chorus:'
-                  primaryTypographyProps={{
-                    sx: {
-                      fontSize: '0.875rem',
-                      color: theme.palette.text.primary,
-                      opacity: 0.7,
-                    },
-                  }}
-                  secondaryTypographyProps={{
-                    sx: {
-                      fontSize: '1rem',
-                      color: theme.palette.text.primary,
-                      textTransform: 'uppercase',
-                    },
-                  }}
-                />
-              </ListItem>
-            )}
-          </List>
-
-          <div style={{ textAlign: 'right' }}>
-            <Button onClick={handleCopy} startIcon={<ContentCopy />}>
-              Copy
-            </Button>
-          </div>
-        </Box>
-      </SwipeableDrawer>
     </>
   );
 };

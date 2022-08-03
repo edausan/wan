@@ -1,3 +1,5 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext } from 'react';
 import {
   Avatar,
@@ -10,22 +12,17 @@ import {
   CardMedia,
   Divider,
   IconButton,
-  Modal,
-  TextField,
+  Skeleton,
 } from '@mui/material';
-import { GetUserMetadata, RealtimeUsers } from '../../../Firebase/authApi';
+import { GetUserMetadata } from '../../../Firebase/authApi';
 import {
   CommentTwoTone,
-  DeleteTwoTone,
   EmojiEmotionsTwoTone,
   FavoriteTwoTone,
   MoreVert,
-  SendTwoTone,
   SentimentVeryDissatisfiedTwoTone,
   ShareTwoTone,
-  ThumbUpOffAlt,
   ThumbUpOffAltOutlined,
-  ThumbUpOffAltTwoTone,
   ThumbUpTwoTone,
 } from '@mui/icons-material';
 import PostDrawer from './PostDrawer';
@@ -35,15 +32,24 @@ import ReactionDrawer from './ReactionDrawer';
 import { GetPost, ReactPost } from '../../../Firebase/postsApi';
 import { Link, useParams } from 'react-router-dom';
 import ReactionsModal from './ReactionsModal';
-import { AppCtx } from '../../../App';
 import PostComments from './PostComments';
 import TextArea from './../../CustomComponents/TextArea';
+import { useSelector } from 'react-redux';
+import { selectUsers } from '../../../redux/slices/usersSlice';
+import { selectPost } from '../../../redux/slices/postsSlice';
+import { AppCtx } from '../../../App';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
-const Post = ({ post: current, friends: wan }) => {
+const Post = ({ post: current }) => {
   const params = useParams();
   const auth = getAuth(FirebaseApp);
   const userProfile = auth.currentUser;
   const { scrollToTop } = useContext(AppCtx);
+
+  const users = useSelector(selectUsers);
+  const { posts } = useSelector(selectPost);
+
   const [user, setUser] = useState(null);
   const [open, setOpen] = useState(false);
   const [reaction, setReaction] = useState(null);
@@ -55,45 +61,51 @@ const Post = ({ post: current, friends: wan }) => {
   const [post, setPost] = useState(null);
   const [friends, setFriends] = useState([]);
 
-  const { data } = RealtimeUsers();
+  useEffect(() => {
+    scrollToTop();
+  }, []);
 
   useEffect(() => {
-    setMsg(current?.message.split('#')[0].trim());
-    const tags = current?.message.split('#').filter((t, i) => i !== 0);
+    if (current?.post.id) {
+      handlePost(current, 'if');
+    } else if (posts.length <= 0 && params?.id) {
+      handleGetPost();
+    } else if (posts.length > 0) {
+      const filtered = posts.filter(
+        (p) => p.post.uid === params?.id || p.post.id === params?.id
+      )[0];
+      handlePost(filtered, 'else');
+    }
+  }, [current, params, posts]);
+
+  const handleGetPost = async () => {
+    try {
+      const id = params?.id;
+      const user = await GetUserMetadata({ id });
+      const res = await GetPost({ id });
+      if (res.id && user.uid) {
+        handlePost({ post: res, user }, 'else if');
+      }
+    } catch (error) {}
+  };
+
+  const handlePost = (postData, from) => {
+    // console.log({ postData, from, current });
+    setMsg(postData?.post?.message?.split('#')[0].trim());
+    const tags = postData?.post?.message?.split('#').filter((t, i) => i !== 0);
     setHashtags(tags);
-    setPost(current);
-  }, [current]);
+    setPost(postData.post);
+    setUser(postData.user);
+  };
 
   useEffect(() => {
-    setFriends(wan || data);
-  }, [wan, data]);
-
-  useEffect(() => {
-    handleUSer();
-  }, [post]);
-
-  useEffect(() => {
-    params.id && getPost();
-  }, [params]);
+    setFriends(users.users);
+  }, [users]);
 
   useEffect(() => {
     setReactionsOpen(false);
     reaction && handleReact();
   }, [reaction]);
-
-  const getPost = async () => {
-    scrollToTop();
-    try {
-      const post = await GetPost({ id: params.id });
-      console.log({ post });
-      setPost(post);
-      setMsg(post?.message.split('#')[0].trim());
-      const tags = post?.message.split('#').filter((t, i) => i !== 0);
-      setHashtags(tags);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
 
   const handleReact = async () => {
     try {
@@ -110,8 +122,7 @@ const Post = ({ post: current, friends: wan }) => {
           reaction,
         },
       ];
-      const res = await ReactPost({ postId: post?.id, reactions });
-      console.log({ handleReact: res });
+      await ReactPost({ postId: post?.id, reactions });
       setReaction(null);
     } catch (error) {
       console.log(error.message);
@@ -150,20 +161,19 @@ const Post = ({ post: current, friends: wan }) => {
         };
     }
   };
-
-  const handleUSer = async () => {
-    try {
-      const user = await GetUserMetadata({ id: post?.uid });
-      setUser(user);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
   const handleHeart = async () => {};
 
+  useEffect(() => {
+    if (post?.media_type === 'video/mp4') {
+      const media = post?.media
+        .split('video/upload')
+        .join('video/upload/f_jpg');
+      console.log({ media });
+    }
+  }, [post]);
+
   return (
-    <Card>
+    <Card className='w-full'>
       <ReactionsModal
         setOpen={setOpenReactions}
         open={openReacions}
@@ -174,9 +184,13 @@ const Post = ({ post: current, friends: wan }) => {
       <CardHeader
         avatar={
           <Link to={`/profile/${post?.uid}`}>
-            <Avatar src={user?.photoURL} aria-label='recipe'>
-              {user?.displayName.split('')[0]}
-            </Avatar>
+            {user?.photoURL ? (
+              <Avatar src={user?.photoURL} aria-label='recipe'>
+                {user?.displayName.split('')[0]}
+              </Avatar>
+            ) : (
+              <Skeleton variant='circular' width={40} height={40} />
+            )}
           </Link>
         }
         action={
@@ -186,14 +200,45 @@ const Post = ({ post: current, friends: wan }) => {
         }
         title={
           <Link to={`/profile/${post?.uid}`}>
-            <span className='text-sm'>{user?.displayName}</span>
+            {user?.displayName ? (
+              <span className='text-sm'>{user?.displayName}</span>
+            ) : (
+              <Skeleton variant='text' />
+            )}
           </Link>
         }
-        subheader={<span className='text-xs'>{post?.date_created}</span>}
+        subheader={
+          <span className='text-xs'>
+            {post?.date_created ? (
+              post?.date_created
+            ) : (
+              <Skeleton variant='text' />
+            )}
+          </span>
+        }
       />
-      {post?.media && <CardMedia src={post?.media} component='img' />}
+      {post?.media_type === 'video/mp4' ? (
+        <CardMedia
+          src={post?.media}
+          component='video'
+          controls
+          preload='none'
+          poster={post?.media.split('video/upload').join('video/upload/f_jpg')}
+        />
+      ) : (
+        <LazyLoadImage
+          alt='demonstration1'
+          effect='blur'
+          placeholder={<Skeleton variant='rectangular' height={350} />}
+          src={post?.media}
+        />
+      )}
       <CardContent>
-        <TextArea value={msg} />
+        <TextArea
+          value={msg}
+          size='.85rem'
+          styles={{ lineHeight: '1.35rem' }}
+        />
         {/* <TextField
           disabled
           multiline
@@ -296,13 +341,13 @@ const Post = ({ post: current, friends: wan }) => {
       )}
       <Divider />
 
-      <CardActions className='justify-center grid grid-cols-3 p-0'>
+      <CardActions className='justify-center grid grid-cols-3 p-1'>
         <Button
           className='col-span-1 ml-0'
           variant='text'
           onClick={() => setReactionsOpen(true)}
           startIcon={
-            post?.reactions.findIndex((r) => r?.uid === userProfile?.uid) !==
+            post?.reactions?.findIndex((r) => r?.uid === userProfile?.uid) !==
               -1 || reaction ? (
               handleReactions(
                 reaction ||
@@ -397,4 +442,4 @@ const Post = ({ post: current, friends: wan }) => {
   );
 };
 
-export default Post;
+export default React.memo(Post);

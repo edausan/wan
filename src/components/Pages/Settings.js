@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Brightness4,
   Brightness7,
@@ -5,13 +6,6 @@ import {
   LogoutOutlined,
 } from '@mui/icons-material';
 import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  Grid,
   IconButton,
   List,
   ListItem,
@@ -19,22 +13,18 @@ import {
   ListItemText,
   ListSubheader,
   Switch,
-  Typography,
   useTheme,
 } from '@mui/material';
 import React, { useEffect } from 'react';
-import { useContext, useState } from 'react';
-import { useHistory, Link } from 'react-router-dom';
+import { useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import { AppCtx } from '../../App';
 import { SignOut } from '../../Firebase/authApi';
-import BG from '../../assets/bg.jpg';
-import Profile from './User/Profile';
 
 const Settings = () => {
   const history = useHistory();
   const theme = useTheme();
-  const { setMode, mode, currentUser, scrollToTop } = useContext(AppCtx);
-  const [toggleMode, setToggleMode] = useState(false);
+  const { setMode, mode, scrollToTop } = useContext(AppCtx);
 
   useEffect(() => {
     scrollToTop();
@@ -92,4 +82,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default React.memo(Settings);

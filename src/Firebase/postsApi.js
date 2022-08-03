@@ -1,9 +1,8 @@
-import { getAuth } from 'firebase/auth';
+// import { getAuth } from 'firebase/auth';
 import { FirebaseApp, Firestore } from '../Firebase';
 import {
   collection,
   doc,
-  setDoc,
   getDoc,
   onSnapshot,
   updateDoc,
@@ -16,8 +15,8 @@ import {
 import { useEffect, useState } from 'react';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 
-const auth = getAuth(FirebaseApp);
-const user = auth.currentUser;
+// const auth = getAuth(FirebaseApp);
+// const user = auth.currentUser;
 const postsRef = collection(Firestore, 'posts');
 
 export const CreatePost = async ({ post }) => {
@@ -66,11 +65,9 @@ export const GetPost = async ({ id }) => {
   const docRef = doc(Firestore, 'posts', id);
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
-    // console.log('Document data:', docSnap.data());
-    return docSnap.data();
+    return { ...docSnap.data(), id: docSnap.id };
   } else {
     // doc.data() will be undefined in this case
-    console.log('No such document!');
   }
 };
 

@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { Suspense, useContext, useEffect, useState } from 'react';
 import {
   Accordion,
   AccordionSummary,
@@ -12,14 +13,11 @@ import {
   Chip,
   Divider,
   FormControl,
-  FormControlLabel,
   InputLabel,
   List,
   ListItem,
-  ListItemButton,
   ListItemIcon,
   ListItemText,
-  ListSubheader,
   MenuItem,
   Select,
   TextField,
@@ -29,48 +27,44 @@ import { IconButton, Typography } from '@mui/material';
 import {
   AccountCircleTwoTone,
   AddCircleOutline,
-  Assignment,
   AssignmentTwoTone,
-  Check,
-  CheckCircle,
   CheckCircleTwoTone,
-  CheckTwoTone,
   CloseTwoTone,
-  Event,
   EventTwoTone,
   ExpandMore,
   MicTwoTone,
   MoreVert,
-  SaveAltOutlined,
   SaveOutlined,
-  Schedule,
   SupervisedUserCircleTwoTone,
-  TodayTwoTone,
 } from '@mui/icons-material';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import moment from 'moment';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from '../../../Firebase';
-import { GetVIA } from '../../../Firebase/authApi';
 import { SetAssignments } from '../../../Firebase/assignmentApi';
 import { Link, useHistory } from 'react-router-dom';
 import { AppCtx } from '../../../App';
+import { useSelector } from 'react-redux';
+import { selectUsers } from '../../../redux/slices/usersSlice';
+// import AssignmentDrawer from './AssignmentDrawer';
+
+const AssignmentDrawer = React.lazy(() => import('./AssignmentDrawer'));
 
 const auth = getAuth(FirebaseApp);
 
 const SetAssignment = ({ isViewing, assignment }) => {
   const history = useHistory();
   const user = auth.currentUser;
+  const { users } = useSelector(selectUsers);
 
   const { scrollToTop } = useContext(AppCtx);
 
+  const [open, setOpen] = useState(false);
   const [viewing, setViewing] = useState(isViewing);
   const [via, setVia] = useState([]);
   const [saving, setSaving] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [assignments, setAssignments] = useState({
     belleview: {
       backups: assignment?.belleview.backups || [],
@@ -135,22 +129,23 @@ const SetAssignment = ({ isViewing, assignment }) => {
 
     if (res) {
       setSaving(false);
-      setSuccess(true);
       history.push('/assignments');
     }
   };
 
   const handleGetVIA = async () => {
-    const VIA = await GetVIA();
-    const altered = VIA.map((v) => {
-      return {
-        ...v,
-        is_wl: false,
-        is_backup: false,
-        location: null,
-      };
-    });
-    setVia(altered);
+    const vias = users
+      .filter((u) => u.ministry === 'VIA')
+      .map((v) => {
+        return {
+          ...v,
+          is_wl: false,
+          is_backup: false,
+          location: null,
+        };
+      });
+    console.log({ vias });
+    setVia(vias);
   };
 
   const commonProps = {
@@ -163,70 +158,96 @@ const SetAssignment = ({ isViewing, assignment }) => {
   };
 
   return (
-    <Card sx={{ width: '100%', mb: !viewing ? 100 : 2 }}>
-      <CardHeader
-        avatar={
-          <Avatar
-            src={viewing ? assignment?.created_by.photoURL : user.photoURL}
-            alt={
-              viewing ? assignment?.created_by.displayName : user.displayName
-            }
-          />
-        }
-        title={viewing ? assignment?.created_by.displayName : user.displayName}
-        subheader={
-          <small>
-            {moment(assignment?.date_created).startOf('minute').fromNow()}
-          </small>
-        }
-        action={
-          <IconButton aria-label='settings'>
-            <MoreVert />
-          </IconButton>
-        }
-      />
-      <CardContent sx={{ pt: 0 }}>
-        <Typography
-          variant='body1'
-          sx={{ mb: 1, display: 'flex', alignItems: 'center' }}
-        >
-          <AssignmentTwoTone sx={{ mr: 1 }} fontSize='small' /> Assignments
-        </Typography>
-        <Service
-          title='Belleview'
-          assignment={assignments.belleview}
-          {...commonProps}
+    <>
+      <Suspense fallback={<div />}>
+        <AssignmentDrawer
+          open={open}
+          setOpen={setOpen}
+          assignment={assignment}
         />
-        <Service
-          title='Lumina'
-          isLumina
-          assignment={assignments.lumina}
-          {...commonProps}
+      </Suspense>
+      <Card sx={{ width: '100%', mb: !viewing ? 100 : 2 }}>
+        <CardHeader
+          avatar={
+            <Avatar
+              src={viewing ? assignment?.created_by.photoURL : user.photoURL}
+              alt={
+                viewing ? assignment?.created_by.displayName : user.displayName
+              }
+            />
+          }
+          title={
+            viewing ? assignment?.created_by.displayName : user.displayName
+          }
+          subheader={
+            <small>
+              {moment(assignment?.date_created).startOf('minute').fromNow()}
+            </small>
+          }
+          action={
+            assignment?.created_by?.uid === user.uid ? (
+              <IconButton aria-label='settings' onClick={() => setOpen(true)}>
+                <MoreVert />
+              </IconButton>
+            ) : (
+              <div />
+            )
+          }
         />
-        <Service
-          title='Youth Service'
-          isYS
-          assignment={assignments.youth}
-          {...commonProps}
-        />
-      </CardContent>
-      {assignments.belleview.date &&
-        assignments.belleview.wl &&
-        assignments.belleview.backups.length > 0 &&
-        !viewing && (
-          <>
-            <Divider />
-            <CardActions sx={{ justifyContent: 'right' }}>
-              <Button
-                startIcon={<SaveOutlined />}
-                onClick={handleSetAssignments}
-              >
-                Save
-              </Button>
-            </CardActions>
-          </>
-        )}
-    </Card>
+        <CardContent sx={{ pt: 0 }}>
+          <Typography
+            variant='body1'
+            className='text-sm mb-2 flex items-center'
+          >
+            <AssignmentTwoTone className='w-[14px] h-[14px] mr-2' />
+            Worship Service Assignments
+          </Typography>
+          {(assignments.belleview.wl || !viewing) && (
+            <Service
+              title='Belleview'
+              assignment={assignments.belleview}
+              {...commonProps}
+            />
+          )}
+
+          {(assignments.lumina.wl ||
+            assignments.lumina.backups.length > 0 ||
+            !viewing) && (
+            <Service
+              title='Lumina'
+              isLumina
+              assignment={assignments.lumina}
+              {...commonProps}
+            />
+          )}
+
+          {(assignments.youth.wl || !viewing) && (
+            <Service
+              title='Youth Service'
+              isYS
+              assignment={assignments.youth}
+              {...commonProps}
+            />
+          )}
+        </CardContent>
+        {assignments.belleview.date &&
+          assignments.belleview.wl &&
+          assignments.belleview.backups.length > 0 &&
+          !viewing && (
+            <>
+              <Divider />
+              <CardActions sx={{ justifyContent: 'right' }}>
+                <Button
+                  startIcon={<SaveOutlined />}
+                  onClick={handleSetAssignments}
+                >
+                  Save
+                </Button>
+              </CardActions>
+            </>
+          )}
+      </Card>
+    </>
   );
 };
 
@@ -249,7 +270,6 @@ const Service = ({
     user.uid === assignment.wl;
   const [date, setDate] = useState('');
   const [worshipLeader, setWorshipLeader] = useState(null);
-  const [recentWL, setRecentWL] = useState(null);
   const [backups, setBackups] = useState([]);
   const [expanded, setExpanded] = useState(exist);
   const [completed, setCompleted] = useState(false);
@@ -408,19 +428,20 @@ const Service = ({
       sx={{ boxShadow: 'none', py: 0, background: 'none' }}
     >
       <AccordionSummary
-        sx={{ px: 0, color: exist ? '#90caf9' : 'inherit' }}
+        // sx={{ px: 0, color: exist ? '#90caf9' : 'inherit' }}
+        className={`px-2 text-[${exist ? '#90caf9' : 'inherit'}]`}
         expandIcon={<ExpandMore />}
         aria-controls='panel1a-content'
         id='panel1a-header'
         onClick={() => setExpanded(!expanded)}
       >
-        <ListItem sx={{ py: 0, px: 1 }}>
+        <ListItem className='px-0 py-0'>
           <ListItemText
             primary={
               isYS ? (
-                <span style={{ display: 'flex', alignItems: 'center' }}>
+                <span className='flex items-center text-xs'>
                   {completed && !viewing && (
-                    <CheckTwoTone
+                    <CheckCircleTwoTone
                       sx={{ fontSize: 16, mr: 1 }}
                       color='success'
                     />
@@ -441,9 +462,12 @@ const Service = ({
                   Youth Service
                 </span>
               ) : (
-                <span style={{ display: 'flex', alignItems: 'center' }}>
+                <span className='flex items-center text-xs'>
                   {completed && !viewing && (
-                    <CheckCircle sx={{ fontSize: 16, mr: 1 }} color='success' />
+                    <CheckCircleTwoTone
+                      sx={{ fontSize: 16, mr: 1 }}
+                      color='success'
+                    />
                   )}{' '}
                   {viewing && moment(assignment.date).diff(new Date()) >= 0 ? (
                     <EventTwoTone
@@ -452,7 +476,7 @@ const Service = ({
                     />
                   ) : (
                     viewing && (
-                      <CheckTwoTone
+                      <CheckCircleTwoTone
                         color='success'
                         sx={{ fontSize: 14, mr: '6px' }}
                       />
@@ -462,11 +486,16 @@ const Service = ({
                 </span>
               )
             }
-            primaryTypographyProps={{ sx: { fontSize: 14, width: 200 } }}
+            className='w-[180px]'
+            // primaryTypographyProps={{ sx: { fontSize: 14, width: 200 } }}
           />
           <ListItemText
-            secondary={moment(viewing ? assignment.date : date).format('l')}
-            secondaryTypographyProps={{ sx: { fontSize: 12 } }}
+            secondary={
+              <span className='text-xs'>
+                {moment(viewing ? assignment.date : date).format('l')}
+              </span>
+            }
+            // secondaryTypographyProps={{ sx: { fontSize: 12 } }}
           />
         </ListItem>
       </AccordionSummary>
@@ -721,4 +750,4 @@ const Service = ({
   );
 };
 
-export default SetAssignment;
+export default React.memo(SetAssignment);

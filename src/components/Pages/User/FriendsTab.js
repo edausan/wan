@@ -44,6 +44,7 @@ const TabPanel = (props) => {
               .map((friend) => {
                 return (
                   <Link
+                    key={friend?.uid}
                     to={`/profile/${friend?.uid}`}
                     style={{ textDecoration: 'none', color: 'inherit' }}
                   >

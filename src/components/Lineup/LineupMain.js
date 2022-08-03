@@ -1,51 +1,61 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { SpeedDial, SpeedDialIcon, SpeedDialAction } from '@mui/material';
-import SwipeableViews from 'react-swipeable-views';
-import {
-  Edit,
-  Add,
-  Save,
-  ClearAll,
-  Cancel,
-  Settings,
-} from '@mui/icons-material';
-import NewLineup from './NewLineup';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useContext, useEffect, Suspense } from 'react';
+import { SpeedDialIcon } from '@mui/material';
+import { Add } from '@mui/icons-material';
 import { AppCtx } from './../../App';
-import LineupItem from './LineupItem';
-import { Link, useLocation } from 'react-router-dom';
-import { RealtimeLineups } from '../../Firebase/songsApi';
+// import LineupItem from './LineupItem';
+import { Link } from 'react-router-dom';
 import { ADMIN } from '../../data';
+import { useSelector } from 'react-redux';
+import { selectLineups } from '../../redux/slices/lineupsSlice';
+import { selectUsers } from './../../redux/slices/usersSlice';
+import LineupLoading from './LineupLoading';
+
+const LineupItem = React.lazy(() => import('./LineupItem'));
 
 const Lineup = () => {
-  const { currentUser, setLineups, scrollToTop } = useContext(AppCtx);
-  const { data } = RealtimeLineups();
-  const location = useLocation();
-  const [lineups, setLineup] = useState([]);
+  const lineups = useSelector(selectLineups);
+  const { users, currentUser } = useSelector(selectUsers);
+  const { scrollToTop } = useContext(AppCtx);
+  // const [lineups, setLineup] = useState([]);
 
   useEffect(() => {
     scrollToTop();
-    setLineups(data);
-    setLineup(data);
-  }, [data]);
+    // setLineups(data);
+    // setLineup(data);
+  }, []);
 
-  const handleGetSong = () => {};
+  useEffect(() => {
+    console.log({ lineups, currentUser });
+  }, [lineups, currentUser]);
 
-  const actions = [
-    { icon: <Cancel />, name: 'Cancel', action: () => {} },
-    { icon: <ClearAll />, name: 'Clear', action: () => {} },
-    { icon: <Save />, name: 'Save', action: () => {} },
-  ];
+  // const actions = [
+  //   { icon: <Cancel />, name: 'Cancel', action: () => {} },
+  //   { icon: <ClearAll />, name: 'Clear', action: () => {} },
+  //   { icon: <Save />, name: 'Save', action: () => {} },
+  // ];
 
-  const sorted = lineups.sort(
-    (a, b) => new Date(b.date_created) - new Date(a.date_created)
-  );
+  // const sorted = lineups.sort(
+  //   (a, b) => new Date(b.date_created) - new Date(a.date_created)
+  // );
 
   return (
     <section style={{ paddingBottom: 100 }}>
       {lineups
+        .slice()
+        .map((l) => ({
+          ...l,
+          worship_leader: users.filter(
+            (u) => u.uid === l.worship_leader.uid
+          )[0],
+        }))
         .sort((a, b) => new Date(b.date_created) - new Date(a.date_created))
         .map((lineup) => {
-          return <LineupItem key={lineup.id} lineup={lineup} />;
+          return (
+            <Suspense key={lineup.id} fallback={<LineupLoading />}>
+              <LineupItem lineup={lineup} />
+            </Suspense>
+          );
         })}
 
       {(currentUser?.user_metadata?.ministry === 'VIA' ||
@@ -61,4 +71,4 @@ const Lineup = () => {
   );
 };
 
-export default Lineup;
+export default React.memo(Lineup);

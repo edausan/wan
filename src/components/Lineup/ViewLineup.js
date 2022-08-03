@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AppCtx } from '../../App';
@@ -24,4 +25,4 @@ const ViewLineup = () => {
   return <div>{lineup && <LineupItem lineup={lineup} isSongsExpanded />}</div>;
 };
 
-export default ViewLineup;
+export default React.memo(ViewLineup);
