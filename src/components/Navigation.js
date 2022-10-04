@@ -5,31 +5,19 @@ import {
   SpeakerNotesOutlined,
 } from '@mui/icons-material';
 import { Paper, Grid, useTheme, Avatar } from '@mui/material';
-import React, { useEffect, useContext } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from './../Firebase';
-import { useDispatch } from 'react-redux';
-import { setPage } from '../redux/slices/appSlice';
-import { AppCtx } from '../App';
 
-const Navigation = ({ setPageIndex }) => {
+const Navigation = () => {
   // const { setPageIndex } = useContext(AppCtx);
-  const dispatch = useDispatch();
   const auth = getAuth(FirebaseApp);
   const user = auth.currentUser;
 
   const location = useLocation();
   const { pathname } = location;
   const theme = useTheme();
-
-  useEffect(() => {
-    // console.log({ location });
-  }, [location]);
-
-  const handleSetPage = (page) => {
-    setPageIndex(page);
-  };
 
   return (
     <Paper
@@ -51,7 +39,7 @@ const Navigation = ({ setPageIndex }) => {
         }}
         justifyContent='center'
       >
-        <Grid item flex={1} onClick={() => handleSetPage(0)}>
+        <Grid item flex={1}>
           <Link
             to='/'
             style={{
@@ -69,7 +57,7 @@ const Navigation = ({ setPageIndex }) => {
             <HomeOutlined />
           </Link>
         </Grid>
-        <Grid item flex={1} onClick={() => handleSetPage(1)}>
+        <Grid item flex={1}>
           <Link
             to='/assignments'
             style={{
@@ -87,7 +75,7 @@ const Navigation = ({ setPageIndex }) => {
             <AssignmentOutlined />
           </Link>
         </Grid>
-        <Grid item flex={1} onClick={() => handleSetPage(2)}>
+        <Grid item flex={1}>
           <Link
             to='/lineup'
             style={{
@@ -105,7 +93,7 @@ const Navigation = ({ setPageIndex }) => {
             <SpeakerNotesOutlined />
           </Link>
         </Grid>
-        <Grid item flex={1} onClick={() => handleSetPage(3)}>
+        <Grid item flex={1}>
           <Link
             to='/songs'
             style={{
@@ -123,7 +111,7 @@ const Navigation = ({ setPageIndex }) => {
             <LibraryMusicOutlined />
           </Link>
         </Grid>
-        <Grid item flex={1} onClick={() => handleSetPage(4)}>
+        <Grid item flex={1}>
           <Link
             to={`/profile/${user.uid}`}
             style={{

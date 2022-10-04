@@ -48,9 +48,9 @@ const Assignments = () => {
       {/* <LoadingScreen data={assignments} /> */}
       <Grid
         container
-        justifyContent='center'
-        alignItems='center'
-        sx={{ paddingBottom: 50 }}
+        justifyContent="center"
+        alignItems="center"
+        className="pb-[50px] pt-3"
       >
         {assignments
           .slice()
@@ -68,9 +68,9 @@ const Assignments = () => {
             to={`/assignments/new`}
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            <button className='fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-white text-black rounded-full z-50'>
-              <span className='motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-white text-black rounded-full z-40 opacity-30'></span>
-              <SpeedDialIcon className='relative z-50' openIcon={<Add />} />
+            <button className="fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-white text-black rounded-full z-50">
+              <span className="motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-white text-black rounded-full z-40 opacity-30"></span>
+              <SpeedDialIcon className="relative z-50" openIcon={<Add />} />
             </button>
           </Link>
         )}

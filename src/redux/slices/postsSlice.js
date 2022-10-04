@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   posts: [],
   userPosts: [],
+  themes: [],
 };
 
 export const postsSlice = createSlice({
@@ -22,12 +23,17 @@ export const postsSlice = createSlice({
     setUserPosts: (state, action) => {
       state.userPosts = action.payload;
     },
+    setThemes: (state, action) => {
+      state.themes = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { getPost, setPosts, setUserPosts } = postsSlice.actions;
+export const { getPost, setPosts, setUserPosts, setThemes } =
+  postsSlice.actions;
 export const selectPost = (state) => state.posts;
 export const selectUserPost = (state) => state.posts.userPosts;
+export const selectThemes = (state) => state.posts.themes;
 
 export default postsSlice.reducer;

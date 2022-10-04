@@ -6,12 +6,14 @@ import {
   ExpandMore,
   Favorite,
   FavoriteBorder,
+  LyricsTwoTone,
   MoreVert,
   MusicNote,
   OpenInNewTwoTone,
   PlayArrow,
   ShareOutlined,
   TextSnippet,
+  YouTube,
 } from '@mui/icons-material';
 import {
   Accordion,
@@ -38,6 +40,7 @@ import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from './../../Firebase';
 import { DeleteLineup, GetSong, HeartLineup } from '../../Firebase/songsApi';
 import { useEffect } from 'react';
+import SPOTIFY_LOGO from '../../assets/spotify_logo.png';
 // import LineupItemDrawer from './LineupItemDrawer';
 // import SongDetailsDrawer from './SongDetailsDrawer';
 // import EditSong from '../Pages/Songs/EditSong';
@@ -124,7 +127,7 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
 
   return (
     <>
-      <Suspense fallback={<div></div>}>
+      <Suspense fallback={<div>Loading...</div>}>
         <SongDetailsDrawer
           drawerData={drawerData}
           expanded={expanded}
@@ -171,7 +174,7 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                   background: `linear-gradient(45deg, ${pink}, ${blue})`,
                   color: '#fff',
                 }}
-                aria-label='recipe'
+                aria-label="recipe"
                 src={lineup?.worship_leader?.photoURL}
               >
                 {lineup?.worship_leader.displayName.split('')[0]}
@@ -183,7 +186,7 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
               {(user.uid === lineup.worship_leader?.uid ||
                 user.uid === ADMIN) && (
                 <IconButton
-                  aria-label='settings'
+                  aria-label="settings"
                   onClick={() => setOpenDrawer(true)}
                 >
                   <MoreVert />
@@ -222,17 +225,17 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
               <AccordionSummary
                 sx={{ px: 0, pr: 1 }}
                 expandIcon={<ExpandMore />}
-                aria-controls='panel1a-content'
-                id='panel1a-header'
+                aria-controls="panel1a-content"
+                id="panel1a-header"
                 onClick={() => setIsExpanded(!isExpanded)}
               >
                 <ListItem sx={{ py: 0 }}>
                   <ListItemIcon sx={{ minWidth: 35 }}>
                     {moment(lineup.date).diff(new Date()) < 0 ? (
-                      <CheckCircleTwoTone color='success' />
+                      <CheckCircleTwoTone color="success" />
                     ) : (
                       <Event
-                        fontSize='small'
+                        fontSize="small"
                         color={
                           moment(lineup.date).diff(new Date()) >= 0
                             ? 'warning'
@@ -243,11 +246,11 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                   </ListItemIcon>
                   <ListItemText
                     primary={
-                      <small className='text-xs'>
+                      <small className="text-xs">
                         {lineup?.service}
                         <div
                           style={{ color: theme.palette.text.secondary }}
-                          className='text-xs'
+                          className="text-xs"
                         >
                           {moment(lineup.date).format('LL')}
                         </div>
@@ -262,6 +265,7 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                 {lineup_songs
                   .filter((s) => s.song || s.title)
                   .map((s) => {
+                    console.log({ s });
                     return (
                       <ListItem key={s.id}>
                         <ListItemText
@@ -269,10 +273,10 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                             setOpenSongDrawer({ song: s, status: true })
                           }
                           primary={
-                            <span className='text-sm'>{s.title || s.song}</span>
+                            <span className="text-sm">{s.title || s.song}</span>
                           }
                           secondary={
-                            <span className='text-xs text-white/40'>
+                            <span className="text-xs text-white/40">
                               {s.label}
                             </span>
                           }
@@ -281,7 +285,7 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                           // }
                         />
                         <IconButton
-                          color='primary'
+                          color="primary"
                           disabled={
                             !s.lyrics?.verse &&
                             !s.lyrics?.pre_chorus &&
@@ -290,10 +294,10 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                           onClick={() => handleExpandClick(s, 'Lyrics')}
                           sx={{ mr: 1 }}
                         >
-                          <TextSnippet fontSize='small' />
+                          <LyricsTwoTone fontSize="small" />
                         </IconButton>
                         <IconButton
-                          color='secondary'
+                          color="secondary"
                           onClick={() => handleExpandClick(s, 'Chords')}
                           disabled={
                             !s.chords?.verse &&
@@ -302,14 +306,22 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                           }
                           sx={{ mr: 1 }}
                         >
-                          <MusicNote fontSize='small' />
+                          <MusicNote fontSize="small" />
                         </IconButton>
-                        <IconButton
-                          color='error'
-                          disabled={!s?.media?.youtube && !s?.media?.spotify}
-                        >
-                          <PlayArrow fontSize='small' />
-                        </IconButton>
+                        <div className="px-1 flex flex-col justify-center items-center gap-1">
+                          <YouTube
+                            fontSize="small"
+                            className="w-[16x] h-[16px]"
+                            color={!s?.media?.youtube ? 'disabled' : 'error'}
+                          />
+                          <img
+                            src={SPOTIFY_LOGO}
+                            alt=""
+                            className={`w-[16px] ${
+                              !s?.media?.spotify ? 'grayscale opacity-30' : ''
+                            }`}
+                          />
+                        </div>
                       </ListItem>
                     );
                   })}
@@ -319,9 +331,9 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
         </CardContent>
 
         <CardActions disableSpacing>
-          <IconButton aria-label='add to favorites' onClick={handleHeart}>
+          <IconButton aria-label="add to favorites" onClick={handleHeart}>
             {lineup?.heart?.findIndex((h) => h === user.uid) >= 0 ? (
-              <Favorite color='error' />
+              <Favorite color="error" />
             ) : (
               <FavoriteBorder onClick={handleHeart} />
             )}{' '}
@@ -337,10 +349,10 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
                 `https://wan-belleview.web.app/lineup/${lineup.id}`
               );
             }}
-            className='ml-2'
+            className="ml-2"
           >
-            <IconButton aria-label='share'>
-              <ShareOutlined fontSize='small' />
+            <IconButton aria-label="share">
+              <ShareOutlined fontSize="small" />
             </IconButton>
           </a>
           {/* <a
@@ -365,12 +377,12 @@ const LineupItem = ({ lineup, isBordered, isLast, isSongsExpanded }) => {
 						</IconButton>
 					)} */}
           <IconButton
-            aria-label='view'
+            aria-label="view"
             onClick={() => history.push(`/lineup/${lineup.id}`)}
-            name='View Lineup'
+            name="View Lineup"
             sx={{ marginLeft: 'auto' }}
           >
-            <OpenInNewTwoTone fontSize='small' />
+            <OpenInNewTwoTone fontSize="small" />
           </IconButton>
         </CardActions>
       </Card>

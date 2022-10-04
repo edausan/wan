@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // import { getAuth } from 'firebase/auth';
 import { FirebaseApp, Firestore } from '../Firebase';
 import {
@@ -11,18 +12,37 @@ import {
   getDocs,
   addDoc,
   deleteDoc,
+  setDoc,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+  uploadString,
+} from 'firebase/storage';
 
 // const auth = getAuth(FirebaseApp);
 // const user = auth.currentUser;
 const postsRef = collection(Firestore, 'posts');
+const themesRef = collection(Firestore, 'themes');
 
 export const CreatePost = async ({ post }) => {
   try {
     const created = await addDoc(postsRef, post);
 
+    return created;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const CreateTheme = async ({ theme }) => {
+  try {
+    const id = theme?.title?.split(' ')?.join('-')?.toLowerCase();
+    const themeRef = doc(themesRef, id);
+    const created = await setDoc(themeRef, { ...theme, id });
     return created;
   } catch (error) {
     console.log(error.message);
@@ -161,6 +181,35 @@ export const UploadPostMedia = async ({ imageUpload }) => {
 };
 
 /**
+ * TODO: Upload Theme Media
+ */
+export const UploadThemeMedia = async ({ image }) => {
+  try {
+    const storage = getStorage(FirebaseApp);
+    console.log({ image });
+
+    /**
+     * TODO: REFERENCE TO FIREBASE STORAGE FOLDER AND FILENAME
+     */
+    const imgRef = ref(storage, `themes/${image.name}`);
+
+    /**
+     * TODO: UPLOADING TO FIREBASE STORAGE
+     */
+    const uploaded = await uploadString(imgRef, image.url, 'data_url');
+
+    /**
+     * TODO:  GET PHOTO DOWNLOAD URL
+     */
+    const photoURL = await getDownloadURL(uploaded.ref);
+    console.log({ photoURL });
+    return { photoURL };
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+/**
  * TODO: REALTIME Posts
  */
 export const RealtimePosts = () => {
@@ -186,4 +235,33 @@ export const RealtimePosts = () => {
   }, []);
 
   return { posts: data };
+};
+
+/**
+ * TODO: REALTIME Themes
+ */
+export const RealtimeThemes = () => {
+  const [data, setData] = useState([]);
+  const themesRef = collection(Firestore, 'themes');
+
+  useEffect(() => {
+    try {
+      onSnapshot(themesRef, (snapshot) => {
+        const docs = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        if (docs.length > 0) {
+          //   localStorage.setItem('orders', JSON.stringify(docs));
+          //   const local_orders = JSON.parse(localStorage.getItem('orders'));
+          setData(docs);
+        }
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }, []);
+
+  return { data };
 };

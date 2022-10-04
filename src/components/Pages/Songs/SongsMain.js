@@ -118,7 +118,7 @@ const SongsMain = () => {
         searchText={searchText}
         tags={tags}
       />
-      <div className='mt-[160px] '>
+      <div className="">
         <SongList songs={songList} />
       </div>
     </div>

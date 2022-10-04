@@ -1,10 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useContext, createContext } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  createContext,
+  lazy,
+} from 'react';
 import { Grid, TextField, Card, Snackbar, Alert } from '@mui/material';
 
 import { LINEUP } from '../../data';
 import { AppCtx } from '../../App';
-import LineupCard from './LineupCard';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -19,7 +24,9 @@ import { useHistory, useParams } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { FirebaseApp } from '../../Firebase';
 import { SaveTwoTone } from '@mui/icons-material';
-import Service from './Service';
+
+const Service = lazy(() => import('./Service'));
+const LineupCard = lazy(() => import('./LineupCard'));
 
 export const EditLineupCtx = createContext(null);
 
@@ -151,25 +158,25 @@ const NewLineup = () => {
         onClose={handleClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert onClose={handleClose} severity='success' sx={{ width: '100%' }}>
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
           {params.id
             ? 'Lineup successfully updated'
             : 'New Lineup successfully created!'}
         </Alert>
       </Snackbar>
 
-      {lineupData?.length > 0 && lineupData[0]?.title && service && (
+      {lineupData?.length > 0 && lineupData[2]?.title && service && (
         <button
-          className='fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-green-500 text-white rounded-full z-50'
+          className="fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-green-500 text-white rounded-full z-50"
           onClick={handleUpdate}
           disabled={saving}
         >
-          <span className='motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-green-500 text-black rounded-full z-40 opacity-30'></span>
+          <span className="motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-green-500 text-black rounded-full z-40 opacity-30"></span>
           <SaveTwoTone />
         </button>
       )}
 
-      <Grid container justifyContent='center' spacing={2}>
+      <Grid container justifyContent="center" spacing={2}>
         <Grid item xs={12} md={12}>
           <Card sx={{ p: 2, mb: 2 }}>
             {/* <FormControl fullWidth variant="standard" required sx={{mb: 2}}>
@@ -183,7 +190,7 @@ const NewLineup = () => {
 
             <button
               onClick={() => setOpenService(true)}
-              className='p-2 w-full bg-sky-400 rounded-md mb-4'
+              className="p-2 w-full bg-sky-400 rounded-md mb-4"
             >
               {service ? service : 'Select Worship Service'}
             </button>
@@ -198,16 +205,16 @@ const NewLineup = () => {
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <MobileDatePicker
                 required
-                inputFormat='dddd LL'
-                label='Date'
+                inputFormat="dddd LL"
+                label="Date"
                 value={date}
                 onChange={(value) => handleDateChange(value)}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     fullWidth
-                    size='small'
-                    variant='standard'
+                    size="small"
+                    variant="standard"
                   />
                 )}
               />

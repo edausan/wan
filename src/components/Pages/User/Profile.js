@@ -1,5 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { Suspense, useContext, useEffect, useState } from 'react';
+import React, {
+  Suspense,
+  useContext,
+  useEffect,
+  useState,
+  lazy,
+  memo,
+} from 'react';
 import { Card } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { AppCtx } from './../../../App';
@@ -13,14 +20,16 @@ import { selectUserPost } from '../../../redux/slices/postsSlice';
 import ProfileLoading from './Loading/ProfileLoading';
 import FriendsLoading from './Loading/FriendsLoading';
 import WritepostLoading from './Loading/WritepostLoading';
-// import Friends from './Friends';
+import { JIL_ADMIN } from '../../../data';
+import { CampaignOutlined, Notes } from '@mui/icons-material';
 
-const WritePost = React.lazy(() => import('./WritePost'));
-const FriendsModal = React.lazy(() => import('./FriendsModal'));
-const PhotoHeart = React.lazy(() => import('./PhotoHeart'));
-const UserTabs = React.lazy(() => import('./Tabs'));
-const NewProfileLayout = React.lazy(() => import('./NewProfileLayout'));
-const Friends = React.lazy(() => import('./Friends'));
+const WritePost = lazy(() => import('./WritePost'));
+const FriendsModal = lazy(() => import('./FriendsModal'));
+const PhotoHeart = lazy(() => import('./PhotoHeart'));
+const UserTabs = lazy(() => import('./Tabs'));
+const NewProfileLayout = lazy(() => import('./NewProfileLayout'));
+const Friends = lazy(() => import('./Friends'));
+const AddTheme = lazy(() => import('./AddTheme'));
 
 const Profile = () => {
   const stateUsers = useSelector(selectUsers);
@@ -37,6 +46,7 @@ const Profile = () => {
   const [friends, setFriends] = useState([]);
   const [open, setOpen] = useState(false);
   const [openFriends, setOpenFriends] = useState(false);
+  const [openAddTheme, setOpenAddTheme] = useState(false);
 
   // const { posts } = RealtimePosts();
 
@@ -110,7 +120,7 @@ const Profile = () => {
   };
 
   return (
-    <>
+    <section className="pt-3">
       <Suspense fallback={<div />}>
         <FriendsModal
           open={openFriends}
@@ -148,6 +158,34 @@ const Profile = () => {
         />
       </Suspense>
 
+      {params.id === JIL_ADMIN && (
+        <Suspense fallback={<div />}>
+          <AddTheme open={openAddTheme} setOpen={setOpenAddTheme} />
+        </Suspense>
+      )}
+
+      {params.id === JIL_ADMIN && (
+        <Card className="mb-4">
+          <div className="p-4 flex flex-row gap-4 items-center justify-start">
+            <button
+              disabled
+              className="text-sm border border-gray-700 rounded-md px-4 py-2 enabled:hover:bg-gray-600 enabled:hover:border-gray-600 disabled:opacity-40 bg-black/30 disabled:border-0 disabled:text-white/25"
+            >
+              <CampaignOutlined /> Add Announcement
+            </button>
+            <button
+              className="flex flex-row gap-2 items-center text-sm border border-gray-700 rounded-md px-4 py-2 hover:bg-gray-600 hover:border-gray-600"
+              onClick={() => setOpenAddTheme(true)}
+            >
+              <Notes />{' '}
+              <span flex flex-row items-center>
+                Add Theme
+              </span>
+            </button>
+          </div>
+        </Card>
+      )}
+
       {params.id === userProfile?.uid && (
         <Suspense fallback={<WritepostLoading />}>
           <WritePost />
@@ -159,8 +197,8 @@ const Profile = () => {
           <UserTabs userlineup={userlineup} userPosts={userPosts} user={user} />
         </Suspense>
       </Card>
-    </>
+    </section>
   );
 };
 
-export default React.memo(Profile);
+export default memo(Profile);

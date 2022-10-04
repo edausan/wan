@@ -40,7 +40,7 @@ const Lineup = () => {
   // );
 
   return (
-    <section style={{ paddingBottom: 100 }}>
+    <section className="pb-[100px] pt-3">
       {lineups
         .slice()
         .map((l) => ({
@@ -60,10 +60,10 @@ const Lineup = () => {
 
       {(currentUser?.user_metadata?.ministry === 'VIA' ||
         currentUser?.user?.uid === ADMIN) && (
-        <Link to='/lineup/new'>
-          <button className='fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-white text-black rounded-full z-50'>
-            <span className='motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-white text-black rounded-full z-40 opacity-30'></span>
-            <SpeedDialIcon className='relative z-50' openIcon={<Add />} />
+        <Link to="/lineup/new">
+          <button className="fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-white text-black rounded-full z-50">
+            <span className="motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-white text-black rounded-full z-40 opacity-30"></span>
+            <SpeedDialIcon className="relative z-50" openIcon={<Add />} />
           </button>
         </Link>
       )}

@@ -14,7 +14,6 @@ import {
   where,
   getDocs,
 } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
 import moment from 'moment';
 import {
   getDownloadURL,
@@ -23,8 +22,6 @@ import {
   uploadString,
   listAll,
 } from 'firebase/storage';
-
-const auth = getAuth(FirebaseApp);
 
 const lineupRef = collection(Firestore, 'lineups');
 const songsRef = collection(Firestore, 'songs');
@@ -215,6 +212,7 @@ export const UpdateSong = async ({ song }) => {
 };
 
 export const AddNewSong = async ({ song }) => {
+  console.log({ song });
   try {
     const id = song.title.split(' ').join('-').toLowerCase();
     const ref = doc(songsRef, id);

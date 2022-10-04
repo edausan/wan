@@ -50,6 +50,7 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
     cover: song?.cover || null,
     title: song?.title || null,
     album: song?.album || null,
+    key: song?.key || null,
     lyrics: {
       verse: null,
       pre_chorus: null,
@@ -81,14 +82,7 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
 
   const memoizedUpdating = useMemo(() => updating, [updating]);
   const new_tag = useMemo(() => newTag, [newTag]);
-  const memoizedSong = useMemo(
-    () => ({
-      lyrics: songDetails.lyrics,
-      chords: songDetails.chords,
-      media: songDetails.media,
-    }),
-    [songDetails.lyrics, songDetails.chords, songDetails.media]
-  );
+  const memoizedSong = useMemo(() => songDetails, [songDetails]);
 
   const handleSetSongDetails = useCallback((value) => {
     setSongDetails(value);
@@ -156,6 +150,7 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
         spotify: null,
         ...song?.media,
       },
+      tags: song?.tags,
     });
   }, [song]);
 
@@ -183,24 +178,21 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
     }
   }, [new_tag]);
 
-  const handleSave = useCallback(
-    () => async () => {
-      setUpdating(true);
-      try {
-        await UpdateSongDetails({ song: songDetails });
-        setUpdating(false);
-        setUpdated(true);
-        setTimeout(() => {
-          setOpen(false);
-          setUpdated(false);
-        }, 1000);
-      } catch (error) {
-        setUpdating(false);
-        console.log(error.message);
-      }
-    },
-    [songDetails]
-  );
+  const handleSave = async () => {
+    setUpdating(true);
+    try {
+      await UpdateSongDetails({ song: songDetails });
+      setUpdating(false);
+      setUpdated(true);
+      setTimeout(() => {
+        setOpen(false);
+        setUpdated(false);
+      }, 1000);
+    } catch (error) {
+      setUpdating(false);
+      console.log(error.message);
+    }
+  };
 
   const handleDeleteTag = (tag) => {
     const filtered = songDetails.tags.filter((t) => t !== tag);
@@ -430,13 +422,20 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
             )}
           </div>
 
-          <div className='px-4 py-2'>
+          <div className='px-4 py-2 flex flex-row justify-end'>
             <button
               onClick={() => setShowLyrics(!showLyrics)}
-              className='px-2 py-1 bg-blue-500 text-white text-xs rounded-sm'
+              className='px-4 py-1 bg-blue-500 text-white text-xs rounded-full'
             >
-              {showLyrics ? 'Hide' : songDetails.lyrics?.verse ? 'Show' : 'Add'}{' '}
-              Lyrics
+              {showLyrics
+                ? 'Hide'
+                : songDetails?.lyrics?.verse ||
+                  songDetails?.lyrics?.pre_chorus ||
+                  songDetails?.lyrics?.chorus ||
+                  songDetails?.lyrics?.bridge
+                ? 'Show'
+                : 'Add'}{' '}
+              Lyrics / Chords
             </button>
           </div>
 
@@ -462,10 +461,9 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
               color='success'
               variant='contained'
               disableElevation
+              onClick={handleSave}
             >
-              <span className='text-xs text-white' onClick={handleSave}>
-                Save Song
-              </span>
+              <span className='text-xs text-white'>Save Song</span>
             </Button>
           </div>
         </div>

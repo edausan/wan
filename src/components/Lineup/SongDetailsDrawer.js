@@ -59,8 +59,8 @@ const SongDetailsDrawer = ({
         },
       }}
     >
-      <List>
-        <ListItem>
+      <List className='pb-0'>
+        <ListItem className='pb-0'>
           <ListItemText
             primary='Song Title:'
             secondary={
@@ -82,6 +82,14 @@ const SongDetailsDrawer = ({
                       Album:
                     </span>{' '}
                     {drawerData?.song?.album}
+                  </small>
+                </div>
+                <div>
+                  <small style={{ textTransform: 'capitalize' }}>
+                    <span style={{ color: theme.palette.text.secondary }}>
+                      Key:
+                    </span>{' '}
+                    {drawerData?.song?.key}
                   </small>
                 </div>
               </div>
@@ -339,7 +347,7 @@ const Media = ({ media }) => {
             <Tab
               disabled={!media?.youtube}
               label={
-                <div className='flex flex-row items-center gap-2'>
+                <div className='flex flex-row items-center gap-2 text-xs'>
                   <YouTube
                     color='error'
                     className={`${!media?.youtube ? 'text-white/25' : ''}`}
@@ -353,7 +361,7 @@ const Media = ({ media }) => {
             <Tab
               disabled={!media?.spotify}
               label={
-                <div className='flex flex-row items-center gap-2'>
+                <div className='flex flex-row items-center gap-2 text-xs'>
                   <img
                     src={SPOTIFY_LOGO}
                     alt=''

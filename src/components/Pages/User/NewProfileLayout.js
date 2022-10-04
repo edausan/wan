@@ -58,21 +58,21 @@ const NewProfileLayout = ({
   };
 
   return (
-    <section className='w-full rounded-3xl relative overflow-hidden mb-4 mobile:pb-[50%] bg-sky-500 min-h-[380px]'>
+    <section className="w-full rounded-3xl relative overflow-hidden mb-4 mobile:pb-[50%] bg-sky-500 min-h-[380px]">
       {paramsId === currentUser?.uid && (
         <>
           <IconButton
-            className='z-[1003] absolute top-[16px] right-[60px] bg-gray-800'
+            className="z-[1003] absolute top-[16px] right-[60px] bg-gray-800"
             onClick={() => {
               history.push('/');
               window.location.reload();
             }}
           >
-            <CachedTwoTone className='w-[20px] h-[20px]' />
+            <CachedTwoTone className="w-[20px] h-[20px]" />
           </IconButton>
-          <Link to='/settings'>
-            <IconButton className='absolute z-[1003] top-[16px] right-[16px] bg-gray-800'>
-              <SettingsOutlined className='w-[20px] h-[20px]' />
+          <Link to="/settings">
+            <IconButton className="absolute z-[1003] top-[16px] right-[16px] bg-gray-800">
+              <SettingsOutlined className="w-[20px] h-[20px]" />
             </IconButton>
           </Link>
         </>
@@ -85,32 +85,32 @@ const NewProfileLayout = ({
       ></span>
       <img
         src={handleColor()?.bg}
-        alt=''
+        alt=""
         className={`w-full ${user?.ministry === 'JAM' ? 'hue-rotate-15' : ''}`}
       />
 
-      <section className='absolute z-[1002] w-full h-full flex flex-col top-0 left-0 items-center justify-center p-6 pt-16 box-border'>
-        <div className='relative'>
+      <section className="absolute z-[1002] w-full h-full flex flex-col top-0 left-0 items-center justify-center p-6 pt-16 box-border">
+        <div className="relative">
           <Avatar
             src={user?.photoURL}
-            className=' w-[120px] h-[120px] z-[1002] mt-[auto] saturate-[1.1]'
+            className=" w-[120px] h-[120px] z-[1002] mt-[auto] saturate-[1.1]"
             onClick={() => setOpen(true)}
           />
           <label
-            className='absolute top-[80px] left-[80px] z-[1004]'
-            htmlFor='icon-button-file'
+            className="absolute top-[80px] left-[80px] z-[1004]"
+            htmlFor="icon-button-file"
           >
             <IconButton
-              color='inherit'
-              aria-label='upload picture'
-              component='span'
-              className='bg-white/50'
+              color="inherit"
+              aria-label="upload picture"
+              component="span"
+              className="bg-white/50"
               onClick={handleHeart}
             >
               {user?.photoHeart?.findIndex((h) => h === currentUser.uid) >=
               0 ? (
                 <Favorite
-                  color='error'
+                  color="error"
                   onClick={
                     user?.photoHeart?.findIndex(
                       (h) => h === currentUser.uid
@@ -125,20 +125,20 @@ const NewProfileLayout = ({
             </IconButton>
           </label>
         </div>
-        <div className='font-bold text-white text-xl mt-2'>
+        <div className="font-bold text-white text-xl mt-2">
           {user?.displayName}
         </div>
-        <div className='text-white/75 text-sm'>
+        <div className="text-white/75 text-sm">
           {Ministries.filter((m) => m.id === user?.ministry)[0]?.name}
         </div>
-        <div className='w-[90%] mt-6 flex flex-row gap-4 items-center relative'>
-          <AutoStoriesTwoTone className='text-white' />
+        <div className="w-[90%] mt-6 flex flex-row gap-4 items-center relative">
+          <AutoStoriesTwoTone className="text-white" />
           <TextArea
             value={user?.life_verse?.substr(0, 182)}
-            className='w-full'
-            size='.75rem'
+            className="w-full"
+            size=".75rem"
             styles={{ textAlign: 'left', lineHeight: '.90rem' }}
-            color='#ffffffbf'
+            color="#ffffffbf"
           />
           {verse_count?.length > 182 && (
             <span
@@ -149,16 +149,16 @@ const NewProfileLayout = ({
           )}
         </div>
         {verse_count?.length > 182 && (
-          <button className='text-xs text-white'>Read More</button>
+          <button className="text-xs text-white">Read More</button>
         )}
 
-        <div className='w-full flex-grow-1 mt-[auto]'>
+        <div className="w-full flex-grow-1 mt-3">
           {paramsId === currentUser?.uid && (
             <Link
-              to='/edit_profile'
+              to="/edit_profile"
               style={{ textDecoration: 'none', width: '100%', flex: 1 }}
             >
-              <button className='bg-white rounded-lg p-2 w-full font-bold text-sm place-self-end'>
+              <button className="bg-white rounded-lg p-2 w-full font-bold text-sm place-self-end">
                 Edit Profile
               </button>
             </Link>

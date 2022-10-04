@@ -4,7 +4,7 @@ import React from 'react';
 
 const ProfileLoading = () => {
   return (
-    <Card className='rounded-3xl'>
+    <Card className='rounded-3xl mb-4'>
       {/* <div className='flex flex-col items-center'> */}
       <div className='flex flex-row w-full items-center justify-end text-right p-4 gap-3'>
         <CachedTwoTone className='w-[20px] h-[20px]' color='disabled' />

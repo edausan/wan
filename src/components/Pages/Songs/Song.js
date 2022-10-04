@@ -1,4 +1,9 @@
-import { MusicNote, TextSnippet, YouTube } from '@mui/icons-material';
+import {
+  LyricsTwoTone,
+  MusicNote,
+  TextSnippet,
+  YouTube,
+} from '@mui/icons-material';
 import {
   Card,
   CardHeader,
@@ -60,16 +65,26 @@ const Song = ({ song, setOpenDrawer, openDrawer, handleExpandClick }) => {
           <IconButton
             className='px-1 w-[28px] h-[28px]'
             color='primary'
-            disabled={!song?.lyrics?.verse}
+            disabled={
+              !song?.lyrics?.verse &&
+              !song?.lyrics?.pre_chorus &&
+              !song?.lyrics?.chorus &&
+              !song?.lyrics?.bridge
+            }
             onClick={() => handleExpandClick(song, 'Lyrics')}
           >
-            <TextSnippet fontSize='small' className='w-[16x] h-[16px]' />
+            <LyricsTwoTone fontSize='small' className='w-[16x] h-[16px]' />
           </IconButton>
           <IconButton
             className='px-1 w-[28px] h-[28px]'
             color='secondary'
             onClick={() => handleExpandClick(song, 'Chords')}
-            disabled={!song?.chords?.verse}
+            disabled={
+              !song?.chords?.verse &&
+              !song?.chords?.pre_chorus &&
+              !song?.chords?.chorus &&
+              !song?.chords?.bridge
+            }
           >
             <MusicNote fontSize='small' className='w-[16x] h-[16px]' />
           </IconButton>

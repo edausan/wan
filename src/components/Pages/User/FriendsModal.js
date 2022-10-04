@@ -1,25 +1,8 @@
-import { AccountCircle, Favorite, Group } from '@mui/icons-material';
-import {
-  Modal,
-  Card,
-  CardContent,
-  IconButton,
-  Typography,
-  Divider,
-  List,
-  ListItem,
-  ListItemAvatar,
-  Avatar,
-  ListItemText,
-  useTheme,
-} from '@mui/material';
+import { Modal, Card } from '@mui/material';
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
 import FriendsTab from './FriendsTab';
 
 const FriendsModal = ({ open, setOpen, user, friends, handleToOther }) => {
-  const theme = useTheme();
-  const params = useParams();
   return (
     <Modal open={open} onClose={() => setOpen(false)}>
       <Card

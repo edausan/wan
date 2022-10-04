@@ -169,6 +169,32 @@ const LINEUP = [
     tags: ['Joyful'],
   },
   {
+    id: 'vs-2',
+    label: 'Victory Song #2',
+    artist: null,
+    album: null,
+    lyrics: null,
+    chords: null,
+    media: null,
+    song: null,
+    disabled: false,
+    is_solemn: false,
+    tags: ['Joyful'],
+  },
+  {
+    id: 'vs-3',
+    label: 'Victory Song #3',
+    artist: null,
+    album: null,
+    lyrics: null,
+    chords: null,
+    media: null,
+    song: null,
+    disabled: false,
+    is_solemn: false,
+    tags: ['Joyful'],
+  },
+  {
     id: 'cs-1',
     label: 'Closing Song',
     artist: null,
@@ -185,10 +211,11 @@ const LINEUP = [
 
 const ASSIGNER = 'k4gcy3yNWqa02aUfhw8J4fn7sS63';
 const ADMIN = 'Hfhcau8TAiXR4T4FEAXp7eipDvz2';
+const JIL_ADMIN = '46NVNKry9DhU1tTX3QrmM1OjudA3';
 
 const Glass = (theme) => ({
   background: `${theme.palette.background.paper}90`,
   backdropFilter: 'blur(5px)',
 });
 
-export { VIA, LINEUP, Glass, ASSIGNER, ADMIN };
+export { VIA, LINEUP, Glass, ASSIGNER, ADMIN, JIL_ADMIN };

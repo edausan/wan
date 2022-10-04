@@ -14,6 +14,7 @@ import {
   SwipeableDrawer,
   Chip,
   TextField,
+  Button,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { AddNewSong, UploadAlbumCover } from '../../../Firebase/songsApi';
@@ -53,6 +54,7 @@ const CreateNewSong = ({ open, setOpen }) => {
     title: null,
     album: null,
     artist: null,
+    key: null,
     lyrics: {
       verse: null,
       pre_chorus: null,
@@ -118,14 +120,15 @@ const CreateNewSong = ({ open, setOpen }) => {
       const song = {
         ...songDetails,
         title: title?.trim(),
-        artist: artist?.trim(),
-        album: album?.trim(),
+        artist: artist ? artist?.trim() : null,
+        album: album ? album?.trim() : null,
       };
       await AddNewSong({ song });
       setUpdating(false);
       setUpdated(true);
 
       setTimeout(() => {
+        setOpen(false);
         setUpdated(false);
       }, 1000);
     } catch (error) {
@@ -228,7 +231,7 @@ const CreateNewSong = ({ open, setOpen }) => {
           <Snackbar
             anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
             open={updated}
-            autoHideDuration={1000}
+            autoHideDuration={null}
             onClose={() => setUpdated(false)}
           >
             <Alert severity='success' sx={{ width: '100%' }}>
@@ -359,13 +362,20 @@ const CreateNewSong = ({ open, setOpen }) => {
             )}
           </div>
 
-          <div className='px-4 py-2'>
+          <div className='px-4 py-2 flex flex-row justify-end'>
             <button
               onClick={() => setShowLyrics(!showLyrics)}
-              className='px-2 py-1 bg-blue-500 text-white text-xs rounded-md'
+              className='px-4 py-1 bg-blue-500 text-white text-xs rounded-full'
             >
-              {showLyrics ? 'Hide' : songDetails.lyrics?.verse ? 'Show' : 'Add'}{' '}
-              Lyrics
+              {showLyrics
+                ? 'Hide'
+                : songDetails?.lyrics?.verse ||
+                  songDetails?.lyrics?.pre_chorus ||
+                  songDetails?.lyrics?.chorus ||
+                  songDetails?.lyrics?.bridge
+                ? 'Show'
+                : 'Add'}{' '}
+              Lyrics / Chords
             </button>
           </div>
 
@@ -377,6 +387,16 @@ const CreateNewSong = ({ open, setOpen }) => {
               updating={updating}
             />
           )}
+
+          <div className='flex flex-row items-center justify-center p-2'>
+            <button
+              className='flex-1 bg-green-500 text-white disabled:bg-black/30 disabled:text-white/25 py-1 rounded-sm'
+              disabled={!songDetails?.title}
+              onClick={handleSave}
+            >
+              Save Song
+            </button>
+          </div>
         </div>
       </SwipeableDrawer>
     </>

@@ -1,39 +1,18 @@
-import React, { useCallback, useContext, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, lazy, Suspense } from 'react';
 import {
   FormControl,
   Grid,
   TextField,
-  Button,
   Card,
-  IconButton,
-  Input,
-  InputAdornment,
   InputLabel,
-  CardActions,
   CardContent,
   Select,
   MenuItem,
-  Autocomplete,
   createFilterOptions,
-  useTheme,
-  Switch,
-  FormGroup,
-  FormControlLabel,
   Modal,
 } from '@mui/material';
-import {
-  NoteAlt,
-  MusicNote,
-  PlayArrow,
-  CloseOutlined,
-  Close,
-  TextSnippet,
-} from '@mui/icons-material';
-import AutocompleteSong from './AutocompleteSong';
-import { NewLineupCtx } from './NewLineup';
-import Lyrics from '../Modals/Lyrics';
-import Chords from '../Modals/Chords';
-import { GetSong } from '../../Firebase/songsApi';
+const Lyrics = lazy(() => import('../Modals/Lyrics'));
+const Chords = lazy(() => import('../Modals/Chords'));
 
 const filter = createFilterOptions();
 
@@ -133,19 +112,23 @@ const LineupCard = ({ category, setLineupData, songs, songData, saving }) => {
         onClose={() => setOpen({ modal: null, status: false })}
       >
         {open.modal === 'lyrics' ? (
-          <Lyrics
-            setCardData={setCardData}
-            setOpen={setOpen}
-            cardData={songData || cardData}
-            category={category}
-          />
+          <Suspense fallback={<div>Loading...</div>}>
+            <Lyrics
+              setCardData={setCardData}
+              setOpen={setOpen}
+              cardData={songData || cardData}
+              category={category}
+            />
+          </Suspense>
         ) : (
-          <Chords
-            setCardData={setCardData}
-            setOpen={setOpen}
-            cardData={songData || cardData}
-            category={category}
-          />
+          <Suspense fallback={<div>Loading...</div>}>
+            <Chords
+              setCardData={setCardData}
+              setOpen={setOpen}
+              cardData={songData || cardData}
+              category={category}
+            />
+          </Suspense>
         )}
       </Modal>
 
@@ -169,8 +152,8 @@ const LineupCard = ({ category, setLineupData, songs, songData, saving }) => {
             <TextField
               label={category.label}
               fullWidth
-              size='small'
-              variant='standard'
+              size="small"
+              variant="standard"
               value={cardData.title || cardData.song_title}
               disabled={saving}
               onChange={(e) =>
@@ -178,7 +161,7 @@ const LineupCard = ({ category, setLineupData, songs, songData, saving }) => {
               }
             />
           ) : (
-            <FormControl variant='standard' fullWidth>
+            <FormControl variant="standard" fullWidth>
               {/* {console.log({"@Select:": cardData})} */}
               <InputLabel>{category.label}</InputLabel>
               <Select
@@ -190,7 +173,11 @@ const LineupCard = ({ category, setLineupData, songs, songData, saving }) => {
                 }
               >
                 {filteredSongs.map((song) => {
-                  return <MenuItem key={song.id} value={song.id}>{song.title}</MenuItem>;
+                  return (
+                    <MenuItem key={song.id} value={song.id}>
+                      {song.title}
+                    </MenuItem>
+                  );
                 })}
               </Select>
             </FormControl>

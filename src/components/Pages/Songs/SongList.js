@@ -34,7 +34,7 @@ const SongList = ({ songs }) => {
   );
 
   return (
-    <div className='grid grid-cols-2 gap-3'>
+    <div className="grid grid-cols-2 gap-3 mt-3">
       <SongDetailsDrawer
         drawerData={drawer_data}
         expanded={expand}
@@ -49,11 +49,11 @@ const SongList = ({ songs }) => {
       {(currentUser?.user_metadata?.ministry === 'VIA' ||
         currentUser?.user?.uid === ADMIN) && (
         <button
-          className='fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-white text-black rounded-full z-50'
+          className="fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-white text-black rounded-full z-50"
           onClick={() => setOpen(true)}
         >
-          <span className='motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-white text-black rounded-full z-40 opacity-30'></span>
-          <SpeedDialIcon className='relative z-50' openIcon={<Add />} />
+          <span className="motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-white text-black rounded-full z-40 opacity-30"></span>
+          <SpeedDialIcon className="relative z-50" openIcon={<Add />} />
         </button>
       )}
 

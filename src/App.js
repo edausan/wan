@@ -9,23 +9,10 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { FirebaseApp } from './Firebase';
 import Navigation from './components/Navigation';
-// import Home from './components/Pages/Home';
-// import Assignments from './components/Pages/Assignments';
-// import Lineup from './components/Lineup/LineupMain';
-// import NewLineup from './components/Lineup/NewLineup';
-// import EditLineup from './components/Lineup/EditLineup';
-// import Settings from './components/Pages/Settings';
-// import Splash from './components/Pages/Auth/Splash';
-// import EditProfile from './components/Pages/EditProfile';
-// import ViewLineup from './components/Lineup/ViewLineup';
-// import SetAssignment from './components/Pages/Assignment/SetAssignment';
-// import Profile from './components/Pages/User/Profile';
-// import Notification from './components/Pages/Notification/Notification';
-// import Post from './components/Pages/Home/Post';
 import { useDispatch } from 'react-redux';
-import { setPosts, setUserPosts } from './redux/slices/postsSlice';
+import { setPosts, setThemes, setUserPosts } from './redux/slices/postsSlice';
 import { setUser, setUsers } from './redux/slices/usersSlice';
-import { RealtimePosts } from './Firebase/postsApi';
+import { RealtimePosts, RealtimeThemes } from './Firebase/postsApi';
 import { GetRealtimeAssignments } from './Firebase/assignmentApi';
 import { setAssignments } from './redux/slices/assignmentsSlice';
 import {
@@ -35,7 +22,7 @@ import {
 } from './Firebase/songsApi';
 import { setLineups } from './redux/slices/lineupsSlice';
 import { setAlbumCovers, setSongs } from './redux/slices/songsSlice';
-// import SongsMain from './components/Pages/Songs/SongsMain';
+import Loading from './components/CustomComponents/Loading';
 
 const Home = lazy(() => import('./components/Pages/Home'));
 const Lineup = lazy(() => import('./components/Lineup/LineupMain'));
@@ -52,6 +39,7 @@ const SetAssignment = lazy(() =>
 const Profile = lazy(() => import('./components/Pages/User/Profile'));
 const Post = lazy(() => import('./components/Pages/Home/Post'));
 const SongsMain = lazy(() => import('./components/Pages/Songs/SongsMain'));
+const Theme = lazy(() => import('./components/Pages/Home/Theme'));
 
 export const AppCtx = createContext();
 
@@ -65,8 +53,8 @@ function App() {
   const { data: AssignmentsData } = GetRealtimeAssignments();
   const { data: Lineups } = RealtimeLineups();
   const { data: Songs } = RealtimeSongs();
+  const { data: Themes } = RealtimeThemes();
   const { AlbumCovers, GetCovers } = GetAllAlbumCovers();
-  const [pageIndex, setPageIndex] = useState(0);
 
   const [currentUser, setCurrentUser] = useState({
     user: null,
@@ -77,13 +65,16 @@ function App() {
   const [index, setIndex] = useState(0);
   const [mode, setMode] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // const [lineups, setLineups] = useState([]);
 
   const bodyRef = useRef(null);
 
   const scrollToTop = () => {
     bodyRef.current.scroll({ top: 0 });
   };
+
+  useEffect(() => {
+    Themes.length > 0 && dispatch(setThemes(Themes));
+  }, [Themes]);
 
   useEffect(() => {
     GetCovers();
@@ -153,8 +144,6 @@ function App() {
     setPostsData,
     bodyRef,
     scrollToTop,
-    pageIndex,
-    setPageIndex,
   };
 
   const theme = createTheme({
@@ -171,16 +160,12 @@ function App() {
     document.body.style.background = mode ? '#eee' : '#242526e8';
   }, [mode]);
 
-  useEffect(() => {
-    console.log({ pageIndex });
-  }, [pageIndex]);
-
   return (
     <ThemeProvider theme={theme}>
       <Router>
         <AppCtx.Provider value={value}>
           {!currentUser?.user ? (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<Loading />}>
               <Splash />
             </Suspense>
           ) : (
@@ -188,7 +173,7 @@ function App() {
               <Grid
                 // onScroll={onScroll}
                 container
-                id='scroll-body'
+                id="scroll-body"
                 ref={bodyRef}
                 sx={{
                   justifyContent: 'center',
@@ -218,7 +203,7 @@ function App() {
                   },
                 }}
               >
-                <Navigation setPageIndex={setPageIndex} />
+                <Navigation />
                 {/* <Grid
                   item
                   sx={{
@@ -237,77 +222,80 @@ function App() {
                     <Assignments />
                   </SwipeableViews> */}
 
-                <div className='p-3 mt-1 w-full z-[1001] pb=[80px] max-w-[680px] mx-auto'>
+                <div className="p-3 pt-0 w-full z-[1001] pb-[80px] max-w-[680px] mx-auto">
                   <Switch>
-                    <Route exact path='/'>
-                      <Suspense fallback={<div>Loading...</div>}>
+                    <Route exact path="/">
+                      <Suspense fallback={<Loading />}>
                         <Home />
                       </Suspense>
                     </Route>
-                    <Route exact path='/assignments'>
-                      <Suspense fallback={<div>Loading...</div>}>
+                    <Route exact path="/assignments">
+                      <Suspense fallback={<Loading />}>
                         <Assignments />
                       </Suspense>
                     </Route>
-                    <Route path='/assignments/new'>
-                      <Suspense fallback={<div>Loading...</div>}>
+                    <Route path="/assignments/new">
+                      <Suspense fallback={<Loading />}>
                         <SetAssignment />
                       </Suspense>
                     </Route>
-                    <Route exact path='/assignments/:id'>
-                      <Suspense fallback={<div>Loading...</div>}>
+                    <Route exact path="/assignments/:id">
+                      <Suspense fallback={<Loading />}>
                         <SetAssignment />
                       </Suspense>
                     </Route>
-                    <Route exact path='/lineup'>
-                      <Suspense fallback={<div>Loading...</div>}>
+                    <Route exact path="/lineup">
+                      <Suspense fallback={<Loading />}>
                         <Lineup />
                       </Suspense>
                     </Route>
-                    <Route path='/lineup/new'>
-                      <Suspense fallback={<div>Loading...</div>}>
+                    <Route path="/lineup/new">
+                      <Suspense fallback={<Loading />}>
                         <NewLineup />
                       </Suspense>
                     </Route>
-                    <Route exact path='/lineup/:id'>
-                      <Suspense fallback={<div>Loading...</div>}>
+                    <Route exact path="/lineup/:id">
+                      <Suspense fallback={<Loading />}>
                         <ViewLineup />
                       </Suspense>
                     </Route>
-                    <Route path='/lineup/edit/:id'>
-                      <Suspense fallback={<div>Loading...</div>}>
+                    <Route path="/lineup/edit/:id">
+                      <Suspense fallback={<Loading />}>
                         <EditLineup />
                       </Suspense>
                     </Route>
-                    <Route path='/settings'>
-                      <Suspense fallback={<div>Loading...</div>}>
+                    <Route path="/settings">
+                      <Suspense fallback={<Loading />}>
                         <Settings />
                       </Suspense>
                     </Route>
-                    <Route path='/edit_profile'>
-                      <Suspense fallback={<div>Loading...</div>}>
+                    <Route path="/edit_profile">
+                      <Suspense fallback={<Loading />}>
                         <EditProfile />
                       </Suspense>
                     </Route>
-                    <Route path='/profile/:id'>
-                      <Suspense fallback={<div>Loading...</div>}>
+                    <Route path="/profile/:id">
+                      <Suspense fallback={<Loading />}>
                         <Profile />
                       </Suspense>
                     </Route>
-                    <Route path='/post/:id'>
-                      <Suspense fallback={<div>Loading...</div>}>
+                    <Route path="/post/:id">
+                      <Suspense fallback={<Loading />}>
                         <Post />
                       </Suspense>
                     </Route>
-                    <Route path='/songs'>
-                      <Suspense fallback={<div>Loading...</div>}>
+                    <Route path="/songs">
+                      <Suspense fallback={<Loading />}>
                         <SongsMain />
                       </Suspense>
                     </Route>
+                    <Route path="/theme/:id">
+                      <Suspense fallback={<Loading />}>
+                        <Theme />
+                      </Suspense>
+                    </Route>
                   </Switch>
-                  {/* </React.Suspense> */}
                 </div>
-                {/* </Grid> */}
               </Grid>
             </main>
           )}

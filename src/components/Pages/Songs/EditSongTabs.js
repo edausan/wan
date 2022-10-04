@@ -6,7 +6,11 @@ import {
   Card,
   CardHeader,
   Divider,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Tab,
   TextField,
 } from '@mui/material';
@@ -19,38 +23,81 @@ import SPOTIFY_LOGO from '../../../assets/spotify_logo.png';
 const EditSongTabs = ({ song, setSongDetails, updating }) => {
   const [value, setValue] = useState('1');
 
-  console.log('EDIT SONG TABS');
+  console.log('EDIT SONG TABS', { song });
 
   return (
-    <TabContext value={value}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <TabList onChange={(e, newValue) => setValue(newValue)}>
-          <Tab label='Lyrics' value='1' className='text-xs' />
-          <Tab label='Chords' value='2' className='text-xs' />
-          <Tab label='Media' value='3' className='text-xs' />
-        </TabList>
-      </Box>
-      <TabPanel value='1'>
-        <SongParts
-          part={song?.lyrics}
-          lyrics
-          setDetails={setSongDetails}
-          song={song}
-          updating={updating}
+    <>
+      <ChordsAddtnl setSongDetails={setSongDetails} song={song} />
+      <TabContext value={value}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList onChange={(e, newValue) => setValue(newValue)}>
+            <Tab label='Lyrics' value='1' className='text-xs' />
+            <Tab label='Chords' value='2' className='text-xs' />
+            <Tab label='Media' value='3' className='text-xs' />
+          </TabList>
+        </Box>
+        <TabPanel value='1'>
+          <SongParts
+            part={song?.lyrics}
+            lyrics
+            setDetails={setSongDetails}
+            song={song}
+            updating={updating}
+          />
+        </TabPanel>
+        <TabPanel value='2'>
+          <SongParts
+            part={song?.chords}
+            setDetails={setSongDetails}
+            song={song}
+            updating={updating}
+          />
+        </TabPanel>
+        <TabPanel value='3' className='p-0'>
+          <Media setDetails={setSongDetails} song={song} />
+        </TabPanel>
+      </TabContext>
+    </>
+  );
+};
+
+const ChordsAddtnl = ({ setSongDetails, song }) => {
+  return (
+    <div className='grid grid-cols-3 gap-4 content-end px-4 mb-4'>
+      <div className='col-span-1 tablet:col-span-1 flex items-end'>
+        <FormControl variant='standard' size='small' fullWidth>
+          <InputLabel id='key'>Key</InputLabel>
+          <Select
+            defaultValue={song?.key}
+            label='Key'
+            labelId='key'
+            onChange={(e) => setSongDetails({ ...song, key: e.target.value })}
+          >
+            {Keys.map((key) => {
+              return <MenuItem value={key}>{key}</MenuItem>;
+            })}
+          </Select>
+        </FormControl>
+      </div>
+      <div className='col-span-1 tablet:col-span-1'>
+        <TextField
+          disabled
+          label='Time Signature'
+          variant='standard'
+          className='VERSE [&>div>textarea]:text-sm [&>label]:text-sm'
         />
-      </TabPanel>
-      <TabPanel value='2'>
-        <SongParts
-          part={song?.chords}
-          setDetails={setSongDetails}
-          song={song}
-          updating={updating}
+      </div>
+      <div className='col-span-1 tablet:col-span-1 flex flex-row gap-2 items-end'>
+        <TextField
+          disabled
+          label='Tempo'
+          variant='standard'
+          fullWidth
+          className='VERSE [&>div>textarea]:text-sm [&>label]:text-sm'
         />
-      </TabPanel>
-      <TabPanel value='3' className='p-0'>
-        <Media setDetails={setSongDetails} song={song} />
-      </TabPanel>
-    </TabContext>
+        <span className='text-xs'>BPM</span>
+      </div>
+    </div>
   );
 };
 
@@ -272,5 +319,7 @@ const SongParts = ({ part, lyrics, setDetails, song, updating }) => {
     </div>
   );
 };
+
+const Keys = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B'];
 
 export default React.memo(EditSongTabs);

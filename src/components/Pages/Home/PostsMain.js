@@ -80,7 +80,7 @@ const PostsMain = ({ profile }) => {
         )}
       </InfiniteLoader> */}
       <section
-        className={`flex flex-col gap-3 mt-2 pb-[${
+        className={`flex flex-col gap-3 mt-4 pb-[${
           profile ? '0' : '200px'
         }] w-full`}
       >
@@ -93,7 +93,7 @@ const PostsMain = ({ profile }) => {
           .map((post) => {
             // console.log({ post });
             return (
-              <Suspense key={post.id} fallback={<PostLoading />}>
+              <Suspense key={post?.id} fallback={<PostLoading />}>
                 <Post post={post} />
               </Suspense>
             );
