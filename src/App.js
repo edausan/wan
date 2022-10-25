@@ -52,9 +52,9 @@ function App() {
   const { data: Users } = RealtimeUsers();
   // const { data: AssignmentsData } = GetRealtimeAssignments();
   // const { data: Lineups } = RealtimeLineups();
-  const { data: Songs } = RealtimeSongs();
+  // const { data: Songs } = RealtimeSongs();
   const { data: Themes } = RealtimeThemes();
-  const { AlbumCovers, GetCovers } = GetAllAlbumCovers();
+  // const { AlbumCovers, GetCovers } = GetAllAlbumCovers();
 
   const [currentUser, setCurrentUser] = useState({
     user: null,
@@ -76,14 +76,14 @@ function App() {
     Themes.length > 0 && dispatch(setThemes(Themes));
   }, [Themes]);
 
-  useEffect(() => {
-    GetCovers();
-    Songs.length > 0 && dispatch(setSongs(Songs));
-  }, [Songs]);
+  // useEffect(() => {
+  //   GetCovers();
+  //   Songs.length > 0 && dispatch(setSongs(Songs));
+  // }, [Songs]);
 
-  useEffect(() => {
-    AlbumCovers.length > 0 && dispatch(setAlbumCovers(AlbumCovers));
-  }, [AlbumCovers]);
+  // useEffect(() => {
+  //   AlbumCovers.length > 0 && dispatch(setAlbumCovers(AlbumCovers));
+  // }, [AlbumCovers]);
 
   // useEffect(() => {
   //   Lineups.length > 0 && dispatch(setLineups(Lineups));

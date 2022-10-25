@@ -1,14 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { useSelector } from 'react-redux';
-import { selectSongs } from '../../../redux/slices/songsSlice';
-import SongList from './SongList';
+import React, { useEffect, useMemo, useState, useCallback } from "react";
+import { useSelector } from "react-redux";
+import { RealtimeSongs } from "../../../Firebase/songsApi";
+import { selectSongs } from "../../../redux/slices/songsSlice";
+import SongList from "./SongList";
 
 // const SongList = React.lazy(() => import('./SongList'));
-const SongSearch = React.lazy(() => import('./SongSearch'));
+const SongSearch = React.lazy(() => import("./SongSearch"));
 
 const SongsMain = () => {
-  const { songs } = useSelector(selectSongs);
+  // const { songs } = useSelector(selectSongs);
+  const { data: songs } = RealtimeSongs();
   const [searchText, setSearchText] = useState(null);
   const [songList, setSongList] = useState([]);
   const [tags, setTags] = useState([]);
@@ -38,7 +40,7 @@ const SongsMain = () => {
         const lyrics_verse = song?.lyrics?.verse?.toLowerCase();
         const lyrics_pre_chorus = song?.lyrics?.pre_chorus?.toLowerCase();
         const lyrics_chorus = song?.lyrics?.chorus?.toLowerCase();
-        const tags = song?.tags?.join(',')?.toLowerCase();
+        const tags = song?.tags?.join(",")?.toLowerCase();
 
         return (
           title?.includes(text) ||

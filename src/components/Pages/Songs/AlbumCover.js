@@ -1,16 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { AddAPhotoOutlined } from '@mui/icons-material';
+import { AddAPhotoOutlined } from "@mui/icons-material";
 import {
   ImageList,
   ImageListItem,
   ImageListItemBar,
   Skeleton,
   SwipeableDrawer,
-} from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { useSelector } from 'react-redux';
-import { selectSongs } from '../../../redux/slices/songsSlice';
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import { useSelector } from "react-redux";
+import { GetAllAlbumCovers } from "../../../Firebase/songsApi";
+import { selectSongs } from "../../../redux/slices/songsSlice";
 
 const AlbumCover = ({
   open,
@@ -20,12 +21,23 @@ const AlbumCover = ({
   setImage,
   resized,
 }) => {
-  const { albumCovers } = useSelector(selectSongs);
+  const { AlbumCovers, GetCovers } = GetAllAlbumCovers();
+  // const { albumCovers } = useSelector(selectSongs);
   const [img, setImg] = useState(null);
 
+  const [albumCovers, setAlbumCovers] = useState([]);
+
   useEffect(() => {
-    setImage(img);
-  }, [img]);
+    GetCovers();
+  }, []);
+
+  useEffect(() => {
+    setAlbumCovers(AlbumCovers);
+  }, [AlbumCovers]);
+
+  // useEffect(() => {
+  //   setImage(img);
+  // }, [img]);
 
   const handleSelect = (cover) => {
     if (cover?.photoURL === selectedCover?.photoURL) {
@@ -37,32 +49,32 @@ const AlbumCover = ({
   };
 
   const handleClick = () => {
-    const upload = document.querySelector('#upload-cover-new');
+    const upload = document.querySelector("#upload-cover-new");
     upload.click();
   };
 
-  const covers = resized
-    ? [...albumCovers, { name: img?.name, photoURL: resized }]
-    : albumCovers;
+  // const covers = resized
+  //   ? [...albumCovers, { name: img?.name, photoURL: resized }]
+  //   : albumCovers;
 
   return (
-    <SwipeableDrawer anchor='bottom' open={open} onClose={() => setOpen(false)}>
-      <div className='p-4'>
-        <ImageList variant='masonry' cols={3} gap={6}>
-          {covers.map((cover) => (
+    <SwipeableDrawer anchor="bottom" open={open} onClose={() => setOpen(false)}>
+      <div className="p-4">
+        <ImageList variant="masonry" cols={3} gap={6}>
+          {albumCovers?.map((cover) => (
             <ImageListItem
               key={cover.photoURL}
               onClick={() => handleSelect(cover)}
               className={`${
                 selectedCover?.name === cover?.name
-                  ? 'border border-sky-500'
-                  : ''
+                  ? "border border-sky-500"
+                  : ""
               }`}
             >
               <LazyLoadImage
                 alt={cover?.name}
-                effect='blur'
-                placeholder={<Skeleton variant='rectangular' height={100} />}
+                effect="blur"
+                placeholder={<Skeleton variant="rectangular" height={100} />}
                 src={cover?.photoURL}
               />
               {/* <img
@@ -72,7 +84,7 @@ const AlbumCover = ({
                 loading='lazy'
               /> */}
               <ImageListItemBar
-                title={<span className='text-xs'>{cover.name}</span>}
+                title={<span className="text-xs">{cover.name}</span>}
               />
             </ImageListItem>
           ))}
@@ -99,18 +111,18 @@ const AlbumCover = ({
           );
         })}
       </div> */}
-      <div className='flex items-center justify-center'>
+      <div className="flex items-center justify-center">
         <input
-          type='file'
-          id='upload-cover-new'
-          accept='image/*'
-          className='hidden'
+          type="file"
+          id="upload-cover-new"
+          accept="image/*"
+          className="hidden"
           onChange={(e) => setImg(e.target.files[0])}
         />
         {/* <label htmlFor='upload-cover'> */}
         <button
           onClick={handleClick}
-          className='p-2 text-sky-300 flex flex-row gap-2 items-center'
+          className="p-2 text-sky-300 flex flex-row gap-2 items-center"
         >
           <AddAPhotoOutlined />
           Upload Album Cover
