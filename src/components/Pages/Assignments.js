@@ -1,27 +1,29 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState, lazy, Suspense } from 'react';
-import { Grid, SpeedDialIcon } from '@mui/material';
+import React, { useContext, useEffect, useState, lazy, Suspense } from "react";
+import { Grid, SpeedDialIcon } from "@mui/material";
 // import SetAssignment from './Assignment/SetAssignment';
-import { Add } from '@mui/icons-material';
-import { AppCtx } from './../../App';
-import { Link } from 'react-router-dom';
-import { getAuth } from 'firebase/auth';
-import { FirebaseApp } from '../../Firebase';
-import { ADMIN, ASSIGNER } from '../../data';
-import { useSelector } from 'react-redux';
-import { selectAssignments } from './../../redux/slices/assignmentsSlice';
-import { selectUsers } from './../../redux/slices/usersSlice';
-import LoadingScreen from '../CustomComponents/LoadingScreen';
-import AssignmentLoading from './Assignment/AssignmentLoading';
+import { Add } from "@mui/icons-material";
+import { AppCtx } from "./../../App";
+import { Link } from "react-router-dom";
+import { getAuth } from "firebase/auth";
+import { FirebaseApp } from "../../Firebase";
+import { ADMIN, ASSIGNER } from "../../data";
+import { useSelector } from "react-redux";
+import { selectAssignments } from "./../../redux/slices/assignmentsSlice";
+import { selectUsers } from "./../../redux/slices/usersSlice";
+import LoadingScreen from "../CustomComponents/LoadingScreen";
+import AssignmentLoading from "./Assignment/AssignmentLoading";
+import { GetRealtimeAssignments } from "../../Firebase/assignmentApi";
 
-const SetAssignment = lazy(() => import('./Assignment/SetAssignment'));
+const SetAssignment = lazy(() => import("./Assignment/SetAssignment"));
 
 const Assignments = () => {
   const { scrollToTop } = useContext(AppCtx);
   // const { data } = GetRealtimeAssignments();
   const auth = getAuth(FirebaseApp);
   const user = auth.currentUser;
-  const assign = useSelector(selectAssignments);
+  const { data: assign } = GetRealtimeAssignments();
+  // const assign = useSelector(selectAssignments);
   const { users } = useSelector(selectUsers);
 
   const [assignments, setAssignments] = useState([]);
@@ -66,7 +68,7 @@ const Assignments = () => {
         {(user.uid === ASSIGNER || user.uid === ADMIN) && (
           <Link
             to={`/assignments/new`}
-            style={{ textDecoration: 'none', color: 'inherit' }}
+            style={{ textDecoration: "none", color: "inherit" }}
           >
             <button className="fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-white text-black rounded-full z-50">
               <span className="motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-white text-black rounded-full z-40 opacity-30"></span>

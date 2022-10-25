@@ -1,20 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, Suspense } from 'react';
-import { SpeedDialIcon } from '@mui/material';
-import { Add } from '@mui/icons-material';
-import { AppCtx } from './../../App';
+import React, { useContext, useEffect, Suspense } from "react";
+import { SpeedDialIcon } from "@mui/material";
+import { Add } from "@mui/icons-material";
+import { AppCtx } from "./../../App";
 // import LineupItem from './LineupItem';
-import { Link } from 'react-router-dom';
-import { ADMIN } from '../../data';
-import { useSelector } from 'react-redux';
-import { selectLineups } from '../../redux/slices/lineupsSlice';
-import { selectUsers } from './../../redux/slices/usersSlice';
-import LineupLoading from './LineupLoading';
+import { Link } from "react-router-dom";
+import { ADMIN } from "../../data";
+import { useSelector } from "react-redux";
+import { selectLineups } from "../../redux/slices/lineupsSlice";
+import { selectUsers } from "./../../redux/slices/usersSlice";
+import LineupLoading from "./LineupLoading";
+import { RealtimeLineups } from "../../Firebase/songsApi";
 
-const LineupItem = React.lazy(() => import('./LineupItem'));
+const LineupItem = React.lazy(() => import("./LineupItem"));
 
 const Lineup = () => {
-  const lineups = useSelector(selectLineups);
+  // const lineups = useSelector(selectLineups);
+  const { data: lineups } = RealtimeLineups();
   const { users, currentUser } = useSelector(selectUsers);
   const { scrollToTop } = useContext(AppCtx);
   // const [lineups, setLineup] = useState([]);
@@ -58,7 +60,7 @@ const Lineup = () => {
           );
         })}
 
-      {(currentUser?.user_metadata?.ministry === 'VIA' ||
+      {(currentUser?.user_metadata?.ministry === "VIA" ||
         currentUser?.user?.uid === ADMIN) && (
         <Link to="/lineup/new">
           <button className="fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-white text-black rounded-full z-50">
