@@ -1,16 +1,16 @@
-import { Add } from '@mui/icons-material';
-import { SpeedDialIcon } from '@mui/material';
-import React, { useCallback, useState, useMemo } from 'react';
-import EditSong from './EditSong';
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from '../../../redux/slices/usersSlice';
-import { ADMIN } from '../../../data';
+import { Add } from "@mui/icons-material";
+import { SpeedDialIcon } from "@mui/material";
+import React, { useCallback, useState, useMemo } from "react";
+import EditSong from "./EditSong";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../../redux/slices/usersSlice";
+import { ADMIN } from "../../../data";
 
-const Song = React.lazy(() => import('./Song'));
-const SongLoading = React.lazy(() => import('./SongLoading'));
-const CreateNewSong = React.lazy(() => import('./CreateNewSong'));
+const Song = React.lazy(() => import("./Song"));
+const SongLoading = React.lazy(() => import("./SongLoading"));
+const CreateNewSong = React.lazy(() => import("./CreateNewSong"));
 const SongDetailsDrawer = React.lazy(() =>
-  import('../../Lineup/SongDetailsDrawer')
+  import("../../Lineup/SongDetailsDrawer")
 );
 
 const SongList = ({ songs }) => {
@@ -34,7 +34,7 @@ const SongList = ({ songs }) => {
   );
 
   return (
-    <div className="grid grid-cols-2 gap-3 mt-3">
+    <div className="grid grid-cols-2 gap-3 mt-3 p-3">
       <SongDetailsDrawer
         drawerData={drawer_data}
         expanded={expand}
@@ -46,7 +46,7 @@ const SongList = ({ songs }) => {
 
       <CreateNewSong open={open} setOpen={setOpen} />
 
-      {(currentUser?.user_metadata?.ministry === 'VIA' ||
+      {(currentUser?.user_metadata?.ministry === "VIA" ||
         currentUser?.user?.uid === ADMIN) && (
         <button
           className="fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-white text-black rounded-full z-50"

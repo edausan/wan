@@ -1,9 +1,9 @@
-import React from 'react';
-import { CircularProgress } from '@mui/material';
+import React from "react";
+import { CircularProgress } from "@mui/material";
 
 function Loading() {
   return (
-    <div className="flex justify-center items-center w-full h-full ">
+    <div className="flex justify-center items-center w-full h-[100vh] ">
       <CircularProgress />
     </div>
   );

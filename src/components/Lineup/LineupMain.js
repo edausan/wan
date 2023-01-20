@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, Suspense } from "react";
-import { SpeedDialIcon } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import React, { useContext, useEffect, Suspense, useState } from "react";
+import { Divider, SpeedDialIcon } from "@mui/material";
+import { Add, PushPin } from "@mui/icons-material";
 import { AppCtx } from "./../../App";
 // import LineupItem from './LineupItem';
 import { Link } from "react-router-dom";
@@ -19,6 +19,9 @@ const Lineup = () => {
   const { data: lineups } = RealtimeLineups();
   const { users, currentUser } = useSelector(selectUsers);
   const { scrollToTop } = useContext(AppCtx);
+  const [pinnedLineup, setPinnedLineup] = useState(null);
+  const [showPinned, setShowPinned] = useState(false);
+  const [lineupData, setLineupData] = useState([]);
   // const [lineups, setLineup] = useState([]);
 
   useEffect(() => {
@@ -28,22 +31,48 @@ const Lineup = () => {
   }, []);
 
   useEffect(() => {
-    console.log({ lineups, currentUser });
+    if (lineups.length > 0) {
+      setLineupData(lineups);
+      const pinned = lineups?.filter((lineup) => lineup?.pinned);
+      lineups.length > 0 && setPinnedLineup(pinned);
+    }
   }, [lineups, currentUser]);
 
-  // const actions = [
-  //   { icon: <Cancel />, name: 'Cancel', action: () => {} },
-  //   { icon: <ClearAll />, name: 'Clear', action: () => {} },
-  //   { icon: <Save />, name: 'Save', action: () => {} },
-  // ];
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  // const sorted = lineups.sort(
-  //   (a, b) => new Date(b.date_created) - new Date(a.date_created)
-  // );
+  const handleScroll = (e) => {
+    const scrollY = e?.path[1]?.scrollY;
+    const profile = document.querySelector("#pinned-lineup-item")?.clientHeight;
+    if (scrollY > profile) {
+      setShowPinned(true);
+    } else {
+      setShowPinned(false);
+    }
+  };
 
   return (
-    <section className="pb-[100px] pt-3">
-      {lineups
+    <section className="p-3 max-w-[680px] mx-auto" id="lineup-main">
+      {pinnedLineup?.length > 0 && (
+        <>
+          <div className="mb-2 flex flex-row gap-2 items-center uppercase text-xs font-bold text-gray-500">
+            <PushPin className="text-sm" /> Pinned Lineup
+          </div>
+
+          {pinnedLineup?.map((pinned) => (
+            <>
+              <Suspense key={pinned?.id} fallback={<LineupLoading />}>
+                <LineupItem lineup={pinned} showPinned={showPinned} />
+              </Suspense>
+            </>
+          ))}
+          <Divider className="mb-4" />
+        </>
+      )}
+
+      {lineupData
         .slice()
         .map((l) => ({
           ...l,
@@ -52,6 +81,7 @@ const Lineup = () => {
           )[0],
         }))
         .sort((a, b) => new Date(b.date_created) - new Date(a.date_created))
+        .filter((lineup) => !lineup.pinned)
         .map((lineup) => {
           return (
             <Suspense key={lineup.id} fallback={<LineupLoading />}>
@@ -63,7 +93,7 @@ const Lineup = () => {
       {(currentUser?.user_metadata?.ministry === "VIA" ||
         currentUser?.user?.uid === ADMIN) && (
         <Link to="/lineup/new">
-          <button className="fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-white text-black rounded-full z-50">
+          <button className="fixed bottom-[86px] right-[26px] w-[50px] h-[50px]  bg-white text-black shadow-lg rounded-full z-50">
             <span className="motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-white text-black rounded-full z-40 opacity-30"></span>
             <SpeedDialIcon className="relative z-50" openIcon={<Add />} />
           </button>

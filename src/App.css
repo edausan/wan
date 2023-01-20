@@ -75,8 +75,31 @@ div.backup .MuiSelect-select {
 }
 
 .MuiPaper-root {
-  backdrop-filter: blur(2px);
+  /* backdrop-filter: blur(2px); */
 }
 .MuiBackdrop-root {
-  backdrop-filter: blur(2px);
+  /* backdrop-filter: blur(2px); */
+}
+
+.Song-Header_dark::before {
+  /* @apply absolute w-[100%] h-[100%] bg-gradient-to-r from-transparent to-red-500 content-none top-0 left-0; */
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(0,0,0,0), rgba(255,255,255,.98),rgba(255,255,255,1),rgba(255,255,255,1),rgba(255,255,255,1));
+  content: '';
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+.Song-Header_light::before {
+  /* @apply absolute w-[100%] h-[100%] bg-gradient-to-r from-transparent to-red-500 content-none top-0 left-0; */
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(0,0,0,0), rgba(30,30,30,.98),rgba(30,30,30,1),rgba(30,30,30,1),rgba(30,30,30,1));
+  content: '';
+  top: 0;
+  left: 0;
+  z-index: 10;
 }

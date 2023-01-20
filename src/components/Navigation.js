@@ -3,17 +3,19 @@ import {
   HomeOutlined,
   AssignmentOutlined,
   SpeakerNotesOutlined,
-} from '@mui/icons-material';
-import { Paper, Grid, useTheme, Avatar } from '@mui/material';
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { getAuth } from 'firebase/auth';
-import { FirebaseApp } from './../Firebase';
+} from "@mui/icons-material";
+import { Paper, Grid, useTheme, Avatar } from "@mui/material";
+import React, { useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { getAuth } from "firebase/auth";
+import { FirebaseApp } from "./../Firebase";
+import { AppCtx } from "../App";
 
 const Navigation = () => {
   // const { setPageIndex } = useContext(AppCtx);
   const auth = getAuth(FirebaseApp);
   const user = auth.currentUser;
+  const { mode } = useContext(AppCtx);
 
   const location = useLocation();
   const { pathname } = location;
@@ -22,36 +24,39 @@ const Navigation = () => {
   return (
     <Paper
       sx={{
-        position: 'fixed',
+        position: "fixed",
         bottom: 0,
-        left: '50%',
-        width: '100%',
-        transform: 'translateX(-50%)',
+        left: "50%",
+        width: "100%",
+        transform: "translateX(-50%)",
         zIndex: 1002,
-        boxShadow: '0 -5px 10px rgba(0,0,0,.1)',
+        boxShadow: "0 -5px 10px rgba(0,0,0,.1)",
         borderRadius: 0,
       }}
+      className={`pb-0 backdrop-blur-sm ${
+        mode ? "bg-white/80" : "bg-[#121212]/70"
+      }`}
     >
       <Grid
         container
         sx={{
           background: theme.palette.mode,
         }}
-        justifyContent='center'
+        justifyContent="center"
       >
         <Grid item flex={1}>
           <Link
-            to='/'
+            to="/"
             style={{
-              display: 'flex',
+              display: "flex",
               padding: 16,
-              alignItems: 'center',
-              justifyContent: 'center',
+              alignItems: "center",
+              justifyContent: "center",
               transition: theme.transitions.easing.easeInOut,
               color:
-                pathname === '/'
+                pathname === "/"
                   ? theme.palette.primary[theme.palette.mode]
-                  : 'inherit',
+                  : "inherit",
             }}
           >
             <HomeOutlined />
@@ -59,17 +64,17 @@ const Navigation = () => {
         </Grid>
         <Grid item flex={1}>
           <Link
-            to='/assignments'
+            to="/assignments"
             style={{
-              display: 'flex',
+              display: "flex",
               padding: 16,
-              justifyContent: 'center',
-              alignItems: 'center',
+              justifyContent: "center",
+              alignItems: "center",
               transition: theme.transitions.easing.easeInOut,
               color:
-                pathname === '/assignments'
+                pathname === "/assignments"
                   ? theme.palette.primary[theme.palette.mode]
-                  : 'inherit',
+                  : "inherit",
             }}
           >
             <AssignmentOutlined />
@@ -77,17 +82,17 @@ const Navigation = () => {
         </Grid>
         <Grid item flex={1}>
           <Link
-            to='/lineup'
+            to="/lineup"
             style={{
-              display: 'flex',
+              display: "flex",
               padding: 16,
-              justifyContent: 'center',
-              alignItems: 'center',
+              justifyContent: "center",
+              alignItems: "center",
               transition: theme.transitions.easing.easeInOut,
               color:
-                pathname === '/lineup'
+                pathname === "/lineup"
                   ? theme.palette.primary[theme.palette.mode]
-                  : 'inherit',
+                  : "inherit",
             }}
           >
             <SpeakerNotesOutlined />
@@ -95,17 +100,17 @@ const Navigation = () => {
         </Grid>
         <Grid item flex={1}>
           <Link
-            to='/songs'
+            to="/songs"
             style={{
-              display: 'flex',
+              display: "flex",
               padding: 16,
-              justifyContent: 'center',
-              alignItems: 'center',
+              justifyContent: "center",
+              alignItems: "center",
               transition: theme.transitions.easing.easeInOut,
               color:
-                pathname === '/songs'
+                pathname === "/songs"
                   ? theme.palette.primary[theme.palette.mode]
-                  : 'inherit',
+                  : "inherit",
             }}
           >
             <LibraryMusicOutlined />
@@ -115,15 +120,15 @@ const Navigation = () => {
           <Link
             to={`/profile/${user.uid}`}
             style={{
-              display: 'flex',
+              display: "flex",
               padding: 16,
-              justifyContent: 'center',
-              alignItems: 'center',
+              justifyContent: "center",
+              alignItems: "center",
               transition: theme.transitions.easing.easeInOut,
               color:
                 pathname === `/profile/${user.uid}`
                   ? theme.palette.primary[theme.palette.mode]
-                  : 'inherit',
+                  : "inherit",
             }}
           >
             {/* <AccountCircleTwoTone /> */}

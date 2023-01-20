@@ -1,10 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Card, Chip, IconButton, TextField } from '@mui/material';
-import React, { Suspense, useState } from 'react';
-import { Clear, FilterList, SearchOutlined } from '@mui/icons-material';
-import { useEffect } from 'react';
+import { Card, Chip, IconButton, TextField } from "@mui/material";
+import React, { Suspense, useState } from "react";
+import { Clear, FilterList, SearchOutlined } from "@mui/icons-material";
+import { useContext } from "react";
+import { AppCtx } from "../../../App";
 
-const FilterDrawer = React.lazy(() => import('./FilterDrawer'));
+const FilterDrawer = React.lazy(() => import("./FilterDrawer"));
 
 const SongSearch = ({
   setSearchText,
@@ -15,14 +16,25 @@ const SongSearch = ({
   searchText,
   tags,
 }) => {
+  const { mode } = useContext(AppCtx);
   const [text, setText] = useState(null);
 
-  useEffect(() => {
-    // setSearchText(text);
-  }, [text]);
+  // useEffect(() => {
+  //   setSearchText(text);
+  // }, [text]);
+
+  const handleClear = () => {
+    setText("");
+    setSearchText(null);
+  };
 
   return (
-    <Card className="p-4 sticky top-0 left-0 w-[100%] z-10 box-border rounded-none ">
+    <Card
+      className={`p-4 sticky top-0 left-0 w-full z-10 box-border rounded-none shadow-md backdrop-blur-sm ${
+        mode ? "bg-white/60" : "bg-[#121212]/60"
+      }`}
+      elevation={0}
+    >
       <section className="flex flex-row gap-1 max-w-[680px] items-center justify-between mx-auto">
         <div className="max-w-[600px] w-full mx-auto bg-white/10 flex flex-row items-center rounded-md pr-2 box-border">
           <TextField
@@ -35,7 +47,7 @@ const SongSearch = ({
             className="TEXT [&>div::before]:!border-0 [&>div::after]:!border-0 [&>div]:!rounded-md [&>div]:!bg-white/0 [&>label]:!text-sm"
           />
           {text && (
-            <IconButton size="small" onClick={() => setText(null)}>
+            <IconButton size="small" onClick={handleClear}>
               <Clear />
             </IconButton>
           )}
@@ -58,7 +70,7 @@ const SongSearch = ({
           setOpen={setOpen}
           artists={artists}
           albums={albums}
-          setSearchText={setText}
+          setSearchText={setSearchText}
           searchText={text}
         />
       </Suspense>
@@ -70,7 +82,7 @@ const SongSearch = ({
               key={tag}
               label={tag}
               className={`text-white text-xs !h-[26px] ${
-                searchText === tag ? '!bg-gray-800' : '!bg-gray-600'
+                searchText === tag ? "!bg-gray-800" : "!bg-gray-600"
               }`}
               onClick={
                 searchText === tag

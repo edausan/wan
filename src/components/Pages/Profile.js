@@ -1,9 +1,9 @@
-import React from 'react';
-import Profile from './User/Profile';
+import React, { useEffect } from "react";
+import Profile from "./User/Profile";
 
 const ProfilePage = () => {
   return (
-    <section className="pb-[50px] pt-3">
+    <section className="">
       <Profile />
     </section>
   );

@@ -18,67 +18,61 @@ import { GetRealtimeAssignments } from "../../Firebase/assignmentApi";
 const SetAssignment = lazy(() => import("./Assignment/SetAssignment"));
 
 const Assignments = () => {
-  const { scrollToTop } = useContext(AppCtx);
-  // const { data } = GetRealtimeAssignments();
-  const auth = getAuth(FirebaseApp);
-  const user = auth.currentUser;
-  const { data: assign } = GetRealtimeAssignments();
-  // const assign = useSelector(selectAssignments);
-  const { users } = useSelector(selectUsers);
+	const { scrollToTop } = useContext(AppCtx);
+	// const { data } = GetRealtimeAssignments();
+	const auth = getAuth(FirebaseApp);
+	const user = auth.currentUser;
+	const { data: assign } = GetRealtimeAssignments();
+	// const assign = useSelector(selectAssignments);
+	const { users } = useSelector(selectUsers);
 
-  const [assignments, setAssignments] = useState([]);
+	const [assignments, setAssignments] = useState([]);
 
-  useEffect(() => {
-    console.log({ assign });
-  }, [assign]);
+	useEffect(() => {
+		scrollToTop();
+		if (assign.length > 0) {
+			const altered = assign.map((a) => {
+				return {
+					...a,
+					created_by: users.filter((u) => u.uid === a.created_by.uid)[0],
+				};
+			});
+			setAssignments(altered);
+		}
+	}, [assign]);
 
-  useEffect(() => {
-    scrollToTop();
-    if (assign.length > 0) {
-      const altered = assign.map((a) => {
-        return {
-          ...a,
-          created_by: users.filter((u) => u.uid === a.created_by.uid)[0],
-        };
-      });
-      setAssignments(altered);
-    }
-  }, [assign]);
+	return (
+		<>
+			{/* <LoadingScreen data={assignments} /> */}
+			<Grid
+				container
+				justifyContent="center"
+				alignItems="center"
+				className="pb-[50px] p-3 max-w-[680px] mx-auto">
+				{assignments
+					.slice()
+					.sort((a, b) => new Date(b.date_created) - new Date(a.date_created))
+					.map((a) => {
+						return (
+							<Suspense key={a?.id} fallback={<AssignmentLoading />}>
+								<SetAssignment assignment={a} isViewing={true} />
+							</Suspense>
+						);
+					})}
 
-  return (
-    <>
-      {/* <LoadingScreen data={assignments} /> */}
-      <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        className="pb-[50px] pt-3"
-      >
-        {assignments
-          .slice()
-          .sort((a, b) => new Date(b.date_created) - new Date(a.date_created))
-          .map((a) => {
-            return (
-              <Suspense key={a?.id} fallback={<AssignmentLoading />}>
-                <SetAssignment assignment={a} isViewing={true} />
-              </Suspense>
-            );
-          })}
-
-        {(user.uid === ASSIGNER || user.uid === ADMIN) && (
-          <Link
-            to={`/assignments/new`}
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
-            <button className="fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-white text-black rounded-full z-50">
-              <span className="motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-white text-black rounded-full z-40 opacity-30"></span>
-              <SpeedDialIcon className="relative z-50" openIcon={<Add />} />
-            </button>
-          </Link>
-        )}
-      </Grid>
-    </>
-  );
+				{(user.uid === ASSIGNER || user.uid === ADMIN) && (
+					<Link
+						to={`/assignments/new`}
+						style={{ textDecoration: "none", color: "inherit" }}>
+						<button className="fixed bottom-[86px] right-[26px] w-[50px] h-[50px]  bg-white text-black shadow-lg rounded-full z-50">
+							<span className="motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-white text-black rounded-full z-40 opacity-30"></span>
+							<SpeedDialIcon className="relative z-50" openIcon={<Add />} />
+						</button>
+					</Link>
+				)}
+			</Grid>
+		</>
+	);
 };
 
 export default React.memo(Assignments);
