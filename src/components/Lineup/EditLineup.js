@@ -5,6 +5,7 @@ import React, {
 	useContext,
 	createContext,
 	lazy,
+	useMemo,
 } from "react";
 import { Grid, TextField, Card, Snackbar, Alert } from "@mui/material";
 
@@ -14,6 +15,7 @@ import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import {
+	GetAllSongs,
 	GetSingleLineup,
 	RealtimeSongs,
 	UpdateLineup,
@@ -24,6 +26,9 @@ import { useHistory, useParams } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import { FirebaseApp } from "../../Firebase";
 import { SaveTwoTone } from "@mui/icons-material";
+import { useMutation, useQuery } from "react-query";
+import { GetAllLineups } from "../../Firebase/songsApi";
+import LoadingScreen from "../CustomComponents/LoadingScreen";
 
 const Service = lazy(() => import("./Service"));
 const LineupCard = lazy(() => import("./LineupCard"));
@@ -39,17 +44,16 @@ const NewLineup = () => {
 	const { scrollToTop } = useContext(AppCtx);
 	const [date, setDate] = useState(new Date());
 	const [lineupData, setLineupData] = useState([]);
-	const [saving, setSaving] = useState(false);
-	const [saved, setSaved] = useState(false);
 	const [service, setService] = useState(null);
-	const [songs, setSongs] = useState([]);
 	const [openService, setOpenService] = useState(false);
 
-	const { data } = RealtimeSongs();
+	const { data } = useQuery("songs", GetAllSongs);
+	const lineupQuery = useQuery("lineups", GetAllLineups);
+
+	const mutatedLineup = useMutation(UpdateLineup);
 
 	useEffect(() => {
 		scrollToTop();
-		data && setSongs(data);
 	}, [data]);
 
 	useEffect(() => {
@@ -60,16 +64,17 @@ const NewLineup = () => {
 		if (params.id && data.length > 0) GetLineup();
 	}, [params.id, data]);
 
-	const GetLineup = async () => {
+	const GetLineup = () => {
 		try {
-			const lineup = await GetSingleLineup({ id: params.id });
+			// const lineup = await GetSingleLineup({ id: params.id });
+			const lineup = lineupQuery.data?.filter((l) => l.id === params.id)[0];
 			if (lineup?.id) {
 				setService(lineup?.service);
 				setDate(lineup?.date);
 				if (data?.length > 0) {
 					const lineupda_data = lineup?.songs.map((song) => {
 						const song_data = data.filter((s) => s.id === song.id)[0];
-						return { ...song, ...song_data };
+						return { ...song_data, ...song };
 					});
 
 					const updated = LINEUP.map((l) => {
@@ -90,9 +95,7 @@ const NewLineup = () => {
 		setDate(newValue);
 	};
 
-	const handleUpdate = async () => {
-		setSaving(true);
-
+	const handleUpdate = () => {
 		const data = {
 			id: params.id,
 			lineup: {
@@ -109,18 +112,18 @@ const NewLineup = () => {
 			},
 		};
 
-		await UpdateLineup(data);
-
-		setTimeout(() => {
-			setSaving(false);
-			setSaved(true);
-
-			setTimeout(() => {
-				setSaved(false);
-				history.push("/lineup");
-			}, 1000);
-		}, 1000);
+		mutatedLineup.mutate(data);
 	};
+
+	useEffect(() => {
+		if (
+			mutatedLineup.isSuccess &&
+			!mutatedLineup.isLoading &&
+			!mutatedLineup.isError
+		) {
+			history.push("/lineup");
+		}
+	}, [mutatedLineup.isSuccess, mutatedLineup.isLoading, mutatedLineup.isError]);
 
 	const getSundayOfCurrentWeek = () => {
 		const today = new Date();
@@ -133,101 +136,100 @@ const NewLineup = () => {
 	};
 
 	const handleClose = () => {
-		setSaved(false);
+		// setSaved(false);
 	};
 
-	return (
-		<section className="relative p-3 w-full max-w-[680px] mt-0 mx-auto">
-			<Snackbar
-				open={saved}
-				autoHideDuration={1000}
-				onClose={handleClose}
-				anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-				<Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-					{params.id
-						? "Lineup successfully updated"
-						: "New Lineup successfully created!"}
-				</Alert>
-			</Snackbar>
+	return useMemo(() => {
+		return (
+			<section className="relative p-3 w-full max-w-[680px] mt-0 mx-auto">
+				<LoadingScreen status={mutatedLineup.isLoading} />
 
-			{lineupData?.length > 0 && lineupData[2]?.title && service && (
-				<button
-					className="fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-green-500 text-white rounded-full z-50"
-					onClick={handleUpdate}
-					disabled={saving}>
-					<span className="motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-green-500 text-black rounded-full z-40 opacity-30"></span>
-					<SaveTwoTone />
-				</button>
-			)}
+				<Snackbar
+					open={mutatedLineup.isSuccess}
+					autoHideDuration={1000}
+					onClose={handleClose}
+					anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+					<Alert
+						onClose={handleClose}
+						severity="success"
+						sx={{ width: "100%" }}>
+						{params.id
+							? "Lineup successfully updated"
+							: "New Lineup successfully created!"}
+					</Alert>
+				</Snackbar>
 
-			<Grid container justifyContent="center" spacing={2}>
-				<Grid item xs={12} md={12}>
-					<Card sx={{ p: 2, mb: 2 }} disableElevation>
-						{/* <FormControl fullWidth variant="standard" required sx={{mb: 2}}>
-							<InputLabel id="service-type">Service</InputLabel>
-							<Select labelId="service-type" value={service} onChange={e => setService(e.target.value)}>
-								<MenuItem value="Worship Service | Belleview">Worship Service | Belleview</MenuItem>
-								<MenuItem value="Worship Service | Lumina">Worship Service | Lumina</MenuItem>
-								<MenuItem value="Youth Service">Youth Service</MenuItem>
-							</Select>
-						</FormControl> */}
+				{lineupData?.length > 0 && lineupData[2]?.title && service && (
+					<button
+						className="fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-green-500 text-white rounded-full z-50"
+						onClick={handleUpdate}
+						disabled={mutatedLineup.isLoading}>
+						<span className="motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-green-500 text-black rounded-full z-40 opacity-30"></span>
+						<SaveTwoTone />
+					</button>
+				)}
 
-						<button
-							onClick={() => setOpenService(true)}
-							className="p-2 w-full bg-sky-400 text-white rounded-md mb-4">
-							{service ? service : "Select Worship Service"}
-						</button>
+				<Grid container justifyContent="center" spacing={2}>
+					<Grid item xs={12} md={12}>
+						<Card sx={{ p: 2, mb: 2 }} disableElevation>
+							<button
+								onClick={() => setOpenService(true)}
+								className="p-2 w-full bg-sky-400 text-white rounded-md mb-4">
+								{service ? service : "Select Worship Service"}
+							</button>
 
-						<Service
-							setOpen={setOpenService}
-							open={openService}
-							service={service}
-							setService={setService}
-						/>
-
-						<LocalizationProvider dateAdapter={AdapterMoment}>
-							<MobileDatePicker
-								required
-								inputFormat="dddd LL"
-								label="Date"
-								value={date}
-								onChange={(value) => handleDateChange(value)}
-								renderInput={(params) => (
-									<TextField
-										{...params}
-										fullWidth
-										size="small"
-										variant="standard"
-									/>
-								)}
+							<Service
+								setOpen={setOpenService}
+								open={openService}
+								service={service}
+								setService={setService}
 							/>
-						</LocalizationProvider>
-					</Card>
-				</Grid>
 
-				<Grid item xs={12} md={12}>
-					{/* <NewLineupCtx.Provider value={{songs, saving, setLineupData, setOpen}}> */}
-					{lineupData?.length > 0 &&
-						songs?.length > 0 &&
-						LINEUP.map((category, idx) => {
-							return (
-								<LineupCard
-									key={category.id + idx}
-									setLineupData={setLineupData}
-									category={category}
-									songs={songs}
-									songData={
-										lineupData.filter((s) => s?.label === category.label)[0]
-									}
-									saving={saving}
+							<LocalizationProvider dateAdapter={AdapterMoment}>
+								<MobileDatePicker
+									required
+									inputFormat="dddd LL"
+									label="Date"
+									value={date}
+									onChange={(value) => handleDateChange(value)}
+									renderInput={(params) => (
+										<TextField
+											{...params}
+											fullWidth
+											size="small"
+											variant="standard"
+										/>
+									)}
 								/>
-							);
-						})}
-					{/* </NewLineupCtx.Provider> */}
+							</LocalizationProvider>
+						</Card>
+					</Grid>
+
+					<Grid item xs={12} md={12}>
+						<Card>
+							{lineupData?.length > 0 &&
+								data?.length > 0 &&
+								LINEUP.map((category, idx) => {
+									return (
+										<LineupCard
+											key={category.id + idx}
+											setLineupData={setLineupData}
+											category={category}
+											songs={data}
+											saving={mutatedLineup.isLoading}
+											lineupData={lineupData}
+											songData={
+												lineupData.filter((s) => s?.label === category.label)[0]
+											}
+										/>
+									);
+								})}
+						</Card>
+					</Grid>
 				</Grid>
-			</Grid>
-		</section>
-	);
+			</section>
+		);
+	}, [lineupData, data, mutatedLineup.isLoading, mutatedLineup.isSuccess]);
 };
 
 export default React.memo(NewLineup);

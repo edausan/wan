@@ -15,6 +15,7 @@ import {
 	getDocs,
 } from "firebase/firestore";
 import moment from "moment";
+import { useQuery } from "react-query";
 import {
 	getDownloadURL,
 	getStorage,
@@ -90,11 +91,15 @@ export const UpdateLineupPinned = async ({ lineup }) => {
 	const ref = doc(lineupRef, id);
 
 	try {
-		const updated = await updateDoc(ref, {
+		const res = await updateDoc(ref, {
 			...lineup,
 		});
 
-		return updated;
+		if (res === undefined) {
+			return {
+				updated: true,
+			};
+		}
 	} catch (error) {
 		console.error(error);
 	}
@@ -168,11 +173,13 @@ export const HeartLineup = async ({ lineupId, userIds }) => {
 	try {
 		const ref = doc(lineupRef, lineupId);
 
-		const updated = await updateDoc(ref, {
+		const res = await updateDoc(ref, {
 			heart: userIds,
 		});
 
-		return updated;
+		if (res === undefined) {
+			return { updated: true };
+		}
 	} catch (error) {
 		console.log(error.message);
 	}
@@ -240,7 +247,11 @@ export const AddNewSong = async ({ song }) => {
 export const UpdateSongDetails = async ({ song }) => {
 	try {
 		const ref = doc(songsRef, song.id);
-		return await updateDoc(ref, song);
+		const res = await updateDoc(ref, song);
+
+		if (res === undefined) {
+			return { updated: true };
+		}
 	} catch (error) {
 		console.log(error.message);
 	}
@@ -290,6 +301,16 @@ export const GetSong = async ({ song }) => {
 	}
 };
 
+export const GetAllSongs = async () => {
+	const querySnapshot = await getDocs(songsRef);
+	const songs = [];
+	querySnapshot.forEach((doc) => {
+		songs.push(doc.data());
+	});
+
+	return songs;
+};
+
 /**
  * TODO: REALTIME songs
  */
@@ -320,6 +341,15 @@ export const RealtimeSongs = () => {
 	return { data };
 };
 
+export const GetAllLineups = async () => {
+	const querySnapshot = await getDocs(lineupRef);
+	const lineups = [];
+	querySnapshot.forEach((doc) => {
+		lineups.push({ ...doc.data(), id: doc.id });
+	});
+	return lineups;
+};
+
 /**
  * TODO: REALTIME lineups
  */
@@ -328,22 +358,16 @@ export const RealtimeLineups = () => {
 
 	useEffect(() => {
 		try {
-			onSnapshot(
-				lineupRef,
+			onSnapshot(lineupRef, (snapshot) => {
+				const docs = snapshot.docs.map((doc) => ({
+					id: doc.id,
+					...doc.data(),
+				}));
 
-				(snapshot) => {
-					const docs = snapshot.docs.map((doc) => ({
-						id: doc.id,
-						...doc.data(),
-					}));
-
-					if (docs.length > 0) {
-						//   localStorage.setItem('orders', JSON.stringify(docs));
-						//   const local_orders = JSON.parse(localStorage.getItem('orders'));
-						setData(docs);
-					}
+				if (docs.length > 0) {
+					setData(docs);
 				}
-			);
+			});
 		} catch (error) {
 			console.log({ RealtimeMetadata_ERROR: error });
 		}
@@ -380,38 +404,61 @@ const GetDownloadURL = async (ref) => {
 	return await getDownloadURL(ref);
 };
 
+export const GetAlbumCovers = async () => {
+	try {
+		const listRef = ref(storage, "album_cover");
+		const res = await listAll(listRef);
+
+		const covers_data = res.items.map(async (itemRef) => {
+			const photoURL = await GetDownloadURL(itemRef);
+			if (typeof photoURL === "string") {
+				const cover_data = { photoURL, fileName: itemRef.name };
+				return cover_data;
+			}
+		});
+
+		return covers_data;
+	} catch (error) {
+		console.log(error.message);
+	}
+};
+
 export const GetAllAlbumCovers = () => {
 	const [covers, setCovers] = useState([]);
-	const [photoURL, setPhotoURL] = useState("");
-	const [fileName, setFileName] = useState("");
-
-	useEffect(() => {
-		if (fileName && typeof photoURL === "string") {
-			const idx = covers.findIndex((c) => c.name === fileName);
-			if (idx === -1) {
-				setCovers([...covers, { name: fileName, photoURL }]);
-			}
-		}
-	}, [photoURL, fileName]);
 
 	const GetCovers = async () => {
 		try {
 			const listRef = ref(storage, "album_cover");
-
 			const res = await listAll(listRef);
 
-			const covers = res.items.forEach(async (itemRef) => {
+			const covers_data = res.items.map(async (itemRef) => {
 				const photoURL = await GetDownloadURL(itemRef);
+
 				if (typeof photoURL === "string") {
-					setPhotoURL(photoURL);
-					setFileName(itemRef.name);
+					const cover_data = { photoURL, fileName: itemRef.name };
+					setCovers((prev) => [...prev, cover_data]);
+					return cover_data;
 				}
 			});
-			return covers;
+
+			return covers_data;
 		} catch (error) {
 			console.log(error.message);
 		}
 	};
 
-	return { AlbumCovers: covers, GetCovers };
+	// useEffect(() => {
+	// 	setCoversRef(albumQuery.data)
+	// }, [albumQuery.data, albumQuery.isFetching])
+
+	// useEffect(() => {
+	// 	if (fileName && typeof photoURL === "string") {
+	// 		const idx = covers.findIndex((c) => c.name === fileName);
+	// 		if (idx === -1) {
+	// 			setCovers([...covers, { name: fileName, photoURL }]);
+	// 		}
+	// 	}
+	// }, [photoURL, fileName]);
+
+	return { AlbumCovers: covers };
 };

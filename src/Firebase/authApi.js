@@ -196,7 +196,6 @@ export const UpdatePhotoURL = async ({ photoURL }) => {
 };
 
 export const UpdateUserMetadata = async ({ metadata }) => {
-	//   console.log({ life_verse, ministry });
 	try {
 		const user = auth.currentUser;
 		const userRef = doc(Firestore, "user_metadata", user.uid);
@@ -252,7 +251,19 @@ export const UploadPhoto = async ({ id, imageUpload }) => {
 	return { photoURL, updateProfile };
 };
 
-export const RealtimeUsers = () => {
+const usersRef = collection(Firestore, "user_metadata");
+
+export const GetAllUsers = async () => {
+	const querySnapshot = await getDocs(usersRef);
+	const songs = [];
+	querySnapshot.forEach((doc) => {
+		songs.push(doc.data());
+	});
+
+	return songs;
+};
+
+export const RealtimeUsers = async () => {
 	const user = auth.currentUser;
 	const [data, setData] = useState([]);
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Slideup from "../../../CustomComponents/Animations/Slideup";
 
 const Chip = ({
 	value,
@@ -20,43 +21,29 @@ const Chip = ({
 	const handleType = (type, val) => {
 		switch (type) {
 			case "maj":
-				return `bg-green-${val}`;
+				return `bg-blue-${val}`;
 			case "min":
-				return `bg-orange-${val}`;
+				return `bg-blue-${val}`;
 			case "overs":
-				return `bg-purple-${val}`;
+				return `bg-blue-${val}`;
 			case "others":
-				return `bg-gray-${val}`;
+				return `bg-blue-${val}`;
 
 			default:
 				break;
 		}
 	};
 
-	// const hover =
-	//   value?.isAccidental || selected?.isAccidental
-	//     ? "hover:bg-orange-500 hover:text-white"
-	//     : isVariant
-	//     ? `hover:${handleType(type, 500)} hover:text-white`
-	//     : "hover:bg-sky-500 hover:text-white";
-
-	const hover = ` hover:${handleType(type, 500)} hover:text-white`;
-
 	const selected_chord = selectedChord
-		? ` ${handleType(type, "600")} text-white`
-		: " bg-slate-300 text-black";
-
-	const isAccidental = "bg-slate-300";
+		? ` bg-blue-600 text-white`
+		: " bg-slate-200 text-black";
 
 	const is_variant =
 		isVariant && !selectedChord ? ` ${handleType(type, 100)} text-black` : "";
 
-	const is_family = !isVariant
-		? family?.findIndex(
-				(f) => f.split("dim")[0].split("m")[0] === value?.root
-		  ) >= 0 && " !border-black/80 bg-slate-300"
-		: family?.findIndex((f) => f === value) >= 0 &&
-		  " !border-black/80 bg-slate-300";
+	const isDim =
+		family?.findIndex((f) => f.split("dim")[0].split("m")[0] === value?.root) >=
+			0 && " !bg-blue-600 !text-white";
 
 	const replace_border =
 		replaceIndex === index &&
@@ -68,12 +55,16 @@ const Chip = ({
 		setShowMenu(false);
 	};
 
+	const value_root = value?.root === selected?.root;
+
 	return (
 		<div
-			className={`flex flex-row items-center justify-between py-1 px-2 text-xs rounded-full cursor-pointer transition-all duration-100 border border-white${
-				is_family || ""
-			}${is_variant || ""}${replace_border || ""}${selected_chord || ""}${
-				isChordRun ? "" : hover
+			className={`flex flex-row items-center justify-center py-1 px-2 min-w-[36px] h-[36px] text-sm rounded-full cursor-pointer transition-all duration-100 border-2 ${
+				value?.root ? "w-[36px]" : ""
+			} ${value_root ? "!bg-orange-600 !text-white" : ""}  ${isDim || ""} ${
+				is_variant || ""
+			} ${replace_border || ""} ${selected_chord || ""} ${
+				isChordRun ? "!bg-slate-200 !text-black !border-0" : ""
 			}`}
 			onClick={
 				isChordRun
@@ -88,7 +79,7 @@ const Chip = ({
 								: callback(value);
 					  }
 			}>
-			<div>{value?.root || value} </div>
+			<div className="text-center text-sm">{value?.root || value} </div>
 			{/* {isChordRun && (
         <button className=" ml-2 w-[14px] h-[14px] flex items-center justify-center rounded-full hover:bg-slate-200">
           <button onClick={() => setShowMenu((prev) => !prev)}>
@@ -113,28 +104,32 @@ const Chip = ({
 
 const ChordMenu = ({ handleDelete, showMenu, chord, handleReplace }) => {
 	return (
+		// <Slideup>
 		<div
 			onClick={() => showMenu(false)}
-			className="flex items-center justify-center absolute top-0 left-0 bg-black/50 w-full h-full">
-			<div className="p-2 rounded-sm min-w-[160px] max-w-[200px] text-start bg-white shadow-lg">
-				<button
-					className="text-xs p-1 hover:bg-slate-200 text-start w-full"
-					onClick={handleDelete}>
-					Delete <span className="font-bold">{chord}</span>
-				</button>
-				<button
-					className="text-xs p-1 hover:bg-slate-200 text-start w-full"
-					onClick={handleReplace}>
-					Replace <span className="font-bold">{chord}</span>
-				</button>
-				<button className="text-xs p-1 hover:bg-slate-200 text-start w-full">
-					Add chord before <span className="font-bold">{chord}</span>
-				</button>
-				<button className="text-xs p-1 hover:bg-slate-200 text-start w-full">
-					Add chord after <span className="font-bold">{chord}</span>
-				</button>
-			</div>
+			className="flex items-center justify-center absolute top-0 left-0 bg-black/30 w-full h-full">
+			<Slideup>
+				<div className="p-2 rounded-sm min-w-[160px] max-w-[200px] text-start bg-white shadow-lg">
+					<button
+						className="text-xs p-1 hover:bg-slate-200 text-start w-full"
+						onClick={handleDelete}>
+						Delete <span className="font-bold">{chord}</span>
+					</button>
+					<button
+						className="text-xs p-1 hover:bg-slate-200 text-start w-full"
+						onClick={handleReplace}>
+						Replace <span className="font-bold">{chord}</span>
+					</button>
+					<button className="text-xs p-1 hover:bg-slate-200 text-start w-full">
+						Add chord before <span className="font-bold">{chord}</span>
+					</button>
+					<button className="text-xs p-1 hover:bg-slate-200 text-start w-full">
+						Add chord after <span className="font-bold">{chord}</span>
+					</button>
+				</div>
+			</Slideup>
 		</div>
+		// </Slideup>
 	);
 };
 

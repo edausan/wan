@@ -2,10 +2,6 @@ import { Clear, EditOutlined, Link, YouTube } from "@mui/icons-material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
 	Box,
-	Button,
-	Card,
-	CardHeader,
-	Divider,
 	FormControl,
 	IconButton,
 	InputLabel,
@@ -16,24 +12,24 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { LazyLoadImage } from "react-lazy-load-image-component";
+// import { LazyLoadImage } from "react-lazy-load-image-component";
 import LazyLoad from "react-lazyload";
 import SPOTIFY_LOGO from "../../../assets/spotify_logo.png";
-import WButton from "../../CustomComponents/Button";
-import Chorder from "./Chorder/Chorder";
+// import WButton from "../../CustomComponents/Button";
+// import Chorder from "./Chorder/Chorder";
 
 const EditSongTabs = ({ song, setSongDetails, updating }) => {
 	const [value, setValue] = useState("1");
-	const [open, setOpen] = useState(false);
-	const [chords, setChords] = useState({
-		intro: null,
-		verse: null,
-		pre_chorus: null,
-		chorus: null,
-		bridge: null,
-	});
+	// const [open, setOpen] = useState(null);
+	// const [chords, setChords] = useState({
+	// 	intro: null,
+	// 	verse: null,
+	// 	pre_chorus: null,
+	// 	chorus: null,
+	// 	bridge: null,
+	// });
 
-	const handleOpenChorder = () => setOpen(true);
+	// const handleOpenChorder = (part) => setOpen(part);
 
 	return (
 		<>
@@ -56,29 +52,35 @@ const EditSongTabs = ({ song, setSongDetails, updating }) => {
 					/>
 				</TabPanel>
 				<TabPanel value="2">
-					{/* <Chorder open={open} setOpen={setOpen} />
-          <div className="flex flex-col justify-start gap-2">
-            <WButton
-              text="Add Intro"
-              callback={handleOpenChorder}
-              color="sky"
-            />
-            <WButton
-              text="Add Verse"
-              callback={handleOpenChorder}
-              color="sky"
-            />
-            <WButton
-              text="Add Pre-chorus"
-              callback={handleOpenChorder}
-              color="sky"
-            />
-            <WButton
-              text="Add Chorus"
-              callback={handleOpenChorder}
-              color="sky"
-            />
-          </div> */}
+					{/* <Chorder
+						open={open}
+						setOpen={setOpen}
+						setChords={(value) =>
+							setChords((prevState) => ({ ...prevState, [open]: value }))
+						}
+					/>
+					<div className="flex flex-col justify-start gap-2">
+						<WButton
+							text="Add Intro"
+							callback={() => handleOpenChorder("intro")}
+							color="sky"
+						/>
+						<WButton
+							text="Add Verse"
+							callback={() => handleOpenChorder("verse")}
+							color="sky"
+						/>
+						<WButton
+							text="Add Pre-chorus"
+							callback={() => handleOpenChorder("pre_chorus")}
+							color="sky"
+						/>
+						<WButton
+							text="Add Chorus"
+							callback={() => handleOpenChorder("chorus")}
+							color="sky"
+						/>
+					</div> */}
 					<SongParts
 						part={song?.chords}
 						setDetails={setSongDetails}

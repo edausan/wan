@@ -48,6 +48,8 @@ import { Link, useHistory } from "react-router-dom";
 import { AppCtx } from "../../../App";
 import { useSelector } from "react-redux";
 import { selectUsers } from "../../../redux/slices/usersSlice";
+import { useQuery } from "react-query";
+import { GetAllUsers } from "../../../Firebase/authApi";
 // import AssignmentDrawer from './AssignmentDrawer';
 
 const AssignmentDrawer = React.lazy(() => import("./AssignmentDrawer"));
@@ -57,7 +59,7 @@ const auth = getAuth(FirebaseApp);
 const SetAssignment = ({ isViewing, assignment }) => {
 	const history = useHistory();
 	const user = auth.currentUser;
-	const { users } = useSelector(selectUsers);
+	// const { users } = useSelector(selectUsers);
 
 	const { scrollToTop } = useContext(AppCtx);
 
@@ -82,6 +84,8 @@ const SetAssignment = ({ isViewing, assignment }) => {
 			date: assignment?.youth.date || null,
 		},
 	});
+
+	const usersQuery = useQuery("users", GetAllUsers);
 
 	useEffect(() => {
 		scrollToTop();
@@ -134,8 +138,8 @@ const SetAssignment = ({ isViewing, assignment }) => {
 	};
 
 	const handleGetVIA = async () => {
-		const vias = users
-			.filter((u) => u.ministry === "VIA")
+		const vias = usersQuery.data
+			?.filter((u) => u.ministry === "VIA")
 			.map((v) => {
 				return {
 					...v,
@@ -172,14 +176,16 @@ const SetAssignment = ({ isViewing, assignment }) => {
 				<CardHeader
 					avatar={
 						<Avatar
-							src={viewing ? assignment?.created_by.photoURL : user.photoURL}
+							src={viewing ? assignment?.created_by?.photoURL : user?.photoURL}
 							alt={
-								viewing ? assignment?.created_by.displayName : user.displayName
+								viewing
+									? assignment?.created_by?.displayName
+									: user?.displayName
 							}
 						/>
 					}
 					title={
-						viewing ? assignment?.created_by.displayName : user.displayName
+						viewing ? assignment?.created_by?.displayName : user?.displayName
 					}
 					subheader={
 						<small>

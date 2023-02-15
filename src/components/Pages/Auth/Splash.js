@@ -10,7 +10,7 @@ const Splash = () => {
 	const [screen, setScreen] = useState("splash");
 
 	const blue = "#00addd";
-	const pink = "#f51088";
+	const pink = "#7400ff";
 
 	useEffect(() => {
 		// history.push(`/profile/${currentUser.user?.uid || params.id}`);

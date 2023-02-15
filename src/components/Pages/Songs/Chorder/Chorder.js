@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import Chip from "./Chip";
 import { CHORDS, pattern, _8oct } from "./Chords";
-import { Dialog } from "@mui/material";
+import { Dialog, Divider } from "@mui/material";
 
 const Chorder = ({ setChords, open, setOpen }) => {
 	const [chord, setChord] = useState(null);
@@ -13,7 +13,7 @@ const Chorder = ({ setChords, open, setOpen }) => {
 	const [replaceIndex, setReplaceIndex] = useState(null);
 
 	useEffect(() => {
-		setSelected(null);
+		// setSelected(null);
 		if (chord && replaceIndex) {
 			handleReplaceChord();
 		} else {
@@ -44,6 +44,11 @@ const Chorder = ({ setChords, open, setOpen }) => {
 	};
 
 	const handleSave = () => {
+		setOpen(null);
+		setSelected(null);
+		setSelectedKey(null);
+		setChordRuns([]);
+		setFamily([]);
 		setChords && setChords(chordRuns);
 	};
 
@@ -68,42 +73,46 @@ const Chorder = ({ setChords, open, setOpen }) => {
 
 	return (
 		<Dialog open={open} onClose={() => setOpen(false)}>
-			<section className="p-4 relative w-full">
-				<div className="p-4">
-					<small className="mb-2">Key:</small>
-					<div className="flex flex-row flex-wrap gap-2 items-center justify-start ">
-						{CHORDS?.map((chord) => {
-							return (
-								<Chip
-									value={chord}
-									selected={selectedKey}
-									callback={setSelectedKey}
-									key={chord.root}
-								/>
-							);
-						})}
+			<section className="relative w-full flex flex-col overflow-auto max-h-[600px]">
+				<article className="sticky top-0 bg-white shadow-lg">
+					<div className="p-4">
+						<small className="text-blue-600 mb-4 block">Key:</small>
+						<div className="flex flex-row flex-wrap gap-2 items-center justify-start ">
+							{CHORDS?.map((chord) => {
+								return (
+									<Chip
+										value={chord}
+										selected={selectedKey}
+										callback={setSelectedKey}
+										key={chord.root}
+									/>
+								);
+							})}
+						</div>
 					</div>
-				</div>
 
-				<div className="flex flex-row gap-2 flex-wrap items-center justify-start p-4">
-					{CHORDS?.map((chord) => {
-						const c = family?.filter((f) => f?.root === chord?.root)[0];
-						return (
-							<Chip
-								family={family}
-								value={c || chord}
-								selected={selected}
-								callback={setSelected}
-								key={chord.root}
-							/>
-						);
-					})}
-				</div>
+					{selectedKey && (
+						<div className="flex flex-row gap-2 flex-wrap items-center justify-start p-4">
+							{CHORDS?.map((chord) => {
+								const c = family?.filter((f) => f?.root === chord?.root)[0];
+								return (
+									<Chip
+										family={family}
+										value={c || chord}
+										selected={selected}
+										callback={setSelected}
+										key={chord.root}
+									/>
+								);
+							})}
+						</div>
+					)}
+				</article>
 
 				{selected && (
-					<section className="flex flex-col items-start justify-center gap-2">
-						<div className="bg-green-50 p-3">
-							<small>Major</small>
+					<section className="flex flex-col items-start justify-center gap-1 p-4">
+						<div className="bg-slate-50 p-3 w-full">
+							<small className="text-blue-600 mb-4 block">Major</small>
 							<div className="flex flex-row gap-2 max-w-[500px] flex-wrap">
 								{selected?.variants?.maj?.map((variant) => {
 									return (
@@ -122,9 +131,9 @@ const Chorder = ({ setChords, open, setOpen }) => {
 							</div>
 						</div>
 
-						<div className="bg-orange-50 p-3 mt-2">
-							<small>Minor</small>
-							<div className="flex flex-row gap-2 max-w-[500px] flex-wrap">
+						<div className="bg-slate-50 p-3 mt-2 w-full">
+							<small className="text-blue-600 mb-4 block">Minor</small>
+							<div className="flex flex-row gap-4 max-w-[500px] flex-wrap">
 								{selected?.variants?.min?.map((variant) => {
 									return (
 										<Chip
@@ -142,9 +151,9 @@ const Chorder = ({ setChords, open, setOpen }) => {
 							</div>
 						</div>
 
-						<div className="bg-purple-50 p-3 mt-2 w-full">
-							<small>Overs</small>
-							<div className="flex flex-row gap-2 max-w-[500px] flex-wrap">
+						<div className="bg-slate-50 p-3 mt-2 w-full">
+							<small className="text-blue-600 mb-4 block">Overs</small>
+							<div className="flex flex-row gap-4 max-w-[500px] flex-wrap">
 								{selected?.variants?.overs?.map((variant) => {
 									return (
 										<Chip
@@ -162,9 +171,9 @@ const Chorder = ({ setChords, open, setOpen }) => {
 							</div>
 						</div>
 
-						<div className="bg-gray-50 p-3 mt-2 w-full">
-							<small>Other</small>
-							<div className="flex flex-row gap-2 max-w-[500px] flex-wrap">
+						<div className="bg-slate-50 p-3 mt-2 w-full">
+							<small className="text-blue-600 mb-4 block">Other</small>
+							<div className="flex flex-row gap-4 max-w-[500px] flex-wrap">
 								{selected?.variants?.other?.map((variant) => {
 									return (
 										<Chip
@@ -184,56 +193,68 @@ const Chorder = ({ setChords, open, setOpen }) => {
 					</section>
 				)}
 
-				<div className="flex flex-row flex-wrap gap-1 items-center mt-4 p-4 bg-slate-50">
-					{chordRuns
-						?.filter((c) => c !== null)
-						.map((chord, idx) => {
-							return chord === "\r\n" ? (
-								<div id="divider" className="w-full h-[10px]" />
-							) : (
-								<Chip
-									index={idx}
-									value={chord}
-									isVariant
-									callback={() => {}}
-									isChordRun
-									handleDeleteChord={handleDeleteChord}
-									setReplaceIndex={setReplaceIndex}
-									replaceIndex={replaceIndex}
-								/>
-							);
-						})}
-				</div>
+				{selectedKey && (
+					<article className="bg-white sticky bottom-0 p-4 shadow-2xl">
+						<div className="flex flex-row flex-wrap gap-1 items-center mt-4 px-4 py-6 ">
+							{chordRuns
+								?.filter((c) => c !== null)
+								.map((chord, idx) => {
+									return chord === "\r\n" ? (
+										<div id="divider" className="w-full h-[10px]" />
+									) : (
+										<Chip
+											index={idx}
+											value={chord}
+											isVariant
+											callback={() => {}}
+											isChordRun
+											handleDeleteChord={handleDeleteChord}
+											setReplaceIndex={setReplaceIndex}
+											replaceIndex={replaceIndex}
+										/>
+									);
+								})}
+						</div>
 
-				<div className="flex flex-row gap-2 mt-4">
-					<ChordButton
-						value="Clear"
-						callback={() => setChordRuns([])}
-						color="slate"
-					/>
-					<ChordButton
-						value="Next Line"
-						callback={() => setChordRuns((prev) => [...prev, "\r\n"])}
-						color="sky"
-					/>
-					<ChordButton
-						value="Save Chord Runs"
-						callback={handleSave}
-						color="green"
-					/>
-				</div>
+						<Divider />
+
+						<div className="flex flex-row gap-2 mt-4">
+							<div className="flex flex-row gap-2 flex-1">
+								<ChordButton
+									value="Clear"
+									callback={() => setChordRuns([])}
+									color="bg-slate-500"
+									hover="bg-slate-700"
+									disabled={chordRuns.length <= 0}
+								/>
+								<ChordButton
+									value="Next Line"
+									callback={() => setChordRuns((prev) => [...prev, "\r\n"])}
+									color="bg-sky-500"
+									hover="bg-sky-700"
+								/>
+							</div>
+							<ChordButton
+								value="Save Chord Runs"
+								callback={handleSave}
+								color="bg-green-500"
+								hover="bg-green-700"
+							/>
+						</div>
+					</article>
+				)}
 			</section>
 		</Dialog>
 	);
 };
 
-const ChordButton = ({ callback, value, color }) => {
-	const btn_color = (val) => `bg-${color}-${val}`;
+const ChordButton = ({ callback, value, color, hover, props }) => {
 	return (
 		<button
-			className={`px-3 py-1 rounded-full ${btn_color(400)} hover:!${btn_color(
-				500
-			)} text-white text-sm`}
+			{...props}
+			className={`px-4 py-3 rounded-full	 ${color} hover:${hover} text-white text-sm ${
+				props?.disabled ? "disabled" : ""
+			}`}
 			onClick={() => callback()}>
 			{value}
 		</button>
