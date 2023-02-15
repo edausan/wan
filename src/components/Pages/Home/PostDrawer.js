@@ -19,6 +19,7 @@ import { FirebaseApp } from "../../../Firebase";
 import { DeletePost } from "../../../Firebase/postsApi";
 
 const PostDrawer = ({ open, setOpen, post }) => {
+	console.log({ post });
 	const auth = getAuth(FirebaseApp);
 	const user = auth.currentUser;
 

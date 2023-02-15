@@ -6,6 +6,8 @@ import { useSelector } from "react-redux";
 import { selectThemes } from "../../../redux/slices/postsSlice";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useMediaQuery } from "@mui/material";
+import { useQuery } from "react-query";
+import { GetAllThemes } from "../../../Firebase/postsApi";
 
 const initialState = {
 	photoURL: null,
@@ -18,6 +20,7 @@ const initialState = {
 };
 
 const Theme = ({ theme, isRow }) => {
+	const { data, isFetching } = useQuery("themes", GetAllThemes);
 	const desktop = useMediaQuery("(min-width:640px)");
 	const themes = useSelector(selectThemes);
 	const params = useParams();
@@ -30,13 +33,13 @@ const Theme = ({ theme, isRow }) => {
 	}, [theme]);
 
 	useEffect(() => {
-		if (params?.id) {
+		if (params?.id && data.length > 0 && !isFetching) {
 			setCurrentTheme(
-				themes?.filter((theme) => theme.id === params?.id)[0] || initialState
+				data?.filter((theme) => theme.id === params?.id)[0] || initialState
 			);
 			setOpen(true);
 		}
-	}, [params]);
+	}, [params, data, isFetching]);
 
 	return (
 		<Card

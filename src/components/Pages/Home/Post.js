@@ -14,7 +14,7 @@ import {
 	IconButton,
 	Skeleton,
 } from "@mui/material";
-import { GetUserMetadata } from "../../../Firebase/authApi";
+import { GetAllUsers, GetUserMetadata } from "../../../Firebase/authApi";
 import {
 	CommentTwoTone,
 	EmojiEmotionsTwoTone,
@@ -29,7 +29,7 @@ import PostDrawer from "./PostDrawer";
 import { getAuth } from "firebase/auth";
 import { FirebaseApp } from "../../../Firebase";
 import ReactionDrawer from "./ReactionDrawer";
-import { GetPost, ReactPost } from "../../../Firebase/postsApi";
+import { GetAllPosts, GetPost, ReactPost } from "../../../Firebase/postsApi";
 import { Link, useParams } from "react-router-dom";
 import ReactionsModal from "./ReactionsModal";
 import PostComments from "./PostComments";
@@ -43,6 +43,7 @@ import { selectPost } from "../../../redux/slices/postsSlice";
 import { AppCtx } from "../../../App";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
+import { useQuery } from "react-query";
 
 const Post = ({ post: current, profile }) => {
 	const params = useParams();
@@ -50,7 +51,10 @@ const Post = ({ post: current, profile }) => {
 	const userProfile = auth.currentUser;
 	const { scrollToTop } = useContext(AppCtx);
 
-	const users = useSelector(selectUsers);
+	// const users = useSelector(selectUsers);
+	const { data: users } = useQuery("users", GetAllUsers);
+	const postsQuery = useQuery("posts", GetAllPosts);
+
 	const currentUser = useSelector(selectCurrentUser);
 
 	const [user, setUser] = useState(null);
@@ -71,19 +75,24 @@ const Post = ({ post: current, profile }) => {
 	useEffect(() => {
 		if (params?.id === currentUser.uid && profile) {
 			handlePost({ post: current, user: currentUser });
-		} else if (params?.id !== currentUser.uid || !profile) {
+		} else if (
+			params?.id !== currentUser.uid ||
+			(!profile && postsQuery.data)
+		) {
 			handleGetPost();
 		}
-	}, [current, params?.id]);
+	}, [current, params?.id, postsQuery.data]);
 
-	const handleGetPost = async () => {
+	const handleGetPost = () => {
 		try {
 			const id = params?.id || current.uid;
-			const post = await GetPost({ id });
-			const user = await GetUserMetadata({ id: post?.uid || id });
-			if (user.uid) {
-				handlePost({ post: post || current, user });
-			}
+			const post = postsQuery.data?.filter((pq) => pq.id === id)[0];
+			// const user = await GetUserMetadata({ id: post?.uid || id });
+			const user = users.filter((u) => u.uid === (current?.uid || post.uid))[0];
+			handlePost({ post: post || current, user });
+			// if (user.uid) {
+			// 	handlePost({ post: post || current, user });
+			// }
 		} catch (error) {}
 	};
 
@@ -96,7 +105,7 @@ const Post = ({ post: current, profile }) => {
 	};
 
 	useEffect(() => {
-		setFriends(users.users);
+		setFriends(users);
 	}, [users]);
 
 	useEffect(() => {
@@ -181,7 +190,8 @@ const Post = ({ post: current, profile }) => {
 			/>
 			<CardHeader
 				avatar={
-					<Link to={`/profile/${post?.uid}`}>
+					<>
+						{/* <Link to={`/profile/${post?.uid}`}> */}
 						{user?.photoURL ? (
 							<Avatar src={user?.photoURL} aria-label="recipe">
 								{user?.displayName.split("")[0]}
@@ -189,21 +199,26 @@ const Post = ({ post: current, profile }) => {
 						) : (
 							<Skeleton variant="circular" width={40} height={40} />
 						)}
-					</Link>
+						{/* </Link> */}
+					</>
 				}
 				action={
-					<IconButton aria-label="settings" onClick={() => setOpen(true)}>
-						<MoreVert />
-					</IconButton>
+					!params?.id && (
+						<IconButton aria-label="settings" onClick={() => setOpen(true)}>
+							<MoreVert />
+						</IconButton>
+					)
 				}
 				title={
-					<Link to={`/profile/${post?.uid}`}>
+					<>
+						{/* <Link to={`/profile/${post?.uid}`}> */}
 						{user?.displayName ? (
 							<span className="text-sm">{user?.displayName}</span>
 						) : (
 							<Skeleton variant="text" />
 						)}
-					</Link>
+						{/* </Link> */}
+					</>
 				}
 				subheader={
 					<span className="text-xs">
@@ -233,33 +248,6 @@ const Post = ({ post: current, profile }) => {
 			)}
 			<CardContent>
 				<p>{msg}</p>
-				{/* <TextArea
-          value={msg}
-          size='.85rem'
-          styles={{ lineHeight: '1.35rem' }}
-        /> */}
-				{/* <TextField
-          disabled
-          multiline
-          value={msg}
-          fullWidth
-          className='first:px-0'
-          sx={{
-            border: 'none',
-            '& > .MuiOutlinedInput-root': {
-              p: 0,
-              border: 'none',
-              '& textarea': {
-                border: 'none',
-                '-webkit-text-fill-color': '#fff',
-                fontSize: '0.875rem',
-              },
-              '& fieldset': {
-                border: 'none',
-              },
-            },
-          }}
-        /> */}
 
 				<div>
 					{hashtags?.map((hash) => {
@@ -440,7 +428,7 @@ const Post = ({ post: current, profile }) => {
 				}
 				post={post}
 			/>
-			<PostDrawer open={open} setOpen={setOpen} post={post} />
+			{!params?.id && <PostDrawer open={open} setOpen={setOpen} post={post} />}
 			<PostComments open={openComments} setOpen={setOpenComments} post={post} />
 		</Card>
 	);

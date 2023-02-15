@@ -6,35 +6,40 @@ import {
 	Favorite,
 	OpenInNewTwoTone,
 } from "@mui/icons-material";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { FirebaseApp } from "../../../Firebase";
 import { GetAllLineups, HeartLineup } from "../../../Firebase/songsApi";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
+import { useEffect } from "react";
 
 const Actions = ({ lineup }) => {
 	const history = useHistory();
 	const auth = getAuth(FirebaseApp);
 	const user = auth.currentUser;
+	const params = useParams();
 
 	const lineupQuery = useQuery("lineups", GetAllLineups);
+	const mutatedLineup = useMutation(HeartLineup);
 
 	const handleHeart = async () => {
 		const idx = lineup?.heart?.findIndex((h) => h === user.uid);
 		if (idx === -1 || idx === undefined) {
 			try {
-				const res = await HeartLineup({
+				mutatedLineup.mutate({
 					lineupId: lineup.id,
 					userIds: [...lineup?.heart, user.uid],
 				});
-
-				if (res.updated) {
-					lineupQuery.refetch();
-				}
 			} catch (error) {
 				console.error(error);
 			}
 		}
 	};
+
+	useEffect(() => {
+		if (mutatedLineup.isSuccess && !mutatedLineup.isLoading) {
+			lineupQuery.refetch();
+		}
+	}, [mutatedLineup.isSuccess, mutatedLineup.isLoading]);
 
 	return (
 		<CardActions disableSpacing>
@@ -62,13 +67,15 @@ const Actions = ({ lineup }) => {
 				</IconButton>
 			</a>
 
-			<IconButton
-				aria-label="view"
-				onClick={() => history.push(`/lineup/${lineup.id}`)}
-				name="View Lineup"
-				sx={{ marginLeft: "auto" }}>
-				<OpenInNewTwoTone fontSize="small" />
-			</IconButton>
+			{!params?.id && (
+				<IconButton
+					aria-label="view"
+					onClick={() => history.push(`/lineup/${lineup.id}`)}
+					name="View Lineup"
+					sx={{ marginLeft: "auto" }}>
+					<OpenInNewTwoTone fontSize="small" />
+				</IconButton>
+			)}
 		</CardActions>
 	);
 };
