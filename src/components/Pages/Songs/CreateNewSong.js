@@ -14,7 +14,6 @@ import {
 	SwipeableDrawer,
 	Chip,
 	TextField,
-	Button,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { AddNewSong, UploadAlbumCover } from "../../../Firebase/songsApi";
@@ -226,7 +225,7 @@ const CreateNewSong = ({ open, setOpen }) => {
 				open={open}
 				onClose={() => setOpen(false)}
 				className="[&>.MuiDrawer-paper]:items-center">
-				<div className="max-w-[680px] m-x-auto w-full">
+				<div className="max-w-[680px] m-x-auto w-full max-h-[100vh] overflow-y-auto">
 					<Snackbar
 						anchorOrigin={{ horizontal: "center", vertical: "top" }}
 						open={updated}
@@ -237,7 +236,7 @@ const CreateNewSong = ({ open, setOpen }) => {
 						</Alert>
 					</Snackbar>
 
-					<div className="flex flex-row gap-2 bg-black/40 items-center">
+					<div className="flex flex-row gap-2 items-end">
 						<div className="w-[70px] relative">
 							<label
 								htmlFor="upload-cover"
@@ -256,7 +255,7 @@ const CreateNewSong = ({ open, setOpen }) => {
 								className="w-full"
 							/>
 						</div>
-						<div className="p-2 box-border flex-1">
+						<div className="p-2 pb-0 box-border flex-1">
 							<FormControl size="small" variant="standard" fullWidth>
 								<InputLabel>Song Title</InputLabel>
 								<Input
@@ -264,15 +263,15 @@ const CreateNewSong = ({ open, setOpen }) => {
 									onChange={(e) =>
 										setSongDetails({ ...songDetails, title: e.target.value })
 									}
-									className={`INPUT [&>textarea]:text-xs [&::before]:!border-b-0 [&::after]:border-0 ${
-										editDetails.title ? "[&::before]:border-0" : ""
-									}`}
+									// className={`INPUT [&>textarea]:text-xs [&::before]:!border-b-0 [&::after]:border-0 ${
+									// 	editDetails.title ? "[&::before]:border-0" : ""
+									// }`}
 								/>
 							</FormControl>
 						</div>
 					</div>
 
-					<div className="p-4 grid grid-cols-2 gap-4 space-y-0">
+					<div className="p-4 flex flex-col gap-4 space-y-0">
 						<div className="col-span-1">
 							<FormControl size="small" variant="standard" fullWidth>
 								<InputLabel>Artist</InputLabel>
@@ -280,9 +279,9 @@ const CreateNewSong = ({ open, setOpen }) => {
 									onChange={(e) =>
 										setSongDetails({ ...songDetails, artist: e.target.value })
 									}
-									className={`INPUT [&>textarea]:text-xs [&>label]:text-xs [&::before]:!border-b-0 [&::after]:border-0 ${
-										editDetails.artist ? "[&::before]:border-0" : ""
-									}`}
+									// className={`INPUT [&>textarea]:text-xs [&>label]:text-xs [&::before]:!border-b-0 [&::after]:border-0 ${
+									// 	editDetails.artist ? "[&::before]:border-0" : ""
+									// }`}
 								/>
 							</FormControl>
 						</div>
@@ -293,21 +292,22 @@ const CreateNewSong = ({ open, setOpen }) => {
 									onChange={(e) =>
 										setSongDetails({ ...songDetails, album: e.target.value })
 									}
-									className={`INPUT [&>textarea]:text-xs [&::before]:!border-b-0 [&::after]:border-0 ${
-										editDetails.album ? "[&::before]:border-0" : ""
-									}`}
+									// className={`INPUT [&>textarea]:text-xs [&::before]:!border-b-0 [&::after]:border-0 ${
+									// 	editDetails.album ? "[&::before]:border-0" : ""
+									// }`}
 								/>
 							</FormControl>
 						</div>
 					</div>
-					<div className="px-4 mb-1 text-xs text-white/60">Tags</div>
+					<div className="px-4 mb-1 text-xs">Tags</div>
+
 					<div className="px-4 py-2 flex flex-row gap-2 flex-wrap">
 						{songDetails?.tags?.map((tag) => {
 							return (
 								<Chip
 									key={tag}
 									label={tag}
-									size="small"
+									size="medium"
 									onDelete={() => handleDeleteTag(tag)}
 								/>
 							);
@@ -316,7 +316,7 @@ const CreateNewSong = ({ open, setOpen }) => {
 							<Chip
 								variant="outlined"
 								label="+ Add Tag"
-								size="small"
+								size="medium"
 								onClick={() =>
 									setEditDetails({
 										...editDetails,
@@ -326,6 +326,7 @@ const CreateNewSong = ({ open, setOpen }) => {
 							/>
 						)}
 					</div>
+
 					<div className="px-4 py-2 flex flex-row">
 						{editDetails.tag && (
 							<>
@@ -334,7 +335,7 @@ const CreateNewSong = ({ open, setOpen }) => {
 									variant="standard"
 									size="small"
 									label="New Tag"
-									className="TAG [&>label]:text-sm [&>div>input]:text-sm"
+									// className="TAG [&>label]:text-sm [&>div>input]:text-sm"
 									onChange={(e) => setNewTag(e.target.value)}
 									error={tagExist}
 									helperText={tagExist ? "Tag already exists." : ""}
@@ -384,7 +385,7 @@ const CreateNewSong = ({ open, setOpen }) => {
 
 					<div className="flex flex-row items-center justify-center p-2">
 						<button
-							className="flex-1 bg-green-500 text-white disabled:bg-black/30 disabled:text-white/25 py-1 rounded-sm"
+							className="flex-1 bg-green-500 text-white disabled:bg-black/10 disabled:text-white/25 py-1 rounded-sm"
 							disabled={!songDetails?.title}
 							onClick={handleSave}>
 							Save Song

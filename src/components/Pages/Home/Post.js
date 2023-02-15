@@ -298,11 +298,11 @@ const Post = ({ post: current, profile }) => {
 									//   background: '#333',
 								},
 							}}>
-							{post?.reactions?.map((r) => {
+							{post?.reactions?.map((r, idx) => {
 								const user = friends?.filter((f) => f.uid === r?.uid)[0];
 								return (
 									<Avatar
-										key={user.uid}
+										key={`${user?.uid}~${idx}`}
 										alt={user?.displayName}
 										src={user?.photoURL}
 										className={`text-[8px] !bg${

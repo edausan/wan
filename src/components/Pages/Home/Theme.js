@@ -1,19 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Suspense, useEffect, useState } from "react";
-import {
-	Button,
-	Card,
-	CardActions,
-	CardContent,
-	Chip,
-	Divider,
-	Skeleton,
-} from "@mui/material";
-import { CommentTwoTone, FavoriteBorder } from "@mui/icons-material";
+import { Card, CardContent, Chip, Skeleton } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectThemes } from "../../../redux/slices/postsSlice";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { useMediaQuery } from "@mui/material";
 
 const initialState = {
 	photoURL: null,
@@ -26,6 +18,7 @@ const initialState = {
 };
 
 const Theme = ({ theme, isRow }) => {
+	const desktop = useMediaQuery("(min-width:640px)");
 	const themes = useSelector(selectThemes);
 	const params = useParams();
 	const [open, setOpen] = useState(false);
@@ -48,7 +41,9 @@ const Theme = ({ theme, isRow }) => {
 	return (
 		<Card
 			fullWidth
-			className={`w-[100%] desktop:min-w-[650px] shadow-md laptop:min-w-[650px] phone:min-w-auto box-border flex flex-col ${
+			className={`w-[100%] ${
+				params?.id ? "" : "phone:max-h-[400px]"
+			} desktop:min-w-[650px] shadow-md laptop:min-w-[650px] phone:min-w-auto box-border flex flex-col ${
 				isRow
 					? "phone:min-w-[220px] desktop:min-w-[400px] laptop:min-w-[400px]"
 					: ""
@@ -76,17 +71,39 @@ const Theme = ({ theme, isRow }) => {
 					)}
 				</Link>
 				<p className="text-sm">
-					<i>{verse ? verse : <Skeleton variant="text" width="100%" />}</i>
-					{!open && (
+					<i>
+						{verse ? (
+							<div
+								className={`font-semibold ${
+									params?.id ? "" : "phone:truncate flex-wrap"
+								}`}>
+								{verse}
+							</div>
+						) : (
+							<Skeleton variant="text" width="100%" />
+						)}
+					</i>
+
+					{!desktop && !params?.id && (
+						<Link to={`/theme/${id || params?.id}`}>
+							<button className="text-sm text-sky-400 ml-2 phone:ml-0">
+								Read more
+							</button>
+						</Link>
+					)}
+
+					{!open && desktop && (
 						<button
 							onClick={() => setOpen(true)}
-							className="text-sm text-sky-400 ml-2">
+							className="text-sm text-sky-400 ml-2 phone:ml-0">
 							Read more
 						</button>
 					)}
 				</p>
 
-				{open && (
+				{params?.id && <p className="my-2 text-sm">{body}</p>}
+
+				{open && desktop && (
 					<p className="my-2 text-sm">
 						{body}{" "}
 						{open && (
@@ -101,7 +118,7 @@ const Theme = ({ theme, isRow }) => {
 			</CardContent>
 
 			<CardContent className="pb-0">
-				<p className="text-xs mt-4">
+				<p className={`text-xs mt-4 ${params?.id ? "" : "phone:truncate"}`}>
 					Source:{" "}
 					<a
 						style={{ pointerEvents: "none" }}

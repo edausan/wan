@@ -9,37 +9,54 @@ import { getAuth } from "firebase/auth";
 import { FirebaseApp } from "../../Firebase";
 import { ADMIN, ASSIGNER } from "../../data";
 import { useSelector } from "react-redux";
-import { selectAssignments } from "./../../redux/slices/assignmentsSlice";
 import { selectUsers } from "./../../redux/slices/usersSlice";
-import LoadingScreen from "../CustomComponents/LoadingScreen";
 import AssignmentLoading from "./Assignment/AssignmentLoading";
-import { GetRealtimeAssignments } from "../../Firebase/assignmentApi";
+import {
+	GetAllAssignments,
+	GetRealtimeAssignments,
+} from "../../Firebase/assignmentApi";
+import { useQuery } from "react-query";
+import Loading from "../CustomComponents/Loading";
+import Fetching from "../CustomComponents/Fetching";
+import { GetAllUsers } from "../../Firebase/authApi";
 
 const SetAssignment = lazy(() => import("./Assignment/SetAssignment"));
 
 const Assignments = () => {
 	const { scrollToTop } = useContext(AppCtx);
-	// const { data } = GetRealtimeAssignments();
 	const auth = getAuth(FirebaseApp);
 	const user = auth.currentUser;
-	const { data: assign } = GetRealtimeAssignments();
-	// const assign = useSelector(selectAssignments);
-	const { users } = useSelector(selectUsers);
+	// const { data: assign } = GetRealtimeAssignments();
+
+	// const { users } = useSelector(selectUsers);
+
+	const usersQuery = useQuery("users", GetAllUsers);
 
 	const [assignments, setAssignments] = useState([]);
 
+	const { data, isLoading, isFetching } = useQuery(
+		"assignments",
+		GetAllAssignments,
+		{
+			staleTime: 10000,
+			cacheTime: 60 * 60 * 100,
+		}
+	);
+
 	useEffect(() => {
 		scrollToTop();
-		if (assign.length > 0) {
-			const altered = assign.map((a) => {
+		if (data && data?.length > 0) {
+			const altered = data?.map((a) => {
 				return {
 					...a,
-					created_by: users.filter((u) => u.uid === a.created_by.uid)[0],
+					created_by: usersQuery.data?.filter(
+						(u) => u.uid === a.created_by.uid
+					)[0],
 				};
 			});
 			setAssignments(altered);
 		}
-	}, [assign]);
+	}, [data]);
 
 	return (
 		<>
@@ -49,6 +66,8 @@ const Assignments = () => {
 				justifyContent="center"
 				alignItems="center"
 				className="pb-[50px] p-3 max-w-[680px] mx-auto">
+				<Fetching close={!isFetching} label="Assignments" />
+
 				{assignments
 					.slice()
 					.sort((a, b) => new Date(b.date_created) - new Date(a.date_created))

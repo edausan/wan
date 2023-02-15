@@ -2,33 +2,37 @@
 import React, { useEffect, useState, Suspense, Fragment } from "react";
 import { useParams } from "react-router-dom";
 import PostLoading from "./PostLoading";
-import { RealtimePosts } from "../../../Firebase/postsApi";
+import { GetAllPosts } from "../../../Firebase/postsApi";
+import { useQuery } from "react-query";
 
 const Post = React.lazy(() => import("./Post"));
 
 const PostsMain = ({ profile }) => {
-	const { posts: Posts } = RealtimePosts();
 	const params = useParams();
 	const [allPosts, setAllPosts] = useState([]);
 
+	const { data, isFetching } = useQuery("posts", GetAllPosts, {
+		cacheTime: 60 * 60 * 1000,
+	});
+
 	useEffect(() => {
-		if (profile && params?.id && Posts.length > 0) {
-			const p = Posts.filter((p) => p.uid === params?.id);
+		if (profile && params?.id && data?.length > 0 && !isFetching) {
+			const p = data?.filter((p) => p.uid === params?.id);
 			setAllPosts(p);
-		} else {
-			setAllPosts(Posts);
+		} else if (data?.length > 0 && !isFetching) {
+			setAllPosts(data);
 		}
-	}, [params.id, Posts]);
+	}, [params.id, data, isFetching]);
 
 	return (
 		<>
 			<section className={`flex flex-col gap-3 mt-4 w-full`}>
 				{allPosts
-					.slice()
+					?.slice()
 					.sort((a, b) => new Date(b.date_created) - new Date(a.date_created))
-					.map((post) => {
+					.map((post, idx) => {
 						return (
-							<Fragment key={post?.id}>
+							<Fragment key={`${post?.id}~${idx}`}>
 								<Suspense key={post?.id} fallback={<PostLoading />}>
 									<Post key={post?.id} post={post} profile={profile} />
 								</Suspense>

@@ -6,10 +6,15 @@ import React, {
 	useCallback,
 	Suspense,
 } from "react";
-import { useSelector } from "react-redux";
-import { RealtimeSongs } from "../../../Firebase/songsApi";
-import { selectSongs } from "../../../redux/slices/songsSlice";
+import {
+	GetAlbumCovers,
+	GetAllSongs,
+	RealtimeSongs,
+} from "../../../Firebase/songsApi";
 import SongList from "./SongList";
+import { useQuery } from "react-query";
+import Loading from "../../CustomComponents/Loading";
+import Fetching from "../../CustomComponents/Fetching";
 
 // const SongList = React.lazy(() => import('./SongList'));
 const SongSearch = React.lazy(() => import("./SongSearch"));
@@ -28,17 +33,30 @@ const SongsMain = () => {
 	const memoizedArtists = useMemo(() => artists, [artists]);
 	const memoizedOpen = useMemo(() => open, [open]);
 
+	const { data, isLoading, isFetching } = useQuery("songs", GetAllSongs, {
+		cacheTime: 60 * 60 * 1000,
+	});
+
+	const albumCoverQuery = useQuery("album-covers", GetAlbumCovers, {
+		cacheTime: 60 * 60 * 1000,
+	});
+
 	useEffect(() => {
-		songs.length > 0 && setSongList(songs);
-		handleTags();
-		handleAlbums();
-		handleArtists();
-	}, [songs]);
+		data && data?.length > 0 && setSongList(data);
+	}, [data, isLoading, isFetching]);
+
+	useEffect(() => {
+		if (songList && songList?.length > 0) {
+			handleTags();
+			handleAlbums();
+			handleArtists();
+		}
+	}, [songList]);
 
 	useEffect(() => {
 		setOpen(false);
 		if (searchText) {
-			const search_result = songs.filter((song) => {
+			const search_result = songList.filter((song) => {
 				const text = searchText?.toLowerCase();
 				const title = song?.title?.toLowerCase();
 				const artist = song?.artist?.toLowerCase();
@@ -67,7 +85,7 @@ const SongsMain = () => {
 
 	const handleAlbums = () => {
 		const albums_arr = [];
-		songs.forEach((song) => {
+		songList?.forEach((song) => {
 			const idx = albums_arr.findIndex(
 				(a) => a?.trim() === song?.album?.trim()
 			);
@@ -80,7 +98,7 @@ const SongsMain = () => {
 
 	const handleArtists = () => {
 		const artists_arr = [];
-		songs.forEach((song) => {
+		songList?.forEach((song) => {
 			const idx = artists_arr.findIndex(
 				(a) => a?.trim() === song?.artist?.trim()
 			);
@@ -94,7 +112,7 @@ const SongsMain = () => {
 	const handleTags = () => {
 		const tags = [];
 
-		songs.forEach((song) => {
+		songList?.forEach((song) => {
 			song?.tags?.forEach((tag) => {
 				const idx = tags.findIndex((t) => t === tag);
 				if (idx === -1) {
@@ -117,6 +135,7 @@ const SongsMain = () => {
 
 	return (
 		<div className="laptop:mx-[-.75rem] desktop:mx-[-.75rem]">
+			<Fetching close={!isFetching} label="Songs Library" />
 			<Suspense>
 				<SongSearch
 					open={memoizedOpen}

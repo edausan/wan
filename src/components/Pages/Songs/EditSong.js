@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
 	AddAPhotoOutlined,
-	ClearOutlined,
 	CloseOutlined,
 	EditOutlined,
-	SaveOutlined,
 } from "@mui/icons-material";
 import {
 	Alert,
@@ -17,11 +15,12 @@ import {
 	InputLabel,
 	Snackbar,
 	SwipeableDrawer,
-	TextField,
 } from "@mui/material";
 import React, { useMemo, useState } from "react";
 import { useEffect } from "react";
 import {
+	GetAllLineups,
+	GetAllSongs,
 	UpdateSongDetails,
 	UploadAlbumCover,
 } from "../../../Firebase/songsApi";
@@ -32,6 +31,7 @@ import AlbumCover from "./AlbumCover";
 import LoadingScreen from "../../CustomComponents/LoadingScreen";
 import { useCallback } from "react";
 import NewSongTag from "./NewTag";
+import { useQuery } from "react-query";
 
 const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
 	const { resized, processfile } = useResize({ quality: 0.9 });
@@ -180,16 +180,23 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
 		}
 	}, [new_tag]);
 
+	const lineupQuery = useQuery("lineups", GetAllLineups);
+	const songsQuery = useQuery("songs", GetAllSongs);
+
 	const handleSave = async () => {
 		setUpdating(true);
 		try {
-			await UpdateSongDetails({ song: songDetails });
+			const res = await UpdateSongDetails({ song: songDetails });
 			setUpdating(false);
 			setUpdated(true);
-			setTimeout(() => {
+			if (res.updated) {
 				setOpen(false);
 				setUpdated(false);
-			}, 1000);
+				const { isFetched } = await songsQuery.refetch();
+				if (isFetched) {
+					lineupQuery.refetch();
+				}
+			}
 		} catch (error) {
 			setUpdating(false);
 			console.log(error.message);

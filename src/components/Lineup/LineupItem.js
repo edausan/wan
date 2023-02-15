@@ -1,29 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState, lazy } from "react";
 import {
 	CheckCircleTwoTone,
 	Event,
 	ExpandMore,
-	Favorite,
-	FavoriteBorder,
 	LyricsTwoTone,
-	MoreVert,
 	MusicNote,
-	OpenInNewTwoTone,
-	PushPin,
-	PushPinOutlined,
-	ShareOutlined,
 	YouTube,
 } from "@mui/icons-material";
+
 import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
 	Avatar,
 	Card,
-	CardActions,
 	CardContent,
-	CardHeader,
 	Divider,
 	IconButton,
 	List,
@@ -33,7 +25,6 @@ import {
 	useTheme,
 	useMediaQuery,
 } from "@mui/material";
-import { ADMIN } from "../../data";
 import moment from "moment";
 import { pink, blue } from "../Pages/Auth/Login";
 import { useHistory, Link } from "react-router-dom";
@@ -41,19 +32,20 @@ import { getAuth } from "firebase/auth";
 import { FirebaseApp } from "./../../Firebase";
 import {
 	DeleteLineup,
+	GetAllLineups,
+	GetAllSongs,
 	GetSong,
-	HeartLineup,
-	UpdateLineupPinned,
 } from "../../Firebase/songsApi";
 import { useEffect } from "react";
 import SPOTIFY_LOGO from "../../assets/spotify_logo.png";
-// import LineupItemDrawer from './LineupItemDrawer';
-// import SongDetailsDrawer from './SongDetailsDrawer';
-// import EditSong from '../Pages/Songs/EditSong';
+import { useMutation, useQuery } from "react-query";
+import LoadingScreen from "../CustomComponents/LoadingScreen";
 
-const EditSong = React.lazy(() => import("../Pages/Songs/EditSong"));
-const SongDetailsDrawer = React.lazy(() => import("./SongDetailsDrawer"));
-const LineupItemDrawer = React.lazy(() => import("./LineupItemDrawer"));
+const EditSong = lazy(() => import("../Pages/Songs/EditSong"));
+const SongDetailsDrawer = lazy(() => import("./SongDetailsDrawer"));
+const LineupItemDrawer = lazy(() => import("./LineupItemDrawer"));
+const Actions = lazy(() => import("./LineupItem/Actions"));
+const Header = lazy(() => import("./LineupItem/Header"));
 
 const LineupItem = ({
 	lineup,
@@ -61,6 +53,8 @@ const LineupItem = ({
 	isLast,
 	isSongsExpanded,
 	showPinned,
+	pinnedLineup,
+	idx,
 }) => {
 	const auth = getAuth(FirebaseApp);
 	const user = auth.currentUser;
@@ -78,21 +72,24 @@ const LineupItem = ({
 		song: null,
 		status: false,
 	});
-
 	const [pinned, setPinned] = useState(false);
+	const [morePins, setMorePins] = useState(pinnedLineup?.length > 1);
 
 	useEffect(() => {
 		lineup?.songs.length > 0 && lineup?.songs[0].title && GetSongsData();
 	}, [lineup.songs]);
 
-	const GetSongsData = async () => {
-		const lineup_songs = [];
-		lineup.songs.map(async (song) => {
-			const songs_data = await GetSong({ song });
-			lineup_songs.push({ ...songs_data, label: song.label });
+	const songsQuery = useQuery("songs", GetAllSongs);
+	const mutatedLineup = useMutation(DeleteLineup);
+	const lineupsQuery = useQuery("lineups", GetAllLineups);
+
+	const GetSongsData = () => {
+		const songs_data = lineup.songs.map((song) => {
+			const songs_data = songsQuery.data?.filter((s) => s.id === song.id)[0];
+			return { ...songs_data, label: song.label };
 		});
 
-		setLineupSongs(lineup_songs);
+		setLineupSongs(songs_data);
 	};
 
 	useEffect(() => {
@@ -113,18 +110,14 @@ const LineupItem = ({
 	};
 
 	const handleDelete = async () => {
-		DeleteLineup({ id: lineup.id });
+		mutatedLineup.mutate({ id: lineup.id });
 	};
 
-	const handleHeart = () => {
-		const idx = lineup?.heart?.findIndex((h) => h === user.uid);
-		if (idx === -1 || idx === undefined) {
-			HeartLineup({
-				lineupId: lineup.id,
-				userIds: [...lineup?.heart, user.uid],
-			});
+	useEffect(() => {
+		if (mutatedLineup.isSuccess && !mutatedLineup.isLoading) {
+			lineupsQuery.refetch();
 		}
-	};
+	}, [mutatedLineup.isSuccess, mutatedLineup.isLoading]);
 
 	const handleCopy = () => {
 		const verse = document.querySelector("#verse");
@@ -148,31 +141,21 @@ const LineupItem = ({
 
 	const lineup_songs = lineup.songs[0].title ? lineupSongs : lineup.songs;
 
-	const handlePinned = async () => {
-		try {
-			const res = await UpdateLineupPinned({
-				lineup: {
-					...lineup,
-					pinned: !pinned,
-				},
-			});
-
-			setPinned((prev) => !prev);
-		} catch (error) {}
-	};
-
 	return (
 		<>
-			<Suspense fallback={<div></div>}>
-				<SongDetailsDrawer
-					drawerData={drawerData}
-					expanded={expanded}
-					handleClose={handleClose}
-					handleCopy={handleCopy}
-					handleExpandClick={handleExpandClick}
-					open={open}
-				/>
-			</Suspense>
+			<LoadingScreen status={mutatedLineup.isLoading} text="Deleting" />
+			{drawerData.song && (
+				<Suspense fallback={<div></div>}>
+					<SongDetailsDrawer
+						drawerData={drawerData}
+						expanded={expanded}
+						handleClose={handleClose}
+						handleCopy={handleCopy}
+						handleExpandClick={handleExpandClick}
+						open={open}
+					/>
+				</Suspense>
+			)}
 
 			<Suspense fallback={<div></div>}>
 				<EditSong drawer={openSongDrawer} setOpen={setOpenSongDrawer} />
@@ -201,84 +184,30 @@ const LineupItem = ({
 					mt: isSongsExpanded ? 2 : 0,
 				}}
 				elevation={0}
-				className={`shadow-md transition-all duration-300 ease-in-out ${
+				className={`shadow-md flex flex-col transition-all duration-300 ease-in-out ${
 					showPinned
 						? "translate-y-[-60px] !mx-[-0.75rem] w-[100vw]"
 						: "translate-y-0"
-				} ${pinned ? "sticky top-0 z-10" : ""}`}
+				} ${pinned ? "sticky top-0 z-10" : ""} ${
+					morePins && idx !== pinnedLineup?.length - 1 ? "mr-4" : ""
+				}`}
 				// variant={isBordered ? 'outlined' : 'elevation'}
 			>
 				{/* {!showPinned && ( */}
-				<CardHeader
-					sx={{ pb: 0 }}
-					className={`transition-all duration-300 ease-in-out ${
-						showPinned
-							? "opacity-0 translate-y-[-100%]"
-							: "opacity-1 translate-y-0"
-					} `}
-					avatar={
-						<Link
-							to={`/profile/${lineup?.worship_leader?.uid}`}
-							style={{ textDecoration: "none", color: "inherit" }}>
-							<Avatar
-								sx={{
-									background: `linear-gradient(45deg, ${pink}, ${blue})`,
-									color: "#fff",
-									opacity: 0,
-								}}
-								aria-label="recipe"
-								src={lineup?.worship_leader?.photoURL}>
-								{lineup?.worship_leader.displayName.split("")[0]}
-							</Avatar>
-						</Link>
-					}
-					action={
-						<>
-							{moment(lineup?.date).diff(new Date()) > 0 && (
-								<IconButton aria-label="pinned" onClick={() => handlePinned()}>
-									{pinned ? (
-										<PushPin fontSize="small" color="primary" />
-									) : (
-										<PushPinOutlined fontSize="small" />
-									)}
-								</IconButton>
-							)}
+				<Suspense>
+					<Header
+						lineup={lineup}
+						setOpenDrawer={setOpenDrawer}
+						showPinned={showPinned}
+					/>
+				</Suspense>
 
-							{(user.uid === lineup.worship_leader?.uid ||
-								user.uid === ADMIN) && (
-								<IconButton
-									aria-label="settings"
-									onClick={() => setOpenDrawer(true)}>
-									<MoreVert />
-								</IconButton>
-							)}
-						</>
-					}
-					title={
-						<Link
-							to={`/profile/${lineup.worship_leader?.uid}`}
-							style={{ textDecoration: "none", color: "inherit" }}>
-							{lineup.worship_leader?.displayName}
-						</Link>
-					}
-					subheader={
-						<small>
-							{moment(lineup.date_created).startOf("minute").fromNow()}{" "}
-							{lineup.date_updated && (
-								<span style={{ color: "#777" }}>
-									• Edited:{" "}
-									{moment(lineup.date_updated).startOf("minute").fromNow()}
-								</span>
-							)}
-						</small>
-					}
-				/>
 				{/* )} */}
 
 				<CardContent
 					sx={{ py: 0 }}
 					id="card-content"
-					className={showPinned ? "!pb-1" : ""}>
+					className={`flex-1 ${showPinned ? "!pb-1" : ""}`}>
 					<List sx={{ py: 0, mt: 1 }}>
 						<Accordion
 							expanded={isExpanded}
@@ -303,10 +232,12 @@ const LineupItem = ({
 												background: `linear-gradient(45deg, ${pink}, ${blue})`,
 												color: "#fff",
 												my: "auto",
+												width: lineup?.pinned ? 30 : 40,
+												height: lineup?.pinned ? 30 : 40,
 											}}
-											aria-label="recipe"
+											aria-label="profile"
 											src={lineup?.worship_leader?.photoURL}>
-											{lineup?.worship_leader.displayName.split("")[0]}
+											{lineup?.worship_leader?.displayName.split("")[0]}
 										</Avatar>
 									</Link>
 								</div>
@@ -353,9 +284,9 @@ const LineupItem = ({
 							<AccordionDetails sx={{ px: 0 }}>
 								{lineup_songs
 									.filter((s) => s.song || s.title)
-									.map((s) => {
+									.map((s, idx) => {
 										return (
-											<ListItem key={s.id}>
+											<ListItem key={`${s.id}~${idx}`}>
 												<ListItemText
 													onClick={() =>
 														setOpenSongDrawer({ song: s, status: true })
@@ -413,59 +344,9 @@ const LineupItem = ({
 				</CardContent>
 
 				{!showPinned && (
-					<CardActions disableSpacing>
-						<IconButton aria-label="add to favorites" onClick={handleHeart}>
-							{lineup?.heart?.findIndex((h) => h === user.uid) >= 0 ? (
-								<Favorite color="error" />
-							) : (
-								<FavoriteBorder onClick={handleHeart} />
-							)}{" "}
-						</IconButton>
-						<small style={{ marginLeft: 6, fontSize: 14 }}>
-							{lineup?.heart?.length}
-						</small>
-						<a
-							href={`https://m.me/j/Aba8ddZutv5MvPbi/`}
-							style={{ textDecoration: "none", color: "inherit" }}
-							onClick={() => {
-								navigator.clipboard.writeText(
-									`https://wan-belleview.web.app/lineup/${lineup.id}`
-								);
-							}}
-							className="ml-2">
-							<IconButton aria-label="share">
-								<ShareOutlined fontSize="small" />
-							</IconButton>
-						</a>
-						{/* <a
-						href={`https://m.me/j/Aba8ddZutv5MvPbi/`}
-						style={{textDecoration: "none", color: "inherit"}}
-						onClick={() => {
-							navigator.clipboard.writeText(`https://wan-belleview.web.app/lineup/${lineup.id}`)
-						}}
-					>
-						<IconButton aria-label="share">
-							<Share />
-						</IconButton>
-					</a>
-					{!isSongsExpanded && (
-						<IconButton
-							aria-label="view"
-							onClick={() => history.push(`/lineup/${lineup.id}`)}
-							name="View Lineup"
-							sx={{marginLeft: "auto"}}
-						>
-							<OpenInNewTwoTone />
-						</IconButton>
-					)} */}
-						<IconButton
-							aria-label="view"
-							onClick={() => history.push(`/lineup/${lineup.id}`)}
-							name="View Lineup"
-							sx={{ marginLeft: "auto" }}>
-							<OpenInNewTwoTone fontSize="small" />
-						</IconButton>
-					</CardActions>
+					<Suspense>
+						<Actions lineup={lineup} />
+					</Suspense>
 				)}
 			</Card>
 		</>
