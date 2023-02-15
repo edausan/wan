@@ -112,7 +112,7 @@ export const GetAllPosts = async () => {
 	const querySnapshot = await getDocs(postsRef);
 	const posts = [];
 	querySnapshot.forEach((doc) => {
-		posts.push(doc.data());
+		posts.push({ ...doc.data(), id: doc.id });
 	});
 
 	return posts;
@@ -122,7 +122,7 @@ export const GetAllThemes = async () => {
 	const querySnapshot = await getDocs(themesRef);
 	const themes = [];
 	querySnapshot.forEach((doc) => {
-		themes.push(doc.data());
+		themes.push({ ...doc.data(), id: doc.id });
 	});
 
 	return themes;

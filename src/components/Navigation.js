@@ -140,7 +140,13 @@ const Navigation = () => {
 						)}
 					</Link>
 				</Grid>
-				<Grid item flex={1}>
+			</Grid>
+		</Paper>
+	);
+};
+
+{
+	/* <Grid item flex={1}>
 					<Link
 						to={`/profile/${user.uid}`}
 						style={{
@@ -154,17 +160,12 @@ const Navigation = () => {
 									? theme.palette.primary[theme.palette.mode]
 									: "inherit",
 						}}>
-						{/* <AccountCircleTwoTone /> */}
 						<Avatar
 							src={user.photoURL}
 							alt={user.displayName}
 							sx={{ width: 26, height: 26 }}
 						/>
 					</Link>
-				</Grid>
-			</Grid>
-		</Paper>
-	);
-};
-
+				</Grid> */
+}
 export default Navigation;

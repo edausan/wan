@@ -10,7 +10,7 @@ const Fetching = ({ close, label, className = "" }) => {
 		if (close) {
 			timeout = setTimeout(() => {
 				setHide(true);
-			}, 500);
+			}, 100);
 		} else {
 			setHide(false);
 		}

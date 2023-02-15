@@ -34,7 +34,6 @@ import {
 	DeleteLineup,
 	GetAllLineups,
 	GetAllSongs,
-	GetSong,
 } from "../../Firebase/songsApi";
 import { useEffect } from "react";
 import SPOTIFY_LOGO from "../../assets/spotify_logo.png";
@@ -224,22 +223,22 @@ const LineupItem = ({
 									className={`flex items-center justify-center transition-all duration-300 ease-in-out ${
 										!showPinned ? "translate-y-[-130%]" : "translate-y-0"
 									}`}>
-									<Link
+									{/* <Link
 										to={`/profile/${lineup?.worship_leader?.uid}`}
-										style={{ textDecoration: "none", color: "inherit" }}>
-										<Avatar
-											sx={{
-												background: `linear-gradient(45deg, ${pink}, ${blue})`,
-												color: "#fff",
-												my: "auto",
-												width: lineup?.pinned ? 30 : 40,
-												height: lineup?.pinned ? 30 : 40,
-											}}
-											aria-label="profile"
-											src={lineup?.worship_leader?.photoURL}>
-											{lineup?.worship_leader?.displayName.split("")[0]}
-										</Avatar>
-									</Link>
+										style={{ textDecoration: "none", color: "inherit" }}> */}
+									<Avatar
+										sx={{
+											background: `linear-gradient(45deg, ${pink}, ${blue})`,
+											color: "#fff",
+											my: "auto",
+											width: lineup?.pinned ? 30 : 40,
+											height: lineup?.pinned ? 30 : 40,
+										}}
+										aria-label="profile"
+										src={lineup?.worship_leader?.photoURL}>
+										{lineup?.worship_leader?.displayName.split("")[0]}
+									</Avatar>
+									{/* </Link> */}
 								</div>
 								{/* )} */}
 								<ListItem

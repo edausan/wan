@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { AppCtx } from "../../App";
-import { GetSingleLineup } from "../../Firebase/songsApi";
+import { GetAllLineups, GetSingleLineup } from "../../Firebase/songsApi";
 import LineupItem from "./LineupItem";
 import { useQuery } from "react-query";
 
@@ -17,16 +17,14 @@ const ViewLineup = () => {
 		scrollToTop();
 	}, []);
 
-	const handleGetLineup = async () => {
-		const lineup = await GetSingleLineup({ id });
-		return lineup;
-	};
-
-	const { data, isLoading } = useQuery("single-lineup", handleGetLineup);
+	const { data, isFetching } = useQuery("lineups", GetAllLineups);
 
 	useEffect(() => {
-		data && !isLoading && setLineup(data);
-	}, [data]);
+		if (data.length > 0 && !isFetching) {
+			const lineup = data.filter((d) => d.id === id)[0];
+			setLineup(lineup);
+		}
+	}, [data, isFetching]);
 
 	return <div>{lineup && <LineupItem lineup={lineup} isSongsExpanded />}</div>;
 };
