@@ -9,7 +9,6 @@ const PostsMain = React.lazy(() => import("./Home/PostsMain"));
 
 const Home = () => {
 	const { scrollToTop } = useContext(AppCtx);
-	// const { posts } = RealtimePosts();
 
 	useEffect(() => {
 		scrollToTop();
@@ -22,7 +21,6 @@ const Home = () => {
 				justifyContent="center"
 				alignItems="start"
 				className="h-[100vh] max-w-[680px] mx-auto p-3">
-				{/* <Chorder /> */}
 				<Suspense fallback={<></>}>
 					<ThemeMain />
 				</Suspense>

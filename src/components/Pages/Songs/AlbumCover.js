@@ -33,7 +33,6 @@ const AlbumCover = ({
 	const [albumCovers, setAlbumCovers] = useState([]);
 
 	useEffect(() => {
-		console.log({ AlbumCovers, isFetched });
 		setAlbumCovers(AlbumCovers);
 	}, [AlbumCovers]);
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { UrlId } from "./EditSongTabs";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box, Tab } from "@mui/material";
@@ -7,7 +7,6 @@ import LazyLoad from "react-lazyload";
 import { YouTube } from "@mui/icons-material";
 
 const Media = ({ setDetails, song }) => {
-	// console.log({ song });
 	const [ytUrl, setYtURL] = useState(null);
 	const [spotifyUrl, setSpotifyURL] = useState(null);
 	const [youtube, setYoutube] = useState(null);
@@ -25,9 +24,7 @@ const Media = ({ setDetails, song }) => {
 			setIsSpotify(is_spotify);
 			return is_spotify;
 		} else {
-			console.log({ ytValue: ytRef.current?.value });
 			const is_yt = ytRef.current?.value.includes("youtube");
-			console.log({ is_yt });
 			setIsYt(is_yt);
 			return is_yt;
 		}
@@ -71,7 +68,6 @@ const Media = ({ setDetails, song }) => {
 	};
 
 	useEffect(() => {
-		// console.log({ isYt, isSpotify });
 	}, [isYt, isSpotify]);
 
 	useEffect(() => {

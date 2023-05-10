@@ -44,11 +44,9 @@ const Theme = ({ theme, isRow }) => {
 	return (
 		<Card
 			fullWidth
-			className={`w-[100%] ${
-				params?.id ? "" : "phone:max-h-[400px]"
-			} desktop:min-w-[650px] shadow-md laptop:min-w-[650px] phone:min-w-auto box-border flex flex-col ${
+			className={`w-[100%] desktop:min-w-[650px] shadow-md laptop:min-w-[650px] phone:min-w-auto box-border flex flex-col ${
 				isRow
-					? "phone:min-w-[220px] desktop:min-w-[400px] laptop:min-w-[400px]"
+					? "phone:min-w-[220px] desktop:min-w-[400px] laptop:min-w-[400px] phone:max-h-[435px]"
 					: ""
 			}`}
 			elevation={0}>

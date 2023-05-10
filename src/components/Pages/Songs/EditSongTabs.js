@@ -90,8 +90,6 @@ const ChordsAddtnl = ({ setSongDetails, song }) => {
 };
 
 export const UrlId = (url) => {
-	console.log({ url });
-
 	if (url === "" || url === null) {
 		return null;
 	}
