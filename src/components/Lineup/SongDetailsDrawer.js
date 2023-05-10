@@ -51,13 +51,6 @@ const SongDetailsDrawer = ({
 	// 	chordRuns: chords?.chorus,
 	// });
 
-	useEffect(() => {
-		console.log({ transposing: verse.isTransposing });
-		if (!verse.isTransposing) {
-			console.log({ chords: verse.chords });
-		}
-	}, [verse]);
-
 	const handleCopy = () => {
 		const intro = document.querySelector("#Intro");
 		const verse = document.querySelector("#Verse");
@@ -79,11 +72,6 @@ const SongDetailsDrawer = ({
 			setOpen(false);
 		}, 1000);
 	};
-
-	console.log({
-		chords: drawerData?.song?.chords?.chorus.split("-")[0],
-		PARSE_INT: parseInt(drawerData?.song?.chords?.chorus.split("-")[0]),
-	});
 
 	return (
 		<SwipeableDrawer

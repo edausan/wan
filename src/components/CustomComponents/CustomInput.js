@@ -1,7 +1,6 @@
 import React from "react";
 
 const CustomInput = (props) => {
-	console.log({ props });
 	return (
 		<input
 			{...props}

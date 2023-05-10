@@ -16,10 +16,13 @@ const PostsMain = ({ profile }) => {
 	});
 
 	useEffect(() => {
-		if (profile && params?.id && data?.length > 0 && !isFetching) {
-			const p = data?.filter((p) => p.uid === params?.id);
-			setAllPosts(p);
-		} else if (data?.length > 0 && !isFetching) {
+		// if (profile && params?.id && data?.length > 0 && !isFetching) {
+		// 	const p = data?.filter((p) => p.uid === params?.id);
+		// 	setAllPosts(p);
+		// } else if (data?.length > 0 && !isFetching) {
+		// 	setAllPosts(data);
+		// }
+		if (data.length > 0 && !isFetching) {
 			setAllPosts(data);
 		}
 	}, [params.id, data, isFetching]);

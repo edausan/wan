@@ -12,7 +12,6 @@ const CreateNewSong = lazy(() => import("./CreateNewSong"));
 const SongDetailsDrawer = lazy(() => import("../../Lineup/SongDetailsDrawer"));
 
 const SongList = ({ songs }) => {
-	console.log({ songs });
 	const currentUser = useSelector(selectCurrentUser);
 	const [drawerData, setDrawerData] = useState({ song: null, id: null });
 	const [expanded, setExpanded] = useState(false);
