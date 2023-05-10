@@ -12,6 +12,7 @@ const CreateNewSong = lazy(() => import("./CreateNewSong"));
 const SongDetailsDrawer = lazy(() => import("../../Lineup/SongDetailsDrawer"));
 
 const SongList = ({ songs }) => {
+	console.log({ songs });
 	const currentUser = useSelector(selectCurrentUser);
 	const [drawerData, setDrawerData] = useState({ song: null, id: null });
 	const [expanded, setExpanded] = useState(false);
@@ -32,7 +33,7 @@ const SongList = ({ songs }) => {
 	);
 
 	return (
-		<div className="grid grid-cols-2 gap-3 mt-3 p-3">
+		<div className="flex flex-col gap-3 mt-3 p-3">
 			<SongDetailsDrawer
 				drawerData={drawer_data}
 				expanded={expand}

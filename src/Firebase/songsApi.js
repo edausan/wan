@@ -417,7 +417,9 @@ export const GetAlbumCovers = async () => {
 			}
 		});
 
-		return covers_data;
+		return covers_data.map(async (cover) => {
+			return await cover;
+		});
 	} catch (error) {
 		console.log(error.message);
 	}

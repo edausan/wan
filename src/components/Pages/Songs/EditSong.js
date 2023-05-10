@@ -259,7 +259,7 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
 							{song?.title} is successfully updated!
 						</Alert>
 					</Snackbar>
-					<div className="flex flex-row gap-2 bg-black/40 items-center">
+					<div className="flex flex-row gap-2 items-center border-b border-gray-100">
 						<div className="w-[70px] relative">
 							{/* <input
               type='file'
@@ -268,7 +268,7 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
               className='hidden'
               onChange={(e) => setImage(e.target.files[0])}
             /> */}
-							<label
+							{/* <label
 								htmlFor="upload-cover"
 								className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-10">
 								<IconButton
@@ -277,7 +277,7 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
 									onClick={() => setOpenCovers(true)}>
 									<AddAPhotoOutlined />
 								</IconButton>
-							</label>
+							</label> */}
 
 							<img
 								src={songDetails?.cover || ALBUM_PLACEHOLDER}
@@ -285,7 +285,7 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
 								className="w-full"
 							/>
 						</div>
-						<div className="p-2 box-border flex-1">
+						<div className="p-2 box-border flex-1 ">
 							<FormControl size="small" variant="standard" fullWidth>
 								<InputLabel>Song Title</InputLabel>
 								<Input
@@ -311,7 +311,7 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
 											</IconButton>
 										</InputAdornment>
 									}
-									className={`INPUT [&>textarea]:text-xs ${
+									className={`INPUT [&>textarea]:text-md ${
 										editTitle ? "[&::before]:border-0" : ""
 									}`}
 								/>
@@ -319,8 +319,8 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
 						</div>
 					</div>
 
-					<div className="p-4 grid grid-cols-2 gap-4 space-y-0">
-						<div className="col-span-1">
+					<div className="px-4 py-2 grid grid-cols-2 gap-1 space-y-0">
+						<div className="laptop:col-span-1 tablet:col-span-1 phone:col-span-2">
 							<FormControl size="small" variant="standard" fullWidth>
 								<InputLabel>Artist</InputLabel>
 								<Input
@@ -351,13 +351,14 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
 											</IconButton>
 										</InputAdornment>
 									}
-									className={`INPUT [&>textarea]:text-xs [&>label]:text-xs ${
+									className={`INPUT [&>textarea]:text-sm [&>label]:text-xs ${
 										editDetails.artist ? "[&::before]:border-0" : ""
 									}`}
 								/>
 							</FormControl>
 						</div>
-						<div className="col-span-1">
+
+						<div className="laptop:col-span-1 tablet:col-span-1 phone:col-span-2">
 							<FormControl size="small" variant="standard" fullWidth>
 								<InputLabel>Album</InputLabel>
 								<Input
@@ -388,14 +389,14 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
 											</IconButton>
 										</InputAdornment>
 									}
-									className={`INPUT [&>textarea]:text-xs ${
+									className={`INPUT [&>textarea]:text-sm ${
 										editDetails.album ? "[&::before]:border-0" : ""
 									}`}
 								/>
 							</FormControl>
 						</div>
 					</div>
-					<div className="px-4 mb-1 text-xs text-white/60">Tags</div>
+					<div className="px-4 mb-1 text-xs opacity-60">Tags</div>
 					<div className="px-4 py-2 flex flex-row gap-2 flex-wrap">
 						{songDetails?.tags?.map((tag) => {
 							return (
@@ -424,7 +425,7 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
 					<div className="px-4 py-2 flex flex-row justify-end">
 						<button
 							onClick={() => setShowLyrics(!showLyrics)}
-							className="px-4 py-1 bg-blue-500 text-white text-xs rounded-full">
+							className="px-4 py-2 bg-blue-500 text-white text-xs rounded-full">
 							{showLyrics
 								? "Hide"
 								: songDetails?.lyrics?.verse ||
@@ -453,7 +454,7 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
 						/>
 					)}
 
-					<div className="flex flex-row items-center justify-center p-2">
+					<div className="flex flex-row gap-2 items-center justify-center p-2">
 						<Button
 							className="flex-1 bg-green-500 text-white p-4"
 							color="success"
@@ -461,6 +462,14 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
 							disableElevation
 							onClick={handleSave}>
 							<span className="text-xs text-white">Save Song</span>
+						</Button>
+
+						<Button
+							className="bg-gray-200 p-4 w-[50px]"
+							variant="contained"
+							disableElevation
+							onClick={() => setOpen(false)}>
+							<span className="text-xs text-gray-400">Close</span>
 						</Button>
 					</div>
 				</div>

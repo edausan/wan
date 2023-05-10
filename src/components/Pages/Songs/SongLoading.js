@@ -12,13 +12,18 @@ const SongLoading = () => {
 					<Skeleton variant="text" />
 					<Skeleton variant="text" />
 				</div>
-				<div className="flex-1 flex flex-row gap-2 items-center justify-center">
+				{/* <div className="flex-1 flex flex-row gap-2 items-center justify-center">
 					<Skeleton variant="circular" width={16} height={16} />
 					<Skeleton variant="circular" width={16} height={16} />
-				</div>
-				<div className="flex-1 flex flex-col gap-2 items-center justify-end">
-					<Skeleton variant="circular" width={16} height={16} />
-					<Skeleton variant="circular" width={16} height={16} />
+				</div> */}
+				<div className="flex-1 flex flex-row items-center justify-end">
+					<Skeleton
+						variant="rectangular"
+						width={64}
+						height={69}
+						className="border-r border-white"
+					/>
+					<Skeleton variant="rectangular" width={64} height={69} />
 				</div>
 			</div>
 		</Card>

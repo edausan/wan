@@ -13,7 +13,6 @@ import {
 } from "../../../Firebase/songsApi";
 import SongList from "./SongList";
 import { useQuery } from "react-query";
-import Loading from "../../CustomComponents/Loading";
 import Fetching from "../../CustomComponents/Fetching";
 
 // const SongList = React.lazy(() => import('./SongList'));
@@ -42,6 +41,10 @@ const SongsMain = () => {
 	});
 
 	useEffect(() => {
+		albumCoverQuery.refetch();
+	}, []);
+
+	useEffect(() => {
 		data && data?.length > 0 && setSongList(data);
 	}, [data, isLoading, isFetching]);
 
@@ -56,31 +59,35 @@ const SongsMain = () => {
 	useEffect(() => {
 		setOpen(false);
 		if (searchText) {
-			const search_result = songList.filter((song) => {
-				const text = searchText?.toLowerCase();
-				const title = song?.title?.toLowerCase();
-				const artist = song?.artist?.toLowerCase();
-				const album = song?.album?.toLowerCase();
-				const lyrics_verse = song?.lyrics?.verse?.toLowerCase();
-				const lyrics_pre_chorus = song?.lyrics?.pre_chorus?.toLowerCase();
-				const lyrics_chorus = song?.lyrics?.chorus?.toLowerCase();
-				const tags = song?.tags?.join(",")?.toLowerCase();
-
-				return (
-					title?.includes(text) ||
-					artist?.includes(text) ||
-					album?.includes(text) ||
-					lyrics_verse?.includes(text) ||
-					lyrics_pre_chorus?.includes(text) ||
-					lyrics_chorus?.includes(text) ||
-					tags?.includes(text)
-				);
-			});
-
-			setSongList(search_result);
+			handleSearch();
 		} else {
 			setSongList(songs);
 		}
+	}, [searchText]);
+
+	const handleSearch = useCallback(() => {
+		const search_result = songList.filter((song) => {
+			const text = searchText?.toLowerCase();
+			const title = song?.title?.toLowerCase();
+			const artist = song?.artist?.toLowerCase();
+			const album = song?.album?.toLowerCase();
+			const lyrics_verse = song?.lyrics?.verse?.toLowerCase();
+			const lyrics_pre_chorus = song?.lyrics?.pre_chorus?.toLowerCase();
+			const lyrics_chorus = song?.lyrics?.chorus?.toLowerCase();
+			const tags = song?.tags?.join(",")?.toLowerCase();
+
+			return (
+				title?.includes(text) ||
+				artist?.includes(text) ||
+				album?.includes(text) ||
+				lyrics_verse?.includes(text) ||
+				lyrics_pre_chorus?.includes(text) ||
+				lyrics_chorus?.includes(text) ||
+				tags?.includes(text)
+			);
+		});
+
+		setSongList(search_result);
 	}, [searchText]);
 
 	const handleAlbums = () => {
@@ -136,7 +143,7 @@ const SongsMain = () => {
 	return (
 		<div className="laptop:mx-[-.75rem] desktop:mx-[-.75rem]">
 			<Fetching close={!isFetching} label="Songs Library" />
-			<Suspense>
+			<Suspense fallback={<></>}>
 				<SongSearch
 					open={memoizedOpen}
 					setOpen={handleOpen}

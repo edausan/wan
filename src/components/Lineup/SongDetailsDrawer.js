@@ -8,12 +8,14 @@ import {
 	SwipeableDrawer,
 	Tab,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import LazyLoad from "react-lazyload";
 import SPOTIFY_LOGO from "../../assets/spotify_logo.png";
 import SongHeader from "./SongHeader";
 import SongPart from "./SongPart";
+import useTransposer from "../../hooks/useTransposer";
+import Chord from "../CustomComponents/Chord";
 
 const SongDetailsDrawer = ({
 	expanded,
@@ -22,6 +24,39 @@ const SongDetailsDrawer = ({
 	drawerData,
 }) => {
 	const [open, setOpen] = useState(false);
+	const [selectedKey, setSelectedKey] = useState(drawerData?.song?.key || "C");
+
+	const [songChords, setSongChords] = useState({
+		intro: null,
+		verse: null,
+		pre_chorus: null,
+		chorus: null,
+		bridge: null,
+	});
+
+	const chords = drawerData?.song?.chords;
+
+	// const intro = useTransposer({
+	// 	selectedKey: drawerData?.song?.key,
+	// 	chordRuns: chords?.intro,
+	// });
+
+	const verse = useTransposer({
+		selectedKey: drawerData?.song?.key,
+		chordRuns: chords?.verse,
+	});
+
+	// const chorus = useTransposer({
+	// 	selectedKey: drawerData?.song?.key,
+	// 	chordRuns: chords?.chorus,
+	// });
+
+	useEffect(() => {
+		console.log({ transposing: verse.isTransposing });
+		if (!verse.isTransposing) {
+			console.log({ chords: verse.chords });
+		}
+	}, [verse]);
 
 	const handleCopy = () => {
 		const intro = document.querySelector("#Intro");
@@ -45,6 +80,11 @@ const SongDetailsDrawer = ({
 		}, 1000);
 	};
 
+	console.log({
+		chords: drawerData?.song?.chords?.chorus.split("-")[0],
+		PARSE_INT: parseInt(drawerData?.song?.chords?.chorus.split("-")[0]),
+	});
+
 	return (
 		<SwipeableDrawer
 			anchor="right"
@@ -53,10 +93,10 @@ const SongDetailsDrawer = ({
 			className="flex relative">
 			<SongHeader song={drawerData.song} />
 
-			{(drawerData?.song?.media?.youtube ||
+			{/* {(drawerData?.song?.media?.youtube ||
 				drawerData?.song?.media?.spotify) && (
 				<Media media={drawerData?.song?.media} />
-			)}
+			)} */}
 			<Box className="laptop:w-[500px] desktop:w-[500px] phone:w-[95vw] p-4  flex-1">
 				<Snackbar
 					open={open}

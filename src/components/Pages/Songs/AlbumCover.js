@@ -10,8 +10,9 @@ import {
 import React, { useEffect, useState } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useSelector } from "react-redux";
-import { GetAllAlbumCovers } from "../../../Firebase/songsApi";
+import { GetAlbumCovers, GetAllAlbumCovers } from "../../../Firebase/songsApi";
 import { selectSongs } from "../../../redux/slices/songsSlice";
+import { useQuery } from "react-query";
 
 const AlbumCover = ({
 	open,
@@ -21,13 +22,18 @@ const AlbumCover = ({
 	setImage,
 	resized,
 }) => {
-	const { AlbumCovers } = GetAllAlbumCovers();
+	// const { AlbumCovers } = GetAllAlbumCovers();
+	const { data: AlbumCovers, isFetched } = useQuery(
+		"album-covers",
+		GetAlbumCovers
+	);
 	// const { albumCovers } = useSelector(selectSongs);
 	const [img, setImg] = useState(null);
 
 	const [albumCovers, setAlbumCovers] = useState([]);
 
 	useEffect(() => {
+		console.log({ AlbumCovers, isFetched });
 		setAlbumCovers(AlbumCovers);
 	}, [AlbumCovers]);
 

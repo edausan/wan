@@ -23,6 +23,7 @@ import { persistQueryClient } from "react-query/persistQueryClient-experimental"
 import Routes from "./Routes";
 import Fetching from "./components/CustomComponents/Fetching";
 import Chorder from "./components/Pages/Songs/Chorder/Chorder";
+import Transposer from "./components/Pages/Songs/Chorder/Transposer";
 
 // Components
 const Home = lazy(() => import("./components/Pages/Home"));
@@ -170,8 +171,8 @@ function App() {
 					},
 				}}
 			/>
+			{/* <Transposer /> */}
 			<ThemeProvider theme={theme}>
-				{/* <Chorder /> */}
 				<Router>
 					<AppCtx.Provider value={value}>
 						{!currentUser?.user ? (

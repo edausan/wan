@@ -5,7 +5,7 @@ import {
 	SpeakerNotesOutlined,
 } from "@mui/icons-material";
 import { Paper, Grid, useTheme, Avatar, CircularProgress } from "@mui/material";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import { FirebaseApp } from "./../Firebase";
@@ -25,14 +25,19 @@ const Navigation = () => {
 	const { pathname } = location;
 	const theme = useTheme();
 
-	// const postsQuery = useQuery("posts", GetAllPosts);
+	const postsQuery = useQuery("posts", GetAllPosts);
 	// const assignmentsQuery = useQuery("assignments", GetAllAssignments);
 	const lineupQuery = useQuery("lineups", GetAllLineups);
-	// const songsQuery = useQuery("lineups", GetAllSongs);
+	const songsQuery = useQuery("lineups", GetAllSongs);
 
 	const handleRefetchLineups = () => {
 		lineupQuery.refetch();
 	};
+
+	useEffect(() => {
+		songsQuery.refetch();
+		postsQuery.refetch();
+	}, []);
 
 	return (
 		<Paper

@@ -298,6 +298,7 @@ const LineupItem = ({
 													//   setIsModalOpen({ song: s, status: true })
 													// }
 												/>
+
 												<IconButton
 													color="primary"
 													disabled={
@@ -320,7 +321,7 @@ const LineupItem = ({
 													sx={{ mr: 1 }}>
 													<MusicNote fontSize="small" />
 												</IconButton>
-												<div className="px-1 flex flex-col justify-center items-center gap-1">
+												{/* <div className="px-1 flex flex-col justify-center items-center gap-1">
 													<YouTube
 														fontSize="small"
 														className="w-[16x] h-[16px]"
@@ -333,7 +334,7 @@ const LineupItem = ({
 															!s?.media?.spotify ? "grayscale opacity-30" : ""
 														}`}
 													/>
-												</div>
+												</div> */}
 											</ListItem>
 										);
 									})}
