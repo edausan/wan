@@ -45,6 +45,7 @@ const Lineup = () => {
 	}, [data, isFetching, isFetched]);
 
 	useEffect(() => {
+		songsQuery.refetch();
 		scrollToTop();
 	}, []);
 

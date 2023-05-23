@@ -12,8 +12,9 @@ import { Grid, TextField, Card, Snackbar, Alert } from "@mui/material";
 import { LINEUP } from "../../data";
 import { AppCtx } from "../../App";
 import MobileDatePicker from "@mui/lab/MobileDatePicker";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import {
 	GetAllSongs,
 	GetSingleLineup,
@@ -42,7 +43,7 @@ const NewLineup = () => {
 	const history = useHistory();
 
 	const { scrollToTop } = useContext(AppCtx);
-	const [date, setDate] = useState(new Date());
+	const [date, setDate] = useState(null);
 	const [lineupData, setLineupData] = useState([]);
 	const [service, setService] = useState(null);
 	const [openService, setOpenService] = useState(false);
@@ -92,8 +93,13 @@ const NewLineup = () => {
 	};
 
 	const handleDateChange = (newValue) => {
-		setDate(newValue);
+		const newDate = new Date(newValue);
+		console.log({ new: moment(newDate).format("LLLL") });
+
+		setDate(moment(newDate).format("LLLL"));
 	};
+
+	console.log({ date });
 
 	const handleUpdate = () => {
 		const data = {
@@ -190,7 +196,7 @@ const NewLineup = () => {
 									required
 									inputFormat="dddd LL"
 									label="Date"
-									value={date}
+									value={new Date(date)}
 									onChange={(value) => handleDateChange(value)}
 									renderInput={(params) => (
 										<TextField
