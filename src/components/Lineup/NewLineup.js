@@ -65,7 +65,7 @@ const NewLineup = () => {
 	}, [LINEUP]);
 
 	const handleDateChange = (newValue) => {
-		setDate(newValue);
+		setDate(new Date(newValue));
 	};
 
 	const handleSave = async () => {

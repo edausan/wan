@@ -11,7 +11,7 @@ const PostsMain = ({ profile }) => {
 	const params = useParams();
 	const [allPosts, setAllPosts] = useState([]);
 
-	const { data, isFetching } = useQuery("posts", GetAllPosts, {
+	const { data, isFetching, refetch } = useQuery("posts", GetAllPosts, {
 		cacheTime: 60 * 60 * 1000,
 	});
 
@@ -22,8 +22,11 @@ const PostsMain = ({ profile }) => {
 		// } else if (data?.length > 0 && !isFetching) {
 		// 	setAllPosts(data);
 		// }
-		if (data.length > 0 && !isFetching) {
+		console.log({ data });
+		if (data?.length > 0 && !isFetching) {
 			setAllPosts(data);
+		} else {
+			refetch();
 		}
 	}, [params.id, data, isFetching]);
 

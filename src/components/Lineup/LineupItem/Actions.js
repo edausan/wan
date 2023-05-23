@@ -5,6 +5,7 @@ import {
 	FavoriteBorder,
 	Favorite,
 	OpenInNewTwoTone,
+	MusicNoteRounded,
 } from "@mui/icons-material";
 import { useHistory, useParams } from "react-router-dom";
 import { FirebaseApp } from "../../../Firebase";
@@ -12,7 +13,7 @@ import { GetAllLineups, HeartLineup } from "../../../Firebase/songsApi";
 import { useMutation, useQuery } from "react-query";
 import { useEffect } from "react";
 
-const Actions = ({ lineup }) => {
+const Actions = ({ lineup, showChords }) => {
 	const history = useHistory();
 	const auth = getAuth(FirebaseApp);
 	const user = auth.currentUser;
@@ -67,15 +68,19 @@ const Actions = ({ lineup }) => {
 				</IconButton>
 			</a>
 
-			{!params?.id && (
-				<IconButton
-					aria-label="view"
-					onClick={() => history.push(`/lineup/${lineup.id}`)}
-					name="View Lineup"
-					sx={{ marginLeft: "auto" }}>
-					<OpenInNewTwoTone fontSize="small" />
+			<div className="flex flex-row gap-1 ml-auto">
+				<IconButton onClick={() => showChords(true)}>
+					<MusicNoteRounded />
 				</IconButton>
-			)}
+				{!params?.id && (
+					<IconButton
+						aria-label="view"
+						onClick={() => history.push(`/lineup/${lineup.id}`)}
+						name="View Lineup">
+						<OpenInNewTwoTone fontSize="small" />
+					</IconButton>
+				)}
+			</div>
 		</CardActions>
 	);
 };

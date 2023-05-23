@@ -74,7 +74,7 @@ const Navigation = () => {
 									? theme.palette.primary[theme.palette.mode]
 									: "inherit",
 						}}>
-						{false ? (
+						{postsQuery.isFetching ? (
 							<CircularProgress size={20} className="w-[20px] h-[20px]" />
 						) : (
 							<HomeOutlined />
@@ -138,7 +138,7 @@ const Navigation = () => {
 									? theme.palette.primary[theme.palette.mode]
 									: "inherit",
 						}}>
-						{false ? (
+						{songsQuery.isFetching ? (
 							<CircularProgress size={20} className="w-[20px] h-[20px]" />
 						) : (
 							<LibraryMusicOutlined />

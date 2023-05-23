@@ -45,6 +45,7 @@ const SongDetailsDrawer = lazy(() => import("./SongDetailsDrawer"));
 const LineupItemDrawer = lazy(() => import("./LineupItemDrawer"));
 const Actions = lazy(() => import("./LineupItem/Actions"));
 const Header = lazy(() => import("./LineupItem/Header"));
+const LineupChords = lazy(() => import("./LineupChords"));
 
 const LineupItem = ({
 	lineup,
@@ -73,6 +74,7 @@ const LineupItem = ({
 	});
 	const [pinned, setPinned] = useState(false);
 	const [morePins, setMorePins] = useState(pinnedLineup?.length > 1);
+	const [showChords, setShowChords] = useState(false);
 
 	useEffect(() => {
 		lineup?.songs.length > 0 && lineup?.songs[0].title && GetSongsData();
@@ -170,6 +172,14 @@ const LineupItem = ({
 					lineup={lineup}
 				/>
 			</Suspense>
+
+			{showChords && (
+				<LineupChords
+					lineup={lineup}
+					showChords={showChords}
+					setShowChords={setShowChords}
+				/>
+			)}
 
 			<Card
 				id={pinned ? "pinned-lineup-item" : "lineup-item"}
@@ -345,7 +355,7 @@ const LineupItem = ({
 
 				{!showPinned && (
 					<Suspense>
-						<Actions lineup={lineup} />
+						<Actions lineup={lineup} showChords={setShowChords} />
 					</Suspense>
 				)}
 			</Card>

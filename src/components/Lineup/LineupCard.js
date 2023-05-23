@@ -9,6 +9,8 @@ import {
 	MenuItem,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
+import { useQuery } from "react-query";
+import { GetAllSongs } from "../../Firebase/songsApi";
 
 const initialState = {
 	song_title: null,
@@ -22,24 +24,21 @@ const initialState = {
 	is_new: false,
 };
 
-const LineupCard = ({
-	category,
-	setLineupData,
-	songs,
-	songData,
-	lineupData,
-}) => {
+const LineupCard = ({ category, setLineupData, songData, lineupData }) => {
 	const [cardData, setCardData] = useState(songData || initialState);
 	const [currentCategory, setCurrentCategory] = useState(category);
 	const [filteredSongs, setFilteredSongs] = useState([]);
+
+	const songsQuery = useQuery("songs", GetAllSongs);
 
 	useEffect(() => {
 		setCurrentCategory(category);
 	}, [category]);
 
 	const handleFilterSongs = () => {
-		if (songs?.length > 0 && currentCategory.id) {
-			const filtered = songs?.filter(
+		console.log({ songs: songsQuery.data, tag: currentCategory?.tags[0] });
+		if (songsQuery.data?.length > 0 && currentCategory.id) {
+			const filtered = songsQuery.data?.filter(
 				(song) =>
 					song?.tags?.length > 0 &&
 					song?.tags.findIndex((tag) => currentCategory?.tags[0] === tag) >= 0
@@ -50,7 +49,7 @@ const LineupCard = ({
 
 	useEffect(() => {
 		handleFilterSongs();
-	}, [songs]);
+	}, [songsQuery.data]);
 
 	const handleSetLineup = () => {
 		const updated_lineup = lineupData?.map((ld) => {
@@ -99,7 +98,7 @@ const LineupCard = ({
 							value={songData?.id || cardData.id}
 							onChange={(e) => {
 								setCardData({
-									...songs?.filter((s) => s.id === e.target.value)[0],
+									...songsQuery.data?.filter((s) => s.id === e.target.value)[0],
 								});
 							}}>
 							{filteredSongs.map((song) => {
