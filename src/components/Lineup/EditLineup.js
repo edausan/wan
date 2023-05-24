@@ -218,7 +218,7 @@ const NewLineup = () => {
 								LINEUP.map((category, idx) => {
 									return (
 										<LineupCard
-											key={category.id + idx}
+											key={`${category.id}~${idx}`}
 											setLineupData={setLineupData}
 											category={category}
 											songs={data}

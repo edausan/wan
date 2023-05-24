@@ -124,6 +124,7 @@ const Navigation = () => {
 						)}
 					</Link>
 				</Grid>
+
 				<Grid item flex={1}>
 					<Link
 						to="/songs"
@@ -145,13 +146,8 @@ const Navigation = () => {
 						)}
 					</Link>
 				</Grid>
-			</Grid>
-		</Paper>
-	);
-};
 
-{
-	/* <Grid item flex={1}>
+				<Grid item flex={1}>
 					<Link
 						to={`/profile/${user.uid}`}
 						style={{
@@ -171,6 +167,10 @@ const Navigation = () => {
 							sx={{ width: 26, height: 26 }}
 						/>
 					</Link>
-				</Grid> */
-}
+				</Grid>
+			</Grid>
+		</Paper>
+	);
+};
+
 export default Navigation;

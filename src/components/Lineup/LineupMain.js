@@ -12,10 +12,14 @@ import { GetAllLineups, GetAllSongs } from "../../Firebase/songsApi";
 import { useQuery } from "react-query";
 import Fetching from "../CustomComponents/Fetching";
 import { GetAllUsers } from "../../Firebase/authApi";
+import LineupQuery from "../../api/lineupQuery";
+import UserQuery from "../../api/userQuery";
+import { useParams } from "react-router-dom";
 
 const LineupItem = React.lazy(() => import("./LineupItem"));
 
 const Lineup = () => {
+	const params = useParams();
 	// const { data: lineups } = RealtimeLineups();
 	const { currentUser } = useSelector(selectUsers);
 	const { scrollToTop } = useContext(AppCtx);
@@ -23,29 +27,20 @@ const Lineup = () => {
 	const [showPinned, setShowPinned] = useState(false);
 	const [lineupData, setLineupData] = useState([]);
 
-	const query = useQuery("lineups", GetAllLineups, {
-		staleTime: 0,
-		cacheTime: 60 * 60 * 100,
-	});
+	const lineupQuery = LineupQuery().lineupsQuery;
+	const usersQuery = UserQuery().usersQuery;
 
-	const usersQuery = useQuery("users", GetAllUsers, {
-		staleTime: 0,
-		cacheTime: 60 * 60 * 1000,
-	});
+	const { data, isFetching, isFetched } = lineupQuery;
 
-	const songsQuery = useQuery("songs", GetAllSongs, {
-		staleTime: 0,
-		cacheTime: 60 * 60 * 1000,
-	});
-
-	const { data, isFetching, isFetched } = query;
+	useEffect(() => {
+		lineupQuery.refetch();
+	}, [params.id]);
 
 	useEffect(() => {
 		data?.length > 0 && isFetched && setLineupData(data);
 	}, [data, isFetching, isFetched]);
 
 	useEffect(() => {
-		songsQuery.refetch();
 		scrollToTop();
 	}, []);
 

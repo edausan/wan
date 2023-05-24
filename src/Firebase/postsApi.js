@@ -92,7 +92,7 @@ export const GetPost = async ({ id }) => {
 };
 
 /**
- * TODO: GET All Posts
+ * TODO: GET User Posts
  */
 
 export const GetPosts = async ({ id }) => {

@@ -1,5 +1,6 @@
 import { Box, Tab, Tabs, Typography } from "@mui/material";
 import React, { Suspense, useState } from "react";
+import LineupLoading from "../../Lineup/LineupLoading";
 // import LineupItem from '../../Lineup/LineupItem';
 // import PostsMain from '../Home/PostsMain';
 
@@ -38,7 +39,7 @@ const a11yProps = (index) => {
 	};
 };
 
-const UserTabs = ({ userlineup, userPosts, user }) => {
+const UserTabs = ({ userlineup, user }) => {
 	const [value, setValue] = useState(0);
 
 	const handleChange = (event, newValue) => {
@@ -63,10 +64,10 @@ const UserTabs = ({ userlineup, userPosts, user }) => {
 			</Box>
 			{user?.ministry === "VIA" && (
 				<TabPanel value={value} index={0}>
-					{userlineup.length > 0 ? (
-						userlineup.map((l, i) => {
+					{userlineup?.length > 0 ? (
+						userlineup?.map((l, i) => {
 							return (
-								<Suspense fallback={<div>Loading...</div>}>
+								<Suspense fallback={<LineupLoading key={i} />}>
 									<LineupItem
 										key={l.id}
 										lineup={l}
@@ -84,15 +85,9 @@ const UserTabs = ({ userlineup, userPosts, user }) => {
 				</TabPanel>
 			)}
 			<TabPanel value={value} index={user?.ministry === "VIA" ? 1 : 0}>
-				{userPosts?.length > 0 ? (
-					<Suspense fallback={<div>Loading...</div>}>
-						<PostsMain profile />
-					</Suspense>
-				) : (
-					<Typography variant="body2" sx={{ textAlign: "center" }}>
-						No post yet.
-					</Typography>
-				)}
+				<Suspense fallback={<div>Loading...</div>}>
+					<PostsMain profile />
+				</Suspense>
 			</TabPanel>
 		</Box>
 	);
