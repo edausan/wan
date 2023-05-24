@@ -6,6 +6,7 @@ import React, {
 	createContext,
 	lazy,
 	useMemo,
+	useRef,
 } from "react";
 import { Grid, TextField, Card, Snackbar, Alert } from "@mui/material";
 
@@ -14,13 +15,7 @@ import { AppCtx } from "../../App";
 import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import {
-	GetAllSongs,
-	GetSingleLineup,
-	RealtimeSongs,
-	UpdateLineup,
-} from "../../Firebase/songsApi";
+import { GetAllSongs, UpdateLineup } from "../../Firebase/songsApi";
 import moment from "moment";
 import { useHistory, useParams } from "react-router-dom";
 
@@ -52,6 +47,7 @@ const NewLineup = () => {
 	const lineupQuery = useQuery("lineups", GetAllLineups);
 
 	const mutatedLineup = useMutation(UpdateLineup);
+	const dateRef = useRef(null);
 
 	useEffect(() => {
 		scrollToTop();
@@ -92,22 +88,13 @@ const NewLineup = () => {
 		} catch (error) {}
 	};
 
-	const handleDateChange = (newValue) => {
-		const newDate = new Date(newValue);
-		console.log({ new: moment(newDate).format("LLLL") });
-
-		setDate(moment(newDate).format("LLLL"));
-	};
-
-	console.log({ date });
-
 	const handleUpdate = () => {
 		const data = {
 			id: params.id,
 			lineup: {
 				service,
 				songs: lineupData,
-				date: moment(date).format("LLLL"),
+				date: moment(dateRef.current.value).format("LLLL"),
 				date_updated: moment(new Date()).format("LLLL"),
 				updated_by: {
 					email: user.email,
@@ -191,23 +178,7 @@ const NewLineup = () => {
 								setService={setService}
 							/>
 
-							<LocalizationProvider dateAdapter={AdapterMoment}>
-								<MobileDatePicker
-									required
-									inputFormat="dddd LL"
-									label="Date"
-									value={new Date(date)}
-									onChange={(value) => handleDateChange(value)}
-									renderInput={(params) => (
-										<TextField
-											{...params}
-											fullWidth
-											size="small"
-											variant="standard"
-										/>
-									)}
-								/>
-							</LocalizationProvider>
+							<input ref={dateRef} className="w-full p-2" type="date" />
 						</Card>
 					</Grid>
 

@@ -126,8 +126,8 @@ export const UpdateLineup = async ({ id, lineup }) => {
 
 		const ref = doc(lineupRef, id);
 		const updated = await updateDoc(ref, {
-			...lineup,
 			songs: saved_songs,
+			...lineup,
 		});
 
 		return updated;
