@@ -64,9 +64,10 @@ const Friends = ({ setOpenFriends, friends, id }) => {
 						.filter((f) => f.uid !== id)
 						.filter((f) => f.uid)
 						.slice(0, count)
-						.map((f) => {
+						.map((f, idx) => {
 							return (
 								<Link
+									key={`${f.uid}~${idx}`}
 									to={`/profile/${f.uid}`}
 									style={{
 										textDecoration: "none",

@@ -212,7 +212,7 @@ const Media = ({ media }) => {
 								disabled={!media?.other}
 								label={
 									<div className="flex flex-row items-center gap-2 text-xs">
-										<Link />
+										{/* <Link /> */}
 										Other
 									</div>
 								}

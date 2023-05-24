@@ -54,9 +54,9 @@ const AlbumCover = ({
 		<SwipeableDrawer anchor="bottom" open={open} onClose={() => setOpen(false)}>
 			<div className="p-4">
 				<ImageList variant="masonry" cols={3} gap={6}>
-					{albumCovers?.map((cover) => (
+					{albumCovers?.map((cover, idx) => (
 						<ImageListItem
-							key={cover.photoURL}
+							key={`${cover.photoURL}~${idx}`}
 							onClick={() => handleSelect(cover)}
 							className={`${
 								selectedCover?.name === cover?.name

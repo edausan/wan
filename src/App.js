@@ -3,45 +3,24 @@ import "./App.css";
 import React, { useRef, lazy, Suspense } from "react";
 import { Grid } from "@mui/material";
 import { useState, createContext, useEffect } from "react";
-import { RealtimeMetadata, RealtimeUsers } from "./Firebase/authApi";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { RealtimeMetadata } from "./Firebase/authApi";
+import { BrowserRouter as Router } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { FirebaseApp } from "./Firebase";
 import Navigation from "./components/Navigation";
 import { useDispatch } from "react-redux";
-import { setPosts, setThemes, setUserPosts } from "./redux/slices/postsSlice";
-import { setUser, setUsers } from "./redux/slices/usersSlice";
-import { RealtimePosts, RealtimeThemes } from "./Firebase/postsApi";
+import { setUser } from "./redux/slices/usersSlice";
 import Loading from "./components/CustomComponents/Loading";
 
 // React Query
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
 import { createWebStoragePersistor } from "react-query/createWebStoragePersistor-experimental";
 import { persistQueryClient } from "react-query/persistQueryClient-experimental";
 import Routes from "./Routes";
-import Fetching from "./components/CustomComponents/Fetching";
-import Chorder from "./components/Pages/Songs/Chorder/Chorder";
-import Transposer from "./components/Pages/Songs/Chorder/Transposer";
 
 // Components
-const Home = lazy(() => import("./components/Pages/Home"));
-const Lineup = lazy(() => import("./components/Lineup/LineupMain"));
-const Assignments = lazy(() => import("./components/Pages/Assignments"));
-const NewLineup = lazy(() => import("./components/Lineup/NewLineup"));
-const EditLineup = lazy(() => import("./components/Lineup/EditLineup"));
-const Settings = lazy(() => import("./components/Pages/Settings"));
 const Splash = lazy(() => import("./components/Pages/Auth/Splash"));
-const EditProfile = lazy(() => import("./components/Pages/EditProfile"));
-const ViewLineup = lazy(() => import("./components/Lineup/ViewLineup"));
-const SetAssignment = lazy(() =>
-	import("./components/Pages/Assignment/SetAssignment")
-);
-const Profile = lazy(() => import("./components/Pages/User/Profile"));
-const Post = lazy(() => import("./components/Pages/Home/Post"));
-const SongsMain = lazy(() => import("./components/Pages/Songs/SongsMain"));
-const Theme = lazy(() => import("./components/Pages/Home/Theme"));
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -68,9 +47,6 @@ const auth = getAuth(FirebaseApp);
 function App() {
 	const dispatch = useDispatch();
 	const { data } = RealtimeMetadata();
-	// const { posts: Posts } = RealtimePosts();
-	// const { data: Users } = RealtimeUsers();
-	// const { data: Themes } = RealtimeThemes();
 
 	const [currentUser, setCurrentUser] = useState({
 		user: null,
@@ -88,14 +64,6 @@ function App() {
 		bodyRef.current.scroll({ top: 0 });
 	};
 
-	// useEffect(() => {
-	// 	Themes.length > 0 && dispatch(setThemes(Themes));
-	// }, [Themes]);
-
-	// useEffect(() => {
-	// 	setPostsData();
-	// }, [Posts, Users]);
-
 	useEffect(() => {
 		currentUser.user_metadata && dispatch(setUser(currentUser));
 	}, [currentUser]);
@@ -110,24 +78,6 @@ function App() {
 		});
 	}, [data]);
 
-	// const setPostsData = () => {
-	// 	if (Posts.length > 0 && Users.length > 0) {
-	// 		const with_user = Posts.map((post) => {
-	// 			return {
-	// 				post,
-	// 				user: Users?.filter((u) => u.uid === post.uid)[0],
-	// 			};
-	// 		});
-	// 		dispatch(setUsers(Users));
-	// 		dispatch(setPosts(with_user));
-	// 		dispatch(
-	// 			setUserPosts(
-	// 				with_user.filter((p) => p.post?.uid === auth.currentUser?.uid)
-	// 			)
-	// 		);
-	// 	}
-	// };
-
 	const value = {
 		setWorshipLeader,
 		worshipLeader,
@@ -139,7 +89,6 @@ function App() {
 		currentUser,
 		setIsLoggedIn,
 		isLoggedIn,
-		// setPostsData,
 		bodyRef,
 		scrollToTop,
 	};

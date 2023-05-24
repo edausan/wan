@@ -250,10 +250,10 @@ const Post = ({ post: current, profile }) => {
 				<p>{msg}</p>
 
 				<div>
-					{hashtags?.map((hash) => {
+					{hashtags?.map((hash, idx) => {
 						return (
 							<Link
-								key={hash}
+								key={`${hash}~${idx}`}
 								to="#"
 								className="no-underline text-sky-500 italic">
 								#{hash}
@@ -307,7 +307,7 @@ const Post = ({ post: current, profile }) => {
 								if (i <= 1) {
 									return (
 										<>
-											<span key={i}>
+											<span key={`${user?.uid}~${i}`}>
 												{i >= 1 && ", "}
 												{user?.displayName}
 											</span>

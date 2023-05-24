@@ -36,14 +36,14 @@ const TabPanel = (props) => {
 					}}>
 					<List>
 						{friends
-							.filter((f) => f.id !== params.id)
-							.filter((f) => f.id)
+							.filter((f) => f.uid !== params.id)
+							.filter((f) => f.uid)
 							.filter((f) => (filter ? f.ministry === filter : f))
 							.map((friend) => {
 								return (
 									<Link
 										key={friend?.uid}
-										to={`/profile/${friend?.id}`}
+										to={`/profile/${friend?.uid}`}
 										style={{ textDecoration: "none", color: "inherit" }}>
 										<ListItem>
 											<ListItemAvatar>
@@ -141,6 +141,7 @@ const FriendsTab = ({ friends }) => {
 					}}>
 					{/* <TabWrapper friends={friends} id={params.id} idx={1} />
           <TabWrapper friends={friends} id={params.id} idx={2} label='VIA' /> */}
+
 					<Tab
 						sx={{ fontSize: ".75rem", padding: "12px 4px", minWidth: 84 }}
 						label={
@@ -162,16 +163,19 @@ const FriendsTab = ({ friends }) => {
 						}
 						{...a11yProps(1)}
 					/>
+
 					<Tab
 						sx={{ fontSize: ".75rem", padding: "12px 4px", minWidth: 80 }}
 						label={<Label friends={friends} id={params.id} filter="VIA" />}
 						{...a11yProps(2)}
 					/>
+
 					<Tab
 						sx={{ fontSize: ".75rem", padding: "12px 4px", minWidth: 80 }}
 						label={<Label friends={friends} id={params.id} filter="JAM" />}
 						{...a11yProps(3)}
 					/>
+
 					<Tab
 						sx={{ fontSize: ".75rem", padding: "12px 4px", minWidth: 80 }}
 						label={<Label friends={friends} id={params.id} filter="TEAM" />}
