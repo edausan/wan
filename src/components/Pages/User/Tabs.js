@@ -1,6 +1,7 @@
 import { Box, Tab, Tabs, Typography } from "@mui/material";
 import React, { Suspense, useState } from "react";
 import LineupLoading from "../../Lineup/LineupLoading";
+import PostLoading from "../Home/PostLoading";
 // import LineupItem from '../../Lineup/LineupItem';
 // import PostsMain from '../Home/PostsMain';
 
@@ -85,7 +86,7 @@ const UserTabs = ({ userlineup, user }) => {
 				</TabPanel>
 			)}
 			<TabPanel value={value} index={user?.ministry === "VIA" ? 1 : 0}>
-				<Suspense fallback={<div>Loading...</div>}>
+				<Suspense fallback={<PostLoading />}>
 					<PostsMain profile />
 				</Suspense>
 			</TabPanel>

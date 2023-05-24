@@ -67,7 +67,7 @@ const SignUp = ({ setScreen }) => {
 	const { data: Teams } = RealtimeTeams();
 
 	useEffect(() => {
-		setMode(false);
+		// setMode(false);
 		if (user.email === "admin.wan@gmail.com") {
 			setUser({ ...user, password: "admin@wan", ministry: "ADMIN" });
 		}

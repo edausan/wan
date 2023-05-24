@@ -22,6 +22,12 @@ const PostsMain = ({ profile }) => {
 	}, [params.id]);
 
 	useEffect(() => {
+		if (posts.data?.length <= 0) {
+			posts.refetch();
+		}
+	}, [posts.data]);
+
+	useEffect(() => {
 		if (profile) {
 			setAllPosts(userPosts.data);
 		} else if (posts.data?.length > 0 && !posts.isFetching) {

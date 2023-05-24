@@ -34,10 +34,10 @@ const Navigation = () => {
 		lineupQuery.refetch();
 	};
 
-	useEffect(() => {
-		songsQuery.refetch();
-		postsQuery.refetch();
-	}, []);
+	// useEffect(() => {
+	// 	songsQuery.refetch();
+	// 	postsQuery.refetch();
+	// }, []);
 
 	return (
 		<Paper
@@ -74,7 +74,7 @@ const Navigation = () => {
 									? theme.palette.primary[theme.palette.mode]
 									: "inherit",
 						}}>
-						{postsQuery.isFetching ? (
+						{false ? (
 							<CircularProgress size={20} className="w-[20px] h-[20px]" />
 						) : (
 							<HomeOutlined />
@@ -117,7 +117,7 @@ const Navigation = () => {
 									? theme.palette.primary[theme.palette.mode]
 									: "inherit",
 						}}>
-						{lineupQuery.isFetching ? (
+						{false ? (
 							<CircularProgress size={20} className="w-[20px] h-[20px]" />
 						) : (
 							<SpeakerNotesOutlined />
@@ -139,7 +139,7 @@ const Navigation = () => {
 									? theme.palette.primary[theme.palette.mode]
 									: "inherit",
 						}}>
-						{songsQuery.isFetching ? (
+						{false ? (
 							<CircularProgress size={20} className="w-[20px] h-[20px]" />
 						) : (
 							<LibraryMusicOutlined />

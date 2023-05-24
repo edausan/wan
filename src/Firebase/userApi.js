@@ -3,7 +3,9 @@ import {
 	doc,
 	getDoc,
 	getDocs,
+	query,
 	updateDoc,
+	where,
 } from "firebase/firestore";
 import { FirebaseApp, Firestore } from ".";
 import { getAuth, updateProfile } from "firebase/auth";
@@ -12,6 +14,16 @@ const auth = getAuth(FirebaseApp);
 const usersRef = collection(Firestore, "user_metadata");
 
 export const GetUserMetadata = async ({ id }) => {
+	// const q = query(usersRef, where("uid", "==", uid));
+	// const docSnap = await getDocs(q);
+	// console.log({ docSnap });
+	// const user = [];
+	// docSnap.forEach((doc) => {
+	// 	user.push(doc.data());
+	// });
+
+	// return user[0];
+
 	const docRef = doc(Firestore, "user_metadata", id);
 	const docSnap = await getDoc(docRef);
 	if (docSnap.exists()) {

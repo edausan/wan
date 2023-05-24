@@ -14,7 +14,7 @@ import {
 	IconButton,
 	Skeleton,
 } from "@mui/material";
-import { GetAllUsers, GetUserMetadata } from "../../../Firebase/authApi";
+import { GetAllUsers } from "../../../Firebase/authApi";
 import {
 	CommentTwoTone,
 	EmojiEmotionsTwoTone,

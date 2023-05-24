@@ -16,7 +16,7 @@ import {
 	TextField,
 	useTheme,
 } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AppCtx } from "../../../App";
 import { SignIn } from "../../../Firebase/authApi";
 import { LoadingButton } from "@mui/lab";
@@ -35,9 +35,14 @@ const Login = ({ setScreen }) => {
 	const [isSigning, setIsSigning] = useState(false);
 	const [error, setError] = useState(null);
 
+	useEffect(() => {
+		setMode(false);
+	}, []);
+
 	const handleSignIn = async () => {
 		setIsSigning(true);
 		setError(null);
+		setMode(true);
 		const response = await SignIn({
 			email: user.email,
 			password: user.password,

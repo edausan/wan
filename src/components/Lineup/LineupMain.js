@@ -27,7 +27,7 @@ const Lineup = () => {
 	const [showPinned, setShowPinned] = useState(false);
 	const [lineupData, setLineupData] = useState([]);
 
-	const lineupQuery = LineupQuery().lineupsQuery;
+	const lineupQuery = LineupQuery("").lineupsQuery;
 	const usersQuery = UserQuery().usersQuery;
 
 	const { data, isFetching, isFetched } = lineupQuery;
