@@ -158,7 +158,7 @@ const Profile = () => {
 
 			<Suspense fallback={<div />}>
 				<PhotoHeart
-					friends={friends}
+					friends={users.data}
 					handleToOther={handleToOther}
 					open={open}
 					setOpen={setOpen}

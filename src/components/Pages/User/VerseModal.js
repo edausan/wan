@@ -3,7 +3,6 @@ import React from "react";
 import TextArea from "../../CustomComponents/TextArea";
 
 const VerseModal = ({ verse, showVerse, setShowVerse }) => {
-	console.log({ verse });
 	return (
 		<Modal open={showVerse} onClose={() => setShowVerse(false)}>
 			<div className="flex flex-col items-end justify-center bg-white w-[90%] p-4 absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] rounded-md">
