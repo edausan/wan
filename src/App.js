@@ -12,6 +12,7 @@ import Navigation from "./components/Navigation";
 import { useDispatch } from "react-redux";
 import { setUser } from "./redux/slices/usersSlice";
 import Loading from "./components/CustomComponents/Loading";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 // React Query
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -59,6 +60,8 @@ function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 	const bodyRef = useRef(null);
+
+	console.log({ mode });
 
 	const scrollToTop = () => {
 		bodyRef.current.scroll({ top: 0 });
@@ -109,7 +112,7 @@ function App() {
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			{/* <ReactQueryDevtools
+			<ReactQueryDevtools
 				initialIsOpen={true}
 				position="top-left"
 				panelProps={{
@@ -119,8 +122,7 @@ function App() {
 						left: 0,
 					},
 				}}
-			/> */}
-			{/* <Transposer /> */}
+			/>
 			<ThemeProvider theme={theme}>
 				<Router>
 					<AppCtx.Provider value={value}>
