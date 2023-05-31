@@ -5,15 +5,13 @@ import React, {
 	useContext,
 	createContext,
 	useMemo,
+	useRef,
 } from "react";
-import { Grid, TextField, Card, Snackbar, Alert } from "@mui/material";
+import { Grid, Card, Snackbar, Alert } from "@mui/material";
 
 import { LINEUP } from "../../data";
 import { AppCtx } from "../../App";
 import LineupCard from "./LineupCard";
-import MobileDatePicker from "@mui/lab/MobileDatePicker";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { AddLineup, GetAllSongs } from "../../Firebase/songsApi";
 import moment from "moment";
 import { useHistory, useParams } from "react-router-dom";
@@ -32,23 +30,18 @@ const NewLineup = () => {
 	const auth = getAuth(FirebaseApp);
 	const user = auth.currentUser;
 	const history = useHistory();
-	const [open, setOpen] = useState({
-		id: null,
-		status: false,
-		song_title: null,
-	});
 
 	const { scrollToTop } = useContext(AppCtx);
 	const [date, setDate] = useState(new Date());
 	const [lineupData, setLineupData] = useState([]);
-	const [saving, setSaving] = useState(false);
-	const [saved, setSaved] = useState(false);
 	const [service, setService] = useState(null);
 	const [songs, setSongs] = useState([]);
 	const [openService, setOpenService] = useState(false);
 
 	const { data } = useQuery("songs", GetAllSongs);
 	const mutatedNewLineup = useMutation(AddLineup);
+
+	const dateRef = useRef(null);
 
 	useEffect(() => {
 		scrollToTop();
@@ -64,17 +57,11 @@ const NewLineup = () => {
 		setLineupData(LINEUP);
 	}, [LINEUP]);
 
-	const handleDateChange = (newValue) => {
-		setDate(new Date(newValue));
-	};
-
 	const handleSave = async () => {
 		if (service) {
-			setSaving(true);
-
 			const new_lineup = {
 				lineup: {
-					date_created: moment(new Date()).format("LLLL"),
+					date_created: moment(dateRef.current?.value).format("LLLL"),
 					songs: lineupData.filter((l) => l.title),
 					worship_leader: {
 						uid: user.uid,
@@ -111,7 +98,7 @@ const NewLineup = () => {
 	};
 
 	const handleClose = () => {
-		setSaved(false);
+		// setSaved(false);
 	};
 
 	return useMemo(() => {
@@ -165,23 +152,7 @@ const NewLineup = () => {
 								setService={setService}
 							/>
 
-							<LocalizationProvider dateAdapter={AdapterMoment}>
-								<MobileDatePicker
-									required
-									inputFormat="dddd LL"
-									label="Date"
-									value={date}
-									onChange={(value) => handleDateChange(value)}
-									renderInput={(params) => (
-										<TextField
-											{...params}
-											fullWidth
-											size="small"
-											variant="standard"
-										/>
-									)}
-								/>
-							</LocalizationProvider>
+							<input ref={dateRef} className="w-full p-2" type="date" />
 						</Card>
 					</Grid>
 

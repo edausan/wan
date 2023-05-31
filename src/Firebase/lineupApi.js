@@ -1,6 +1,6 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 
-import { FirebaseApp, Firestore } from ".";
+import { Firestore } from "../Firebase";
 const lineupRef = collection(Firestore, "lineups");
 
 /**

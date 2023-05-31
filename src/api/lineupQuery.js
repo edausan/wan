@@ -1,10 +1,11 @@
 import { useQuery } from "react-query";
 import { GetAllLineups, GetLineup } from "../Firebase/lineupApi";
+import { time } from "../Firebase";
 
 const LineupQuery = (uid = "") => {
 	const lineupsQuery = useQuery("lineups", GetAllLineups, {
 		staleTime: 0,
-		cacheTime: 60 * 60 * 100,
+		cacheTime: time,
 	});
 
 	const userLineupQuery = useQuery(
@@ -12,7 +13,7 @@ const LineupQuery = (uid = "") => {
 		() => GetLineup({ id: uid }),
 		{
 			staleTime: 0,
-			cacheTime: 60 * 60 * 100,
+			cacheTime: time,
 		}
 	);
 
