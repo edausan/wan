@@ -27,6 +27,7 @@ const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
 			cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+			staleTime: 1000 * 60 * 60 * 24, // 24 hours
 			refetchOnWindowFocus: false,
 		},
 	},
@@ -60,8 +61,6 @@ function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 	const bodyRef = useRef(null);
-
-	console.log({ mode });
 
 	const scrollToTop = () => {
 		bodyRef.current.scroll({ top: 0 });
@@ -112,7 +111,7 @@ function App() {
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			<ReactQueryDevtools
+			{/* <ReactQueryDevtools
 				initialIsOpen={true}
 				position="top-left"
 				panelProps={{
@@ -122,7 +121,7 @@ function App() {
 						left: 0,
 					},
 				}}
-			/>
+			/> */}
 			<ThemeProvider theme={theme}>
 				<Router>
 					<AppCtx.Provider value={value}>

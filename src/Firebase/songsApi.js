@@ -15,7 +15,6 @@ import {
 	getDocs,
 } from "firebase/firestore";
 import moment from "moment";
-import { useQuery } from "react-query";
 import {
 	getDownloadURL,
 	getStorage,
@@ -34,8 +33,8 @@ export const AddLineup = async ({ lineup }) => {
 	const filtered_songs = lineup.songs.filter((s) => s.title);
 
 	try {
-		const filtered = filtered_songs.filter((s) => s.is_new);
-		filtered && (await AddNewSongs({ songs: filtered }));
+		// const filtered = filtered_songs.filter((s) => s.is_new);
+		// filtered && (await AddNewSongs({ songs: filtered }));
 
 		const saved_songs = filtered_songs.map((song) => {
 			const id = song.title.split(" ").join("-").toLowerCase();

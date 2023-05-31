@@ -1,13 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
-import {
-	FormControl,
-	Grid,
-	InputLabel,
-	CardContent,
-	Select,
-	MenuItem,
-} from "@mui/material";
+import { FormControl, Grid, InputLabel, Select, MenuItem } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { useQuery } from "react-query";
 import { GetAllSongs } from "../../Firebase/songsApi";
@@ -20,11 +13,18 @@ const initialState = {
 	chords: null,
 	media: null,
 	from: null,
-	song_id: null,
+	id: null,
 	is_new: false,
 };
 
-const LineupCard = ({ category, setLineupData, songData, lineupData }) => {
+const LineupCard = ({
+	category,
+	setLineupData,
+	songData,
+	lineupData,
+	handleChangeSong,
+	currentStep,
+}) => {
 	const [cardData, setCardData] = useState(songData || initialState);
 	const [currentCategory, setCurrentCategory] = useState(category);
 	const [filteredSongs, setFilteredSongs] = useState([]);
@@ -35,8 +35,13 @@ const LineupCard = ({ category, setLineupData, songData, lineupData }) => {
 		setCurrentCategory(category);
 	}, [category]);
 
+	useEffect(() => {
+		if (currentStep >= 2) {
+			setCardData(initialState);
+		}
+	}, [currentStep]);
+
 	const handleFilterSongs = () => {
-		console.log({ songs: songsQuery.data, tag: currentCategory?.tags[0] });
 		if (songsQuery.data?.length > 0 && currentCategory.id) {
 			const filtered = songsQuery.data?.filter(
 				(song) =>
@@ -51,24 +56,25 @@ const LineupCard = ({ category, setLineupData, songData, lineupData }) => {
 		handleFilterSongs();
 	}, [songsQuery.data]);
 
-	const handleSetLineup = () => {
-		const updated_lineup = lineupData?.map((ld) => {
-			if (ld.label === currentCategory.label) {
-				return {
-					...cardData,
-					label: currentCategory.label,
-				};
-			}
+	// const handleSetLineup = () => {
+	// 	const updated_lineup = lineupData?.map((ld) => {
+	// 		if (ld.label === currentCategory.label) {
+	// 			return {
+	// 				...cardData,
+	// 				label: currentCategory.label,
+	// 			};
+	// 		}
 
-			return ld;
-		});
+	// 		return ld;
+	// 	});
 
-		setLineupData(updated_lineup);
-	};
+	// 	setLineupData(updated_lineup);
+	// };
 
 	useEffect(() => {
+		handleChangeSong && handleChangeSong({ song: cardData, category });
 		if (cardData.title) {
-			handleSetLineup();
+			// handleSetLineup();
 		}
 	}, [cardData]);
 
@@ -90,12 +96,16 @@ const LineupCard = ({ category, setLineupData, songData, lineupData }) => {
 
 	return (
 		<Grid item xs={12} md={12}>
-			<section className="p-6 flex flex-row gap-2 items-center">
+			<section className="p-2 flex flex-row gap-2 items-center">
 				<div className="flex-1">
 					<FormControl variant="standard" fullWidth>
-						<InputLabel>{currentCategory.label}</InputLabel>
+						<InputLabel className="text-sm">{currentCategory.label}</InputLabel>
 						<Select
+							// label={currentCategory.label}
 							value={songData?.id || cardData.id}
+							sx={{
+								fontSize: 14,
+							}}
 							onChange={(e) => {
 								setCardData({
 									...songsQuery.data?.filter((s) => s.id === e.target.value)[0],
@@ -118,8 +128,16 @@ const LineupCard = ({ category, setLineupData, songData, lineupData }) => {
 					</button>
 				</div>
 			</section>
+			{/* {error?.msg &&
+				(error?.msg && error?.category === category.label ? (
+					<small className="bg-red-100 text-red-500 text-xs rounded-md w-full px-2 py-1">
+						{error?.msg}
+					</small>
+				) : (
+					""
+				))} */}
 		</Grid>
 	);
 };
 
-export default React.memo(LineupCard);
+export default LineupCard;

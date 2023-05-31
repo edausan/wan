@@ -18,6 +18,9 @@ const Profile = lazy(() => import("./components/Pages/User/Profile"));
 const Post = lazy(() => import("./components/Pages/Home/Post"));
 const SongsMain = lazy(() => import("./components/Pages/Songs/SongsMain"));
 const Theme = lazy(() => import("./components/Pages/Home/Theme"));
+const NewLineupLayout = lazy(() =>
+	import("./components/Lineup/NewLineupLayout")
+);
 
 const Routes = () => {
 	return (
@@ -49,7 +52,7 @@ const Routes = () => {
 			</Route>
 			<Route path="/lineup/new">
 				<Suspense fallback={<Loading />}>
-					<NewLineup />
+					<NewLineupLayout />
 				</Suspense>
 			</Route>
 			<Route exact path="/lineup/:id">
@@ -59,7 +62,7 @@ const Routes = () => {
 			</Route>
 			<Route path="/lineup/edit/:id">
 				<Suspense fallback={<Loading />}>
-					<EditLineup />
+					<NewLineupLayout edit />
 				</Suspense>
 			</Route>
 			<Route path="/settings">

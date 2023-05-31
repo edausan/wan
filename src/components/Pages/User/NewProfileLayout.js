@@ -67,7 +67,7 @@ const NewProfileLayout = ({
 		<section
 			id="new-profile-layout"
 			className="w-full relative overflow-hidden mb-4 flex bg-sky-500 p-6 bg-cover"
-			style={{ backgroundImage: `url(${handleColor().url})` }}>
+			style={{ backgroundImage: `url(${handleColor()?.url})` }}>
 			{paramsId === currentUser?.uid && (
 				<>
 					<IconButton

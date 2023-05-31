@@ -10,25 +10,20 @@ const LineupChords = ({ lineup, showChords, setShowChords }) => {
 	useEffect(() => {
 		const songs = songsQuery.data;
 		lineup?.songs?.forEach((song) => {
-			console.log({ song });
-			const song_chord = songs.find((s) => song.id === s.id);
-			const exists = songChords.findIndex((c) => c.id === song_chord.id) >= 0;
+			const song_chord = songs.find((s) => song?.id === s?.id);
+			const exists = songChords.findIndex((c) => c?.id === song_chord?.id) >= 0;
 			!exists &&
 				setSongChords((prev) => [
 					...prev,
 					{ ...song_chord, ...song, isDone: false },
 				]);
 		});
-	}, [lineup, songsQuery.data]);
-
-	useEffect(() => {
-		console.log({ songChords });
-	}, [songChords]);
+	}, [lineup, songChords, songsQuery.data]);
 
 	const handleDone = (id) => {
 		setSongChords((prev) => {
 			return prev.map((song) => {
-				if (song.id === id) {
+				if (song?.id === id) {
 					return {
 						...song,
 						isDone: !song.isDone,
@@ -47,45 +42,47 @@ const LineupChords = ({ lineup, showChords, setShowChords }) => {
 					<Button onClick={() => setShowChords(false)} className="w-full">
 						Close Chords
 					</Button>
-					{songChords.map((song) => {
-						const { verse, pre_chorus, chorus, bridge } = song?.chords || {
-							verse: "",
-							pre_chorus: "",
-							chorus: "",
-							bridge: "",
-						};
-						return (
-							<div key={song.id} className="bg-white shadow-lg mb-4">
-								<div
-									onClick={() => handleDone(song.id)}
-									className={`${
-										song.isDone ? "bg-slate-300" : "bg-purple-600"
-									} text-white py-2 px-4 flex flex-row items-start justify-between`}>
-									<div className="w-full max-w-[70%]">
-										<h1 className="font-bold text-sm w-[200px] truncate overflow-hidden ">
-											{song.title}
-										</h1>
-										<small>Key: {song.key}</small>
+					{songChords
+						.filter((song) => song?.chords?.verse || song?.chords?.chorus)
+						.map((song) => {
+							const { verse, pre_chorus, chorus, bridge } = song?.chords || {
+								verse: "",
+								pre_chorus: "",
+								chorus: "",
+								bridge: "",
+							};
+							return (
+								<div key={song?.id} className="bg-white shadow-lg mb-4">
+									<div
+										onClick={() => handleDone(song?.id)}
+										className={`${
+											song.isDone ? "bg-slate-300" : "bg-purple-600"
+										} text-white py-2 px-4 flex flex-row items-start justify-between`}>
+										<div className="w-full max-w-[70%]">
+											<h1 className="font-bold text-sm w-[200px] truncate overflow-hidden ">
+												{song.title}
+											</h1>
+											<small>Key: {song.key}</small>
+										</div>
+										<div className="w-full max-w-[30%] text-right">
+											<small className="text-xs block">{song.label}</small>
+										</div>
 									</div>
-									<div className="w-full max-w-[30%] text-right">
-										<small className="text-xs block">{song.label}</small>
-									</div>
-								</div>
 
-								<section
-									className={`flex flex-col gap-1 p-4 ${
-										song.isDone ? "opacity-30" : "opacity-100"
-									}`}>
-									{verse && <Chords part="Verse" chords={verse} />}
-									{pre_chorus && (
-										<Chords part="Pre-chorus" chords={pre_chorus} />
-									)}
-									{chorus && <Chords part="Chorus" chords={chorus} />}
-									{bridge && <Chords part="Bridge" chords={bridge} />}
-								</section>
-							</div>
-						);
-					})}
+									<section
+										className={`flex flex-col gap-1 p-4 ${
+											song.isDone ? "opacity-30" : "opacity-100"
+										}`}>
+										{verse && <Chords part="Verse" chords={verse} />}
+										{pre_chorus && (
+											<Chords part="Pre-chorus" chords={pre_chorus} />
+										)}
+										{chorus && <Chords part="Chorus" chords={chorus} />}
+										{bridge && <Chords part="Bridge" chords={bridge} />}
+									</section>
+								</div>
+							);
+						})}
 				</div>
 			</Modal>
 		</>

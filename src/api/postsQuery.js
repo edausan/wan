@@ -1,14 +1,16 @@
-import React from "react";
 import { useQuery } from "react-query";
 import { GetAllPosts, GetPosts } from "../Firebase/postsApi";
+import { time } from "../Firebase";
 
 const PostsQuery = (uid = "") => {
 	const postsQuery = useQuery("posts", GetAllPosts, {
-		cacheTime: 60 * 60 * 1000,
+		cacheTime: time,
+		staleTime: time,
 	});
 
 	const userPostQuery = useQuery("userPosts", () => GetPosts({ id: uid }), {
-		cacheTime: 60 * 60 * 1000,
+		cacheTime: time,
+		staleTime: time,
 	});
 
 	return {

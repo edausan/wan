@@ -8,13 +8,10 @@ import React, {
 	useMemo,
 	useRef,
 } from "react";
-import { Grid, TextField, Card, Snackbar, Alert } from "@mui/material";
+import { Grid, Card, Snackbar, Alert } from "@mui/material";
 
 import { LINEUP } from "../../data";
 import { AppCtx } from "../../App";
-import MobileDatePicker from "@mui/lab/MobileDatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { GetAllSongs, UpdateLineup } from "../../Firebase/songsApi";
 import moment from "moment";
 import { useHistory, useParams } from "react-router-dom";
@@ -61,6 +58,24 @@ const NewLineup = () => {
 		if (params.id && data.length > 0) GetLineup();
 	}, [params.id, data]);
 
+	useEffect(() => {
+		if (dateRef.current !== null) {
+			// console.log({ dateRef: dateRef.current.value });
+			const lineup = lineupQuery.data?.filter((l) => l.id === params.id)[0];
+			const date = moment(lineup?.date).format("YYYY-MM-DD");
+			setDate(date);
+			// console.log({ date, lineup_date: lineup?.date });
+			dateRef.current.value = date;
+		}
+	}, []);
+
+	useEffect(() => {}, [dateRef.current]);
+
+	const handleDateChange = () => {
+		setDate(dateRef.current.value);
+		console.log({ current: dateRef.current.value });
+	};
+
 	const GetLineup = () => {
 		try {
 			// const lineup = await GetSingleLineup({ id: params.id });
@@ -68,6 +83,7 @@ const NewLineup = () => {
 			if (lineup?.id) {
 				setService(lineup?.service);
 				setDate(lineup?.date);
+				dateRef.current.value = moment(lineup?.date).format("yyyy-dd-mm");
 				if (data?.length > 0) {
 					const lineupda_data = lineup?.songs.map((song) => {
 						const song_data = data.filter((s) => s.id === song.id)[0];
@@ -94,7 +110,7 @@ const NewLineup = () => {
 			lineup: {
 				service,
 				songs: lineupData,
-				date: moment(dateRef.current.value).format("LLLL"),
+				date: moment(dateRef.current?.value).format("LLLL"),
 				date_updated: moment(new Date()).format("LLLL"),
 				updated_by: {
 					email: user.email,
@@ -152,7 +168,7 @@ const NewLineup = () => {
 					</Alert>
 				</Snackbar>
 
-				{lineupData?.length > 0 && lineupData[2]?.title && service && (
+				{lineupData?.length > 0 && service && (
 					<button
 						className="fixed bottom-[86px] right-[26px] w-[40px] h-[40px]  bg-green-500 text-white rounded-full z-50"
 						onClick={handleUpdate}
@@ -178,7 +194,13 @@ const NewLineup = () => {
 								setService={setService}
 							/>
 
-							<input ref={dateRef} className="w-full p-2" type="date" />
+							<input
+								ref={dateRef}
+								value={dateRef.current?.value}
+								onChange={handleDateChange}
+								className="w-full p-2"
+								type="date"
+							/>
 						</Card>
 					</Grid>
 
@@ -206,7 +228,13 @@ const NewLineup = () => {
 				</Grid>
 			</section>
 		);
-	}, [lineupData, data, mutatedLineup.isLoading, mutatedLineup.isSuccess]);
+	}, [
+		lineupData,
+		data,
+		mutatedLineup.isLoading,
+		mutatedLineup.isSuccess,
+		dateRef.current?.value,
+	]);
 };
 
 export default React.memo(NewLineup);
