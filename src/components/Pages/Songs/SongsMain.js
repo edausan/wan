@@ -45,8 +45,8 @@ const SongsMain = () => {
 	}, []);
 
 	useEffect(() => {
-		data && data?.length > 0 && setSongList(data);
-	}, [data, isLoading, isFetching]);
+		data && data?.length > 0 && !isFetching && setSongList(data);
+	}, [data, isFetching]);
 
 	useEffect(() => {
 		if (songList && songList?.length > 0) {
