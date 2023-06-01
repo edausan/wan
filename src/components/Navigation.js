@@ -149,7 +149,7 @@ const Navigation = () => {
 
 				<Grid item flex={1}>
 					<Link
-						to={`/profile/${user.uid}`}
+						to={`/profile/${user?.uid}`}
 						style={{
 							display: "flex",
 							padding: 16,
@@ -157,7 +157,7 @@ const Navigation = () => {
 							alignItems: "center",
 							transition: theme.transitions.easing.easeInOut,
 							color:
-								pathname === `/profile/${user.uid}`
+								pathname === `/profile/${user?.uid}`
 									? theme.palette.primary[theme.palette.mode]
 									: "inherit",
 						}}>
