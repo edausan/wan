@@ -51,7 +51,7 @@ const Login = ({ setScreen }) => {
 		if (response.user?.auth) {
 			//   response.auth.currentUser.uid && setIsSigning(true);
 			setCurrentUser(response);
-			setUserId(response.user.uid);
+			setUserId(response.user?.uid);
 		} else {
 			const err_msg =
 				response.code === "auth/email-already-in-use"
