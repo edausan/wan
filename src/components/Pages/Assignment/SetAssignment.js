@@ -125,7 +125,7 @@ const SetAssignment = ({ isViewing, assignment }) => {
 			date_created: moment(new Date()).format("LLLL"),
 			created_by: {
 				uid: user.uid,
-				photoURL: user.photoURL,
+				photoURL: user?.photoURL,
 				displayName: user.displayName,
 			},
 		};

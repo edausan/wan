@@ -162,7 +162,7 @@ const Navigation = () => {
 									: "inherit",
 						}}>
 						<Avatar
-							src={user.photoURL}
+							src={user?.photoURL}
 							alt={user.displayName}
 							sx={{ width: 26, height: 26 }}
 						/>
