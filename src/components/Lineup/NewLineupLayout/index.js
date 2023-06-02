@@ -97,7 +97,7 @@ const NewLineupLayout = ({ edit }) => {
 					songs: songs.filter((l) => l.title),
 					worship_leader: {
 						uid: currentUser.uid,
-						photoURL: currentUser.photoURL,
+						photoURL: currentUser?.photoURL,
 						displayName: currentUser.displayName,
 					},
 					date: dayjs(date).format(dateFormat),
@@ -122,7 +122,7 @@ const NewLineupLayout = ({ edit }) => {
 					email: currentUser.email,
 					uid: currentUser.uid,
 					displayName: currentUser.displayName,
-					photoURL: currentUser.photoURL,
+					photoURL: currentUser?.photoURL,
 				},
 			},
 		};
