@@ -5,12 +5,27 @@ import WAN_LOGO_NEW from "../../../assets/WAN_LOGO_NEW.png";
 import SPLASH_BG from "../../../assets/splash-bg.webp";
 import Login from "./Login";
 import SignUp from "./Signup";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { FirebaseApp } from "../../../Firebase";
+import Loading from "../../CustomComponents/Loading";
 
 const Splash = () => {
+	const auth = getAuth(FirebaseApp);
+	const user = auth.currentUser;
+
 	const [screen, setScreen] = useState("splash");
+	const [isLoggedIn, setIsLoggedIn] = useState(true);
 
 	const blue = "#00addd";
 	const pink = "#7400ff";
+
+	onAuthStateChanged(auth, (user) => {
+		if (user) {
+			setIsLoggedIn(false);
+		} else {
+			setIsLoggedIn(false);
+		}
+	});
 
 	useEffect(() => {
 		// history.push(`/profile/${currentUser.user?.uid || params.id}`);
@@ -32,22 +47,22 @@ const Splash = () => {
 
 	const SplashScreen = (
 		<>
-			<Box
-				className="w-full max-w-[500px] text-center z-[1002] flex justify-center"
-				// sx={{ width: '100%', maxWidth: 500, textAlign: 'center', zIndex: 1002 }}
-			>
-				<img
-					src={WAN_LOGO_NEW}
-					alt="WAN | Belleview"
-					style={{ width: "80%" }}
-				/>
-			</Box>
-
 			<Grid
 				container
 				flexDirection="column"
 				spacing={2}
 				sx={{ p: 4, width: "100%", maxWidth: 345, zIndex: 1002 }}>
+				<Grid item>
+					<Button
+						disableElevation
+						variant="contained"
+						className="bg-white text-black rounded-[25px] hover:text-white"
+						fullWidth
+						onClick={() => setScreen("login")}>
+						LOGIN
+					</Button>
+				</Grid>
+
 				<Grid item>
 					<Button
 						variant="outlined"
@@ -61,16 +76,6 @@ const Splash = () => {
 						disableElevation
 						onClick={() => setScreen("signup")}>
 						SIGN UP
-					</Button>
-				</Grid>
-				<Grid item>
-					<Button
-						disableElevation
-						variant="contained"
-						className="bg-white text-black rounded-[25px] hover:text-white"
-						fullWidth
-						onClick={() => setScreen("login")}>
-						LOGIN
 					</Button>
 				</Grid>
 			</Grid>
@@ -101,7 +106,14 @@ const Splash = () => {
 					backgroundBlendMode: "overlay",
 				},
 			}}>
-			{Screen()}
+			<Box className="w-full max-w-[500px] text-center z-[1002] flex justify-center">
+				<img
+					src={WAN_LOGO_NEW}
+					alt="WAN | Belleview"
+					style={{ width: "80%" }}
+				/>
+			</Box>
+			{isLoggedIn ? <Loading /> : Screen()}
 		</Grid>
 	);
 };

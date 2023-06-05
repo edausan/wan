@@ -52,11 +52,13 @@ const LineupChords = ({ lineup, showChords, setShowChords }) => {
 								bridge: "",
 							};
 							return (
-								<div key={song?.id} className="bg-white shadow-lg mb-4">
+								<div
+									key={song?.id}
+									className="bg-white shadow-lg mb-4 rounded-md overflow-hidden">
 									<div
 										onClick={() => handleDone(song?.id)}
 										className={`${
-											song.isDone ? "bg-slate-300" : "bg-purple-600"
+											song.isDone ? "bg-slate-300" : "bg-sky-500"
 										} text-white py-2 px-4 flex flex-row items-start justify-between`}>
 										<div className="w-full max-w-[70%]">
 											<h1 className="font-bold text-sm w-[200px] truncate overflow-hidden ">

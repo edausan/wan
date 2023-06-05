@@ -132,14 +132,6 @@ const SignUp = ({ setScreen }) => {
 			<Card
 				elevation={0}
 				className="py-2 px-2 text-center m-2 w-auto max-w-[345px] box-border backdrop-blur-sm z-[1002] bg-transparent">
-				<Box sx={{ width: "100%", mb: 4 }}>
-					<img
-						// src={theme.palette.mode === "dark" ? WAN_LOGO_WHITE : WAN_LOGO}
-						src={WAN_LOGO_WHITE}
-						alt="WAN | Belleview"
-						style={{ width: "100%" }}
-					/>
-				</Box>
 				<Typography variant="body1" className="mb-5 font-bold">
 					SIGN UP
 				</Typography>
@@ -229,6 +221,7 @@ const SignUp = ({ setScreen }) => {
 							<Grid item xs={4} md={4}>
 								<Button
 									variant="text"
+									className="py-4"
 									fullWidth
 									disabled={isSigning}
 									onClick={() => setScreen("login")}>
@@ -237,7 +230,7 @@ const SignUp = ({ setScreen }) => {
 							</Grid>
 							<Grid item xs={8} md={8}>
 								<LoadingButton
-									className="text-white"
+									className="text-white py-4"
 									color="primary"
 									loadingPosition="start"
 									variant="outlined"

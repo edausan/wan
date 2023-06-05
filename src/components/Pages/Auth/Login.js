@@ -9,10 +9,12 @@ import {
 	Alert,
 	Button,
 	Card,
+	FormControl,
 	Grid,
 	IconButton,
 	Input,
 	InputAdornment,
+	InputLabel,
 	TextField,
 	useTheme,
 } from "@mui/material";
@@ -77,17 +79,6 @@ const Login = ({ setScreen }) => {
 			<Card
 				elevation={0}
 				className="py-2 px-2 text-center m-2 w-auto max-w-[345px] box-border backdrop-blur-sm z-[1002] bg-transparent">
-				<Box sx={{ width: "100%", mb: 4 }}>
-					<img
-						// src={theme.palette.mode === "dark" ? WAN_LOGO_WHITE : WAN_LOGO}
-						src={WAN_LOGO_NEW}
-						alt="WAN | Belleview"
-						style={{ width: "100%" }}
-					/>
-				</Box>
-				{/* <Typography variant='body1' sx={{ mb: 2 }}>
-          LOGIN
-        </Typography> */}
 				{error && (
 					<Alert
 						severity="error"
@@ -96,9 +87,10 @@ const Login = ({ setScreen }) => {
 						{error}
 					</Alert>
 				)}
-				<Grid container spacing={2} className="mt-[-20%]">
+				<Grid container spacing={2}>
 					<Grid item xs={12} md={12}>
 						<TextField
+							required
 							variant="standard"
 							label="Email Address"
 							fullWidth
@@ -113,31 +105,35 @@ const Login = ({ setScreen }) => {
 						/>
 					</Grid>
 					<Grid item xs={12} md={12}>
-						<Input
-							variant="standard"
-							label="Password"
-							fullWidth
-							disabled={isSigning}
-							type={show ? "text" : "password"}
-							onChange={(e) => setUser({ ...user, password: e.target.value })}
-							endAdornment={
-								<InputAdornment position="end">
-									<IconButton
-										aria-label="toggle password visibility"
-										onClick={() => setShow(!show)}
-										onMouseDown={() => setShow(!show)}
-										edge="end">
-										{show ? <VisibilityOff /> : <Visibility />}
-									</IconButton>
-								</InputAdornment>
-							}
-						/>
+						<FormControl variant="standard" fullWidth required>
+							<InputLabel id="password">Password</InputLabel>
+							<Input
+								variant="standard"
+								label="Password"
+								labelId="password"
+								fullWidth
+								disabled={isSigning}
+								type={show ? "text" : "password"}
+								onChange={(e) => setUser({ ...user, password: e.target.value })}
+								endAdornment={
+									<InputAdornment position="end">
+										<IconButton
+											aria-label="toggle password visibility"
+											onClick={() => setShow(!show)}
+											onMouseDown={() => setShow(!show)}
+											edge="end">
+											{show ? <VisibilityOff /> : <Visibility />}
+										</IconButton>
+									</InputAdornment>
+								}
+							/>
+						</FormControl>
 					</Grid>
 					<Grid item xs={12} md={12} sx={{ mt: 2 }}>
 						<Grid container spacing={2}>
 							<Grid item xs={8} md={8}>
 								<LoadingButton
-									className="text-white"
+									className="text-sky-500 py-4 bg-white border-none hover:bg-white hover:border-none disabled:bg-white/0 disabled:border-none"
 									color="primary"
 									onClick={handleSignIn}
 									loading={isSigning}
@@ -153,6 +149,7 @@ const Login = ({ setScreen }) => {
 							<Grid item xs={4} md={4}>
 								<Button
 									variant="text"
+									className="py-4"
 									fullWidth
 									disabled={isSigning}
 									onClick={() => setScreen("signup")}>

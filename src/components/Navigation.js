@@ -3,16 +3,16 @@ import {
 	HomeOutlined,
 	AssignmentOutlined,
 	SpeakerNotesOutlined,
+	AudioFileOutlined,
 } from "@mui/icons-material";
 import { Paper, Grid, useTheme, Avatar, CircularProgress } from "@mui/material";
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import { FirebaseApp } from "./../Firebase";
 import { AppCtx } from "../App";
 import { useQuery } from "react-query";
 import { GetAllLineups, GetAllSongs } from "../Firebase/songsApi";
-import { GetAllAssignments } from "../Firebase/assignmentApi";
 import { GetAllPosts } from "../Firebase/postsApi";
 
 const Navigation = () => {
@@ -25,19 +25,10 @@ const Navigation = () => {
 	const { pathname } = location;
 	const theme = useTheme();
 
-	const postsQuery = useQuery("posts", GetAllPosts);
-	// const assignmentsQuery = useQuery("assignments", GetAllAssignments);
 	const lineupQuery = useQuery("lineups", GetAllLineups);
-	const songsQuery = useQuery("lineups", GetAllSongs);
-
 	const handleRefetchLineups = () => {
 		lineupQuery.refetch();
 	};
-
-	// useEffect(() => {
-	// 	songsQuery.refetch();
-	// 	postsQuery.refetch();
-	// }, []);
 
 	return (
 		<Paper
@@ -163,9 +154,27 @@ const Navigation = () => {
 						}}>
 						<Avatar
 							src={user?.photoURL}
-							alt={user.displayName}
+							alt={user?.displayName}
 							sx={{ width: 26, height: 26 }}
 						/>
+					</Link>
+				</Grid>
+
+				<Grid item flex={1}>
+					<Link
+						to={`/chorder`}
+						style={{
+							display: "flex",
+							padding: 16,
+							justifyContent: "center",
+							alignItems: "center",
+							transition: theme.transitions.easing.easeInOut,
+							color:
+								pathname === `/chorder`
+									? theme.palette.primary[theme.palette.mode]
+									: "inherit",
+						}}>
+						<AudioFileOutlined />
 					</Link>
 				</Grid>
 			</Grid>
