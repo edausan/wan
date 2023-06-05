@@ -247,11 +247,11 @@ export const CHORDS = [
 	},
 	{
 		root: "C#",
-		relatedKeys: ["C♯", "F♯", "G♯"],
-		variants: handleChord("C♯", "F", "F♯", "G♯"),
+		relatedKeys: ["C#", "F#", "G#"],
+		variants: handleChord("C#", "F", "F#", "G#"),
 		isAccidental: true,
 		isFamily: false,
-		familyChords: handleFamilyChords("C♯"),
+		familyChords: handleFamilyChords("C#"),
 	},
 	{
 		root: "D",
@@ -263,8 +263,8 @@ export const CHORDS = [
 	},
 	{
 		root: "Eb",
-		relatedKeys: ["E♭", "G♯", "B♭"],
-		variants: handleChord("E♭", "G", "G♯", "B♭"),
+		relatedKeys: ["E♭", "G#", "B♭"],
+		variants: handleChord("E♭", "G", "G#", "B♭"),
 		isAccidental: true,
 		isFamily: false,
 		familyChords: handleFamilyChords("Eb"),
@@ -287,8 +287,8 @@ export const CHORDS = [
 	},
 	{
 		root: "F#",
-		relatedKeys: ["C♯", "B", "F♯"],
-		variants: handleChord("F♯", "B♭", "B", "C♯"),
+		relatedKeys: ["C#", "B", "F#"],
+		variants: handleChord("F#", "B♭", "B", "C#"),
 		isAccidental: true,
 		isFamily: false,
 		familyChords: handleFamilyChords("F#"),
@@ -303,8 +303,8 @@ export const CHORDS = [
 	},
 	{
 		root: "G#",
-		relatedKeys: ["C♯", "E♭", "G♯"],
-		variants: handleChord("G♯", "C", "C♯", "E♭"),
+		relatedKeys: ["C#", "E♭", "G#"],
+		variants: handleChord("G#", "C", "C#", "E♭"),
 		isAccidental: true,
 		isFamily: false,
 		familyChords: handleFamilyChords("G#"),
@@ -312,7 +312,7 @@ export const CHORDS = [
 	{
 		root: "A",
 		relatedKeys: ["A", "D", "E"],
-		variants: handleChord("A", "C♯", "D", "E"),
+		variants: handleChord("A", "C#", "D", "E"),
 		isAccidental: false,
 		isFamily: false,
 		familyChords: handleFamilyChords("A"),
@@ -327,8 +327,8 @@ export const CHORDS = [
 	},
 	{
 		root: "B",
-		relatedKeys: ["B", "E", "F♯"],
-		variants: handleChord("B", "E♭", "E", "F♯"),
+		relatedKeys: ["B", "E", "F#"],
+		variants: handleChord("B", "E♭", "E", "F#"),
 		isAccidental: false,
 		isFamily: false,
 		familyChords: handleFamilyChords("B"),

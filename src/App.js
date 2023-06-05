@@ -111,7 +111,7 @@ function App() {
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			<ReactQueryDevtools
+			{/* <ReactQueryDevtools
 				initialIsOpen={true}
 				position="top-left"
 				panelProps={{
@@ -121,7 +121,7 @@ function App() {
 						left: 0,
 					},
 				}}
-			/>
+			/> */}
 			<ThemeProvider theme={theme}>
 				<Router>
 					<AppCtx.Provider value={value}>

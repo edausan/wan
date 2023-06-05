@@ -35,7 +35,7 @@ const Chorder = ({ setChords, open, setOpen }) => {
 				(chord) => chord.root === selectedKey.root
 			);
 
-			const fam_pos = _8oct[key_pos + pat.pos].variants[pat.type][0];
+			const fam_pos = _8oct[key_pos + pat?.pos]?.variants[pat?.type][0];
 
 			return fam_pos;
 		});
@@ -72,7 +72,7 @@ const Chorder = ({ setChords, open, setOpen }) => {
 	};
 
 	return (
-		<Dialog open={open} onClose={() => setOpen(false)}>
+		<Dialog open={true} onClose={() => setOpen(false)}>
 			<section className="relative w-full flex flex-col overflow-auto max-h-[600px]">
 				<article className="sticky top-0 bg-white shadow-lg">
 					<div className="p-4">
