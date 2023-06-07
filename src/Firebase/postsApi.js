@@ -161,7 +161,7 @@ export const RealtimeComments = () => {
         },
       );
     } catch (error) {
-      console.log({ RealtimeMetadata_ERROR: error });
+      throw new Error(error);
     }
   }, []);
 

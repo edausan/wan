@@ -1,35 +1,35 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  Button,
-  TextField,
-  Input,
-  IconButton,
-  Select,
-  MenuItem,
-  Snackbar,
-  Alert,
-  Avatar,
-  useTheme,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
+
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Input from "@mui/material/Input";
+import IconButton from "@mui/material/IconButton";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import Avatar from "@mui/material/Avatar";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import { useTheme } from "@mui/material/";
+
+import AccountCircleOutlined from "@mui/icons-material/AccountCircleOutlined";
+import FormatQuote from "@mui/icons-material/FormatQuote";
+import GroupOutlined from "@mui/icons-material/GroupOutlined";
+import PhotoCamera from "@mui/icons-material/PhotoCamera";
+
 import { AppCtx } from "@/App";
 import BG from "@/assets/bg.jpg";
 import { UpdateProfile, UploadPhoto } from "@/Firebase/authApi";
 import { Ministries } from "@components/Pages/Auth/Signup";
 import { useHistory } from "react-router-dom";
-import {
-  AccountCircleOutlined,
-  FormatQuote,
-  GroupOutlined,
-  PhotoCamera,
-} from "@mui/icons-material";
+
 import { getAuth } from "firebase/auth";
 import { FirebaseApp } from "@/Firebase";
 import useResize from "@hooks/useResize";

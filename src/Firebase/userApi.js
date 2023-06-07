@@ -12,7 +12,7 @@ export const GetUserMetadata = async ({ id }) => {
     return docSnap.data();
   } else {
     // doc.data() will be undefined in this case
-    console.log("No user found!");
+    throw new Error("No user found!");
   }
 };
 
