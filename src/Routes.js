@@ -1,7 +1,8 @@
 import { Suspense, lazy } from "react";
 import { Switch, Route } from "react-router-dom";
-import Loading from "./components/CustomComponents/Loading";
-import ChordEditor from "./components/Pages/ChordEditor";
+import Loading from "@components/CustomComponents/Loading";
+import ChordEditor from "@components/Pages/ChordEditor";
+import SongPreview from "./components/Pages/Songs/SongPreview";
 
 // Components
 const Home = lazy(() => import("./components/Pages/Home"));
@@ -85,6 +86,11 @@ const Routes = () => {
         </Suspense>
       </Route>
       <Route path="/songs">
+        <Suspense fallback={<Loading />}>
+          <SongsMain />
+        </Suspense>
+      </Route>
+      <Route path="/song/:id">
         <Suspense fallback={<Loading />}>
           <SongsMain />
         </Suspense>
