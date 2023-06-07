@@ -3,20 +3,20 @@ import { GetAllPosts, GetPosts } from "../Firebase/postsApi";
 import { time } from "../Firebase";
 
 const PostsQuery = (uid = "") => {
-	const postsQuery = useQuery("posts", GetAllPosts, {
-		cacheTime: time,
-		staleTime: time,
-	});
+  const postsQuery = useQuery("posts", GetAllPosts, {
+    cacheTime: time,
+    staleTime: time,
+  });
 
-	const userPostQuery = useQuery("userPosts", () => GetPosts({ id: uid }), {
-		cacheTime: time,
-		staleTime: time,
-	});
+  const userPostQuery = useQuery("userPosts", () => GetPosts({ id: uid }), {
+    cacheTime: time,
+    staleTime: time,
+  });
 
-	return {
-		postsQuery,
-		userPostQuery,
-	};
+  return {
+    postsQuery,
+    userPostQuery,
+  };
 };
 
 export default PostsQuery;

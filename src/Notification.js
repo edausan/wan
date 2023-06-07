@@ -18,20 +18,17 @@ export const Notification = () => {
 
     getToken(messaging, { vapidKey })
       .then((currentToken) => {
-        console.log({ currentToken });
         if (currentToken) {
           // Send the token to your server and update the UI if necessary
           // ...
         } else {
           // Show permission request UI
-          console.log(
-            "No registration token available. Request permission to generate one."
-          );
+          throw new Error("No registration token available. Request permission to generate one.");
           // ...
         }
       })
       .catch((err) => {
-        console.log("An error occurred while retrieving token. ", err);
+        throw new Error("An error occurred while retrieving token. ", err);
         // ...
       });
   };

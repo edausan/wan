@@ -1,7 +1,7 @@
-import React from 'react';
-import { TextField } from '@mui/material';
+import React from "react";
+import { TextField } from "@mui/material";
 
-const TextArea = ({ value, className, size, styles, color = '#fff' }) => {
+const TextArea = ({ value, className, size, styles, color = "#fff" }) => {
   return (
     <TextField
       disabled
@@ -10,18 +10,18 @@ const TextArea = ({ value, className, size, styles, color = '#fff' }) => {
       fullWidth
       className={`first:px-0 ${className}`}
       sx={{
-        border: 'none',
-        '& > .MuiOutlinedInput-root': {
+        border: "none",
+        "& > .MuiOutlinedInput-root": {
           p: 0,
-          border: 'none',
-          '& textarea': {
-            border: 'none',
-            '-webkit-text-fill-color': color,
+          border: "none",
+          "& textarea": {
+            border: "none",
+            "-webkit-text-fill-color": color,
             fontSize: size,
             ...styles,
           },
-          '& fieldset': {
-            border: 'none',
+          "& fieldset": {
+            border: "none",
           },
         },
       }}
