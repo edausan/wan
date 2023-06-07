@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Search, ArrowBack } from "@mui/icons-material";
-import Youtube from "../../Youtube";
-import VideoItem from "../Video/VideoItem";
+import Youtube from "@/Youtube.js";
+import VideoItem from "@components/Video/VideoItem.js";
 
 const Media = () => {
   const [searchText, setSearchText] = useState("");

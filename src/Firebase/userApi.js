@@ -1,5 +1,5 @@
 import { collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
-import { FirebaseApp, Firestore } from "../Firebase";
+import { FirebaseApp, Firestore } from "@/Firebase";
 import { getAuth, updateProfile } from "firebase/auth";
 
 const auth = getAuth(FirebaseApp);

@@ -11,14 +11,14 @@ import {
   Chip,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import { AddNewSong, UploadAlbumCover } from "@/Firebase/songsApi";
 import useResize from "@hooks/useResize";
 import AlbumCover from "./AlbumCover";
-import EditSongTabs from "./EditSongTabs";
 import ALBUM_PLACEHOLDER from "@assets/music_placeholder.jpg";
-import SongType from "./SongType";
 import LoadingScreen from "@components/CustomComponents/LoadingScreen";
+const EditSongTabs = lazy(import(() => "./EditSongTabs"));
+const SongType = lazy(() => import("./SongType"));
 
 const CreateNewSong = ({ open, setOpen }) => {
   const [newTag, setNewTag] = useState(null);
@@ -200,19 +200,21 @@ const CreateNewSong = ({ open, setOpen }) => {
 
   return (
     <>
-      <SongType
-        open={openSongType && open}
-        setOpen={setOpenSongType}
-        setSongType={handleSongType}
-      />
-      <AlbumCover
+      <Suspense fallback={<div />}>
+        <SongType
+          open={openSongType && open}
+          setOpen={setOpenSongType}
+          setSongType={handleSongType}
+        />
+      </Suspense>
+      {/* <AlbumCover
         open={openCovers}
         setOpen={setOpenCovers}
         setSelectedCover={setSelectedCover}
         selectedCover={selectedCover}
         setImage={setImage}
         resized={resized}
-      />
+      /> */}
       <LoadingScreen status={updating} text="Saving, " />
       <SwipeableDrawer
         anchor="bottom"
@@ -358,12 +360,14 @@ const CreateNewSong = ({ open, setOpen }) => {
           </div>
 
           {showLyrics && (
-            <EditSongTabs
-              song={songDetails}
-              setSongDetails={setSongDetails}
-              save={handleSave}
-              updating={updating}
-            />
+            <Suspense fallback={<div />}>
+              <EditSongTabs
+                song={songDetails}
+                setSongDetails={setSongDetails}
+                save={handleSave}
+                updating={updating}
+              />
+            </Suspense>
           )}
 
           <div className="flex flex-row items-center justify-center p-2">

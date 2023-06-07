@@ -9,22 +9,15 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { useSelector } from "react-redux";
-import { GetAlbumCovers, GetAllAlbumCovers } from "@/Firebase/songsApi";
-import { selectSongs } from "@/redux/slices/songsSlice";
-import { useQuery } from "react-query";
 
 const AlbumCover = ({ open, setOpen, setSelectedCover, selectedCover, setImage, resized }) => {
-  // const { AlbumCovers } = GetAllAlbumCovers();
-  const { data: AlbumCovers, isFetched } = useQuery("album-covers", GetAlbumCovers);
-  // const { albumCovers } = useSelector(selectSongs);
   const [img, setImg] = useState(null);
 
   const [albumCovers, setAlbumCovers] = useState([]);
 
   useEffect(() => {
-    setAlbumCovers(AlbumCovers);
-  }, [AlbumCovers]);
+    setAlbumCovers([]);
+  }, []);
 
   const handleSelect = (cover) => {
     if (cover?.photoURL === selectedCover?.photoURL) {

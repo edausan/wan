@@ -10,7 +10,7 @@ import { ADMIN, ASSIGNER } from "@/data";
 import AssignmentLoading from "./Assignment/AssignmentLoading";
 import { GetAllAssignments, GetRealtimeAssignments } from "@/Firebase/assignmentApi";
 import { useQuery } from "react-query";
-import Fetching from "../CustomComponents/Fetching";
+import Fetching from "@components/CustomComponents/Fetching";
 import { GetAllUsers } from "@/Firebase/authApi";
 
 const SetAssignment = lazy(() => import("./Assignment/SetAssignment"));

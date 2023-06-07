@@ -1,5 +1,5 @@
 import { getAuth } from "firebase/auth";
-import { FirebaseApp, Firestore } from "../Firebase";
+import { FirebaseApp, Firestore } from "@/Firebase";
 import { collection, doc, onSnapshot, addDoc, deleteDoc, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 

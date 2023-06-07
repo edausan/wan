@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "react-query";
 import { GetAllSongs } from "@/Firebase/songsApi";
 import { LINEUP } from "@/data";
-import LineupCard from "../LineupCard";
+import LineupCard from "@components/Lineup/LineupCard";
 
 const LineupSongs = ({ songs, setSongs, currentStep }) => {
   const songsQuery = useQuery("songs", GetAllSongs);

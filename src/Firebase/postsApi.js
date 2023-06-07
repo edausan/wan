@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // import { getAuth } from 'firebase/auth';
-import { FirebaseApp, Firestore } from "../Firebase";
+import { FirebaseApp, Firestore } from "@/Firebase";
 import {
   collection,
   doc,

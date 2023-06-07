@@ -1,6 +1,6 @@
 import { Avatar } from "@mui/material";
 import React from "react";
-import { Ministries } from "../Auth/Signup";
+import { Ministries } from "@/Auth/Signup";
 
 const ProfileHeader = ({ show, user }) => {
   const handleBGColor = () => {

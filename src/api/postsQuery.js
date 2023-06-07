@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
-import { GetAllPosts, GetPosts } from "../Firebase/postsApi";
-import { time } from "../Firebase";
+import { GetAllPosts, GetPosts } from "@/Firebase/postsApi";
+import { time } from "@/Firebase";
 
 const PostsQuery = (uid = "") => {
   const postsQuery = useQuery("posts", GetAllPosts, {

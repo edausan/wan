@@ -3,7 +3,7 @@ import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import Service from "../Service";
+import Service from "@components/Lineup/Service";
 import { Add } from "@mui/icons-material";
 
 const ServiceDate = ({ handleDateChange, date, setService, service }) => {

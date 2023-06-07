@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
-import { GetAllLineups, GetLineup } from "../Firebase/lineupApi";
-import { time } from "../Firebase";
+import { GetAllLineups, GetLineup } from "@/Firebase/lineupApi";
+import { time } from "@/Firebase";
 
 const LineupQuery = (uid = "") => {
   const lineupsQuery = useQuery("lineups", GetAllLineups, {

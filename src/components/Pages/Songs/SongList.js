@@ -9,7 +9,7 @@ import SongLoading from "./SongLoading";
 
 const Song = lazy(() => import("./Song"));
 const CreateNewSong = lazy(() => import("./CreateNewSong"));
-const SongDetailsDrawer = lazy(() => import("../../Lineup/SongDetailsDrawer"));
+const SongDetailsDrawer = lazy(() => import("@components/Lineup/SongDetailsDrawer"));
 
 const SongList = ({ songs }) => {
   const currentUser = useSelector(selectCurrentUser);

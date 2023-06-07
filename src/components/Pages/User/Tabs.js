@@ -1,12 +1,10 @@
 import { Box, Tab, Tabs, Typography } from "@mui/material";
 import React, { Suspense, useState } from "react";
 import LineupLoading from "@components/Lineup/LineupLoading";
-import PostLoading from "../Home/PostLoading";
-// import LineupItem from '../../Lineup/LineupItem';
-// import PostsMain from '../Home/PostsMain';
+import PostLoading from "@components/Pages/Home/PostLoading";
 
-const LineupItem = React.lazy(() => import("../../Lineup/LineupItem"));
-const PostsMain = React.lazy(() => import("../Home/PostsMain"));
+const LineupItem = React.lazy(() => import("@components/Lineup/LineupItem"));
+const PostsMain = React.lazy(() => import("@components/Pages/Home/PostsMain"));
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;

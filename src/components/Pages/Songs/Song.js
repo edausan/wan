@@ -33,13 +33,13 @@ const Song = ({ song, setOpenDrawer, openDrawer, handleExpandClick }) => {
       className="phone:col-span-2 laptop:col-span-1 flex flex-row shadow-md"
       elevation={0}
     >
-      <Suspense fallback={<Skeleton variant="rectangular" width={50} height="100%" />}>
+      {/* <Suspense fallback={<Skeleton variant="rectangular" width={50} height="100%" />}>
         <CardMedia
           component="img"
           image={song?.cover || ALBUM_PLACEHOLDER}
           className={`w-[50px] min-w-[50px] overflow-hidden`}
         />
-      </Suspense>
+      </Suspense> */}
       <div className="flex-1 flex flex-row">
         <CardHeader
           onClick={
@@ -49,15 +49,15 @@ const Song = ({ song, setOpenDrawer, openDrawer, handleExpandClick }) => {
               ? () => handleExpandClick(song, "Lyrics")
               : () => handleExpandClick(song, "Chords")
           }
-          className="flex-1 pt-2 pb-3 pl-2 phone:max-w-[205px] phone_lg:max-w-[244px] tablet:max-w-full laptop:max-w-full"
+          className="flex-1 pt-2 pb-2 pl-2 "
           title={
-            <p className="text-sm laptop:text-sm phone:text-xs font-bold truncate desktop:max-w-full laptop:max-w-full tablet:max-w-full phone:max-w-[170px] box-border">
+            <p className="text-md laptop:text-[14px] phone:text-[14px] font-bold truncate desktop:max-w-full laptop:max-w-full tablet:max-w-full phone:max-w-[170px] box-border pl-2 mb-2 pt-1">
               {song?.title}
             </p>
           }
           titleTypographyProps={{ sx: { lineHeight: 0.8 } }}
           subheader={
-            <div className="text-xs flex flex-col">
+            <div className="text-xs flex flex-col pl-2">
               <span className="mr-2 flex-1">
                 {/* <small className='block'>Artist:</small> */}
                 {song?.artist || <span className="text-[.55rem]">+ Add Artist</span>}

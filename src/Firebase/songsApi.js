@@ -397,63 +397,49 @@ const GetDownloadURL = async (ref) => {
   return await getDownloadURL(ref);
 };
 
-export const GetAlbumCovers = async () => {
-  try {
-    const listRef = ref(storage, "album_cover");
-    const res = await listAll(listRef);
+// export const GetAlbumCovers = async () => {
+//   try {
+//     const listRef = ref(storage, "album_cover");
+//     const res = await listAll(listRef);
 
-    const covers_data = res.items.map(async (itemRef) => {
-      const photoURL = await GetDownloadURL(itemRef);
-      if (typeof photoURL === "string") {
-        const cover_data = { photoURL, fileName: itemRef.name };
-        return cover_data;
-      }
-    });
+//     const covers_data = res.items.map(async (itemRef) => {
+//       const photoURL = await GetDownloadURL(itemRef);
+//       if (typeof photoURL === "string") {
+//         const cover_data = { photoURL, fileName: itemRef.name };
+//         return cover_data;
+//       }
+//     });
 
-    return covers_data.map(async (cover) => {
-      return await cover;
-    });
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
+//     return covers_data.map(async (cover) => {
+//       return await cover;
+//     });
+//   } catch (error) {
+//     throw new Error(error.message);
+//   }
+// };
 
-export const GetAllAlbumCovers = () => {
-  const [covers, setCovers] = useState([]);
+// export const GetAllAlbumCovers = () => {
+//   const [covers, setCovers] = useState([]);
 
-  const GetCovers = async () => {
-    try {
-      const listRef = ref(storage, "album_cover");
-      const res = await listAll(listRef);
+//   const GetCovers = async () => {
+//     try {
+//       const listRef = ref(storage, "album_cover");
+//       const res = await listAll(listRef);
 
-      const covers_data = res.items.map(async (itemRef) => {
-        const photoURL = await GetDownloadURL(itemRef);
+//       const covers_data = res.items.map(async (itemRef) => {
+//         const photoURL = await GetDownloadURL(itemRef);
 
-        if (typeof photoURL === "string") {
-          const cover_data = { photoURL, fileName: itemRef.name };
-          setCovers((prev) => [...prev, cover_data]);
-          return cover_data;
-        }
-      });
+//         if (typeof photoURL === "string") {
+//           const cover_data = { photoURL, fileName: itemRef.name };
+//           setCovers((prev) => [...prev, cover_data]);
+//           return cover_data;
+//         }
+//       });
 
-      return covers_data;
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  };
-
-  // useEffect(() => {
-  // 	setCoversRef(albumQuery.data)
-  // }, [albumQuery.data, albumQuery.isFetching])
-
-  // useEffect(() => {
-  // 	if (fileName && typeof photoURL === "string") {
-  // 		const idx = covers.findIndex((c) => c.name === fileName);
-  // 		if (idx === -1) {
-  // 			setCovers([...covers, { name: fileName, photoURL }]);
-  // 		}
-  // 	}
-  // }, [photoURL, fileName]);
-
-  return { AlbumCovers: covers };
-};
+//       return covers_data;
+//     } catch (error) {
+//       throw new Error(error.message);
+//     }
+//   };
+//   return { AlbumCovers: covers };
+// };
