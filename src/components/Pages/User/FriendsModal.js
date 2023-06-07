@@ -1,6 +1,6 @@
-import { Modal, Card } from '@mui/material';
-import React from 'react';
-import FriendsTab from './FriendsTab';
+import { Modal, Card } from "@mui/material";
+import React from "react";
+import FriendsTab from "./FriendsTab";
 
 const FriendsModal = ({ open, setOpen, user, friends, handleToOther }) => {
   return (
@@ -8,14 +8,14 @@ const FriendsModal = ({ open, setOpen, user, friends, handleToOther }) => {
       <Card
         sx={{
           // p: 2,
-          width: '90%',
+          width: "90%",
           minWidth: 300,
           maxWidth: 400,
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          boxSizing: 'border-box',
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          boxSizing: "border-box",
         }}
       >
         {/* <CardContent

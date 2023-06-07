@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { AppCtx } from "../../App";
+import { AppCtx } from "@/App";
 
 const SongHeader = ({ song }) => {
   const { mode } = useContext(AppCtx);

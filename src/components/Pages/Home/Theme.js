@@ -1,144 +1,133 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Suspense, useEffect, useState } from "react";
-import { Card, CardContent, Chip, Skeleton } from "@mui/material";
+import { Card, CardContent, Chip, Skeleton, useMediaQuery } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectThemes } from "../../../redux/slices/postsSlice";
+import { selectThemes } from "@/redux/slices/postsSlice";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { useMediaQuery } from "@mui/material";
 import { useQuery } from "react-query";
-import { GetAllThemes } from "../../../Firebase/postsApi";
+import { GetAllThemes } from "@/Firebase/postsApi";
 
 const initialState = {
-	photoURL: null,
-	title: null,
-	verse: null,
-	body: null,
-	link: null,
-	tags: [],
-	id: null,
+  photoURL: null,
+  title: null,
+  verse: null,
+  body: null,
+  link: null,
+  tags: [],
+  id: null,
 };
 
 const Theme = ({ theme, isRow }) => {
-	const { data, isFetching } = useQuery("themes", GetAllThemes);
-	const desktop = useMediaQuery("(min-width:640px)");
-	const themes = useSelector(selectThemes);
-	const params = useParams();
-	const [open, setOpen] = useState(false);
-	const [currentTheme, setCurrentTheme] = useState(initialState);
-	const { photoURL, title, verse, body, link, tags, id } = currentTheme;
+  const { data, isFetching } = useQuery("themes", GetAllThemes);
+  const desktop = useMediaQuery("(min-width:640px)");
+  const themes = useSelector(selectThemes);
+  const params = useParams();
+  const [open, setOpen] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState(initialState);
+  const { photoURL, title, verse, body, link, tags, id } = currentTheme;
 
-	useEffect(() => {
-		theme?.id && setCurrentTheme(theme);
-	}, [theme]);
+  useEffect(() => {
+    theme?.id && setCurrentTheme(theme);
+  }, [theme]);
 
-	useEffect(() => {
-		if (params?.id && data.length > 0 && !isFetching) {
-			setCurrentTheme(
-				data?.filter((theme) => theme.id === params?.id)[0] || initialState
-			);
-			setOpen(true);
-		}
-	}, [params, data, isFetching]);
+  useEffect(() => {
+    if (params?.id && data.length > 0 && !isFetching) {
+      setCurrentTheme(data?.filter((theme) => theme.id === params?.id)[0] || initialState);
+      setOpen(true);
+    }
+  }, [params, data, isFetching]);
 
-	return (
-		<Card
-			fullWidth
-			className={`w-[100%] desktop:min-w-[650px] shadow-md laptop:min-w-[650px] phone:min-w-auto box-border flex flex-col ${
-				isRow
-					? "phone:min-w-[220px] desktop:min-w-[400px] laptop:min-w-[400px] phone:max-h-[435px]"
-					: ""
-			}`}
-			elevation={0}>
-			<Suspense
-				fallback={<Skeleton variant="rectangular" height={300} width="100%" />}>
-				<Link to={`/theme/${id || params?.id}`}>
-					<LazyLoadImage
-						alt={title}
-						effect="blur"
-						placeholder={<Skeleton variant="rectangular" height={350} />}
-						src={photoURL}
-						width="100%"
-					/>
-				</Link>
-			</Suspense>
+  return (
+    <Card
+      fullWidth
+      className={`w-[100%] desktop:min-w-[650px] shadow-md laptop:min-w-[650px] phone:min-w-auto box-border flex flex-col ${
+        isRow
+          ? "phone:min-w-[220px] desktop:min-w-[400px] laptop:min-w-[400px] phone:max-h-[435px]"
+          : ""
+      }`}
+      elevation={0}
+    >
+      <Suspense fallback={<Skeleton variant="rectangular" height={300} width="100%" />}>
+        <Link to={`/theme/${id || params?.id}`}>
+          <LazyLoadImage
+            alt={title}
+            effect="blur"
+            placeholder={<Skeleton variant="rectangular" height={350} />}
+            src={photoURL}
+            width="100%"
+          />
+        </Link>
+      </Suspense>
 
-			<CardContent className="pb-2 h-full">
-				<Link to={`/theme/${id || params?.id}`}>
-					{title ? (
-						<p className="text-md mb-2 font-semibold">{title}</p>
-					) : (
-						<Skeleton variant="text" width={500} />
-					)}
-				</Link>
-				<p className="text-sm">
-					<i>
-						{verse ? (
-							<div
-								className={`font-semibold ${
-									params?.id ? "" : "phone:truncate flex-wrap"
-								}`}>
-								{verse}
-							</div>
-						) : (
-							<Skeleton variant="text" width="100%" />
-						)}
-					</i>
+      <CardContent className="pb-2 h-full">
+        <Link to={`/theme/${id || params?.id}`}>
+          {title ? (
+            <p className="text-md mb-2 font-semibold">{title}</p>
+          ) : (
+            <Skeleton variant="text" width={500} />
+          )}
+        </Link>
+        <p className="text-sm">
+          <i>
+            {verse ? (
+              <div className={`font-semibold ${params?.id ? "" : "phone:truncate flex-wrap"}`}>
+                {verse}
+              </div>
+            ) : (
+              <Skeleton variant="text" width="100%" />
+            )}
+          </i>
 
-					{!desktop && !params?.id && (
-						<Link to={`/theme/${id || params?.id}`}>
-							<button className="text-sm text-sky-400 ml-2 phone:ml-0">
-								Read more
-							</button>
-						</Link>
-					)}
+          {!desktop && !params?.id && (
+            <Link to={`/theme/${id || params?.id}`}>
+              <button className="text-sm text-sky-400 ml-2 phone:ml-0">Read more</button>
+            </Link>
+          )}
 
-					{!open && desktop && (
-						<button
-							onClick={() => setOpen(true)}
-							className="text-sm text-sky-400 ml-2 phone:ml-0">
-							Read more
-						</button>
-					)}
-				</p>
+          {!open && desktop && (
+            <button onClick={() => setOpen(true)} className="text-sm text-sky-400 ml-2 phone:ml-0">
+              Read more
+            </button>
+          )}
+        </p>
 
-				{params?.id && <p className="my-2 text-sm">{body}</p>}
+        {params?.id && <p className="my-2 text-sm">{body}</p>}
 
-				{open && desktop && (
-					<p className="my-2 text-sm">
-						{body}{" "}
-						{open && (
-							<button
-								onClick={() => setOpen(false)}
-								className="text-sm text-sky-400 ml-2">
-								Read less
-							</button>
-						)}
-					</p>
-				)}
-			</CardContent>
+        {open && desktop && (
+          <p className="my-2 text-sm">
+            {body}{" "}
+            {open && (
+              <button onClick={() => setOpen(false)} className="text-sm text-sky-400 ml-2">
+                Read less
+              </button>
+            )}
+          </p>
+        )}
+      </CardContent>
 
-			<CardContent className="pb-0">
-				<p className={`text-xs mt-4 ${params?.id ? "" : "phone:truncate"}`}>
-					Source:{" "}
-					<a
-						style={{ pointerEvents: "none" }}
-						href={link}
-						target="_black"
-						no-referrerpolicy=""
-						className="underline text-sky-400">
-						{link?.split("https://")[1]}
-					</a>
-				</p>
+      <CardContent className="pb-0">
+        <p className={`text-xs mt-4 ${params?.id ? "" : "phone:truncate"}`}>
+          Source:{" "}
+          <a
+            style={{ pointerEvents: "none" }}
+            href={link}
+            target="_black"
+            no-referrerpolicy=""
+            className="underline text-sky-400"
+          >
+            {link?.split("https://")[1]}
+          </a>
+        </p>
 
-				<div className="flex flex-row items-center justify-start p-2 pt-0 gap-2 self-end mt-4">
-					{tags?.map((tag) => {
-						return <Chip key={tag} label={tag} size="small" />;
-					})}
-				</div>
-			</CardContent>
-			{/* <Divider /> */}
-			{/* <CardActions className='justify-center grid grid-cols-3 p-1'>
+        <div className="flex flex-row items-center justify-start p-2 pt-0 gap-2 self-end mt-4">
+          {tags?.map((tag) => {
+            return <Chip key={tag} label={tag} size="small" />;
+          })}
+        </div>
+      </CardContent>
+      {/* <Divider /> */}
+      {/* <CardActions className='justify-center grid grid-cols-3 p-1'>
         <Button
           variant='text'
           color='inherit'
@@ -156,8 +145,8 @@ const Theme = ({ theme, isRow }) => {
           <span className='!capitalize text-xs'>Comment</span>
         </Button>
       </CardActions> */}
-		</Card>
-	);
+    </Card>
+  );
 };
 
 export default Theme;

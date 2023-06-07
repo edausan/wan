@@ -1,101 +1,94 @@
 import {
-	Avatar,
-	Button,
-	Card,
-	CardContent,
-	CardMedia,
-	Grid,
-	IconButton,
-	Typography,
+  Avatar,
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  Grid,
+  IconButton,
+  Typography,
 } from "@mui/material";
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import { AppCtx } from "../../../App";
+import { AppCtx } from "@/App";
 
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Visibility } from "@mui/icons-material";
 
 const Friends = ({ setOpenFriends, friends, id }) => {
-	const theme = useTheme();
-	const matches = useMediaQuery(theme.breakpoints.up("sm"));
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("sm"));
 
-	const count = matches ? 10 : 5;
+  const count = matches ? 10 : 5;
 
-	return (
-		<Card
-			sx={{
-				mb: 2,
-				position: "relative",
-			}}
-			elevation={0}
-			className="shadow-md">
-			<CardContent>
-				<Typography
-					variant="body2"
-					sx={{ mb: 2, alignItems: "center", display: "flex" }}
-					onClick={() => setOpenFriends(true)}>
-					Friends •{" "}
-					{
-						friends
-							.filter((f) => f.id !== id || f.uid !== id)
-							.filter((f) => f.id || f.uid).length
-					}
-					<Button
-						disabled={friends.length <= 0}
-						size="small"
-						variant="text"
-						sx={{
-							fontSize: 12,
-							ml: 1,
-							pb: 0,
-							pt: "2px",
-							textTransform: "capitalize",
-						}}
-						onClick={
-							friends.length <= 0 ? () => {} : () => setOpenFriends(true)
-						}>
-						Show more
-					</Button>
-				</Typography>
+  return (
+    <Card
+      sx={{
+        mb: 2,
+        position: "relative",
+      }}
+      elevation={0}
+      className="shadow-md"
+    >
+      <CardContent>
+        <Typography
+          variant="body2"
+          sx={{ mb: 2, alignItems: "center", display: "flex" }}
+          onClick={() => setOpenFriends(true)}
+        >
+          Friends •{" "}
+          {friends.filter((f) => f.id !== id || f.uid !== id).filter((f) => f.id || f.uid).length}
+          <Button
+            disabled={friends.length <= 0}
+            size="small"
+            variant="text"
+            sx={{
+              fontSize: 12,
+              ml: 1,
+              pb: 0,
+              pt: "2px",
+              textTransform: "capitalize",
+            }}
+            onClick={friends.length <= 0 ? () => {} : () => setOpenFriends(true)}
+          >
+            Show more
+          </Button>
+        </Typography>
 
-				<section className="flex flex-row gap-2 items-center justify-center">
-					{friends
-						.filter((f) => f.uid !== id)
-						.filter((f) => f.uid)
-						.slice(0, count)
-						.map((f, idx) => {
-							return (
-								<Link
-									key={`${f.uid}~${idx}`}
-									to={`/profile/${f.uid}`}
-									style={{
-										textDecoration: "none",
-										color: "inherit",
-										width: "100%",
-									}}>
-									<Avatar
-										alt={f.displayName}
-										src={f.photoURL}
-										className="w-[50px] h-[50px]"
-									/>
-								</Link>
-							);
-						})}
+        <section className="flex flex-row gap-2 items-center justify-center">
+          {friends
+            .filter((f) => f.uid !== id)
+            .filter((f) => f.uid)
+            .slice(0, count)
+            .map((f, idx) => {
+              return (
+                <Link
+                  key={`${f.uid}~${idx}`}
+                  to={`/profile/${f.uid}`}
+                  style={{
+                    textDecoration: "none",
+                    color: "inherit",
+                    width: "100%",
+                  }}
+                >
+                  <Avatar alt={f.displayName} src={f.photoURL} className="w-[50px] h-[50px]" />
+                </Link>
+              );
+            })}
 
-					{!matches && (
-						<IconButton
-							className="p-0 m-0"
-							onClick={
-								friends.length <= 0 ? () => {} : () => setOpenFriends(true)
-							}>
-							<Avatar className="w-[50px] h-[50px]">
-								<Visibility />
-							</Avatar>
-						</IconButton>
-					)}
-				</section>
-				{/* <Grid
+          {!matches && (
+            <IconButton
+              className="p-0 m-0"
+              onClick={friends.length <= 0 ? () => {} : () => setOpenFriends(true)}
+            >
+              <Avatar className="w-[50px] h-[50px]">
+                <Visibility />
+              </Avatar>
+            </IconButton>
+          )}
+        </section>
+        {/* <Grid
           container
           spacing={1}
           justifyContent="center"
@@ -167,9 +160,9 @@ const Friends = ({ setOpenFriends, friends, id }) => {
 
           {!matches && <Avatar className="w-[50px] h-[50px]" />}
         </Grid> */}
-			</CardContent>
-		</Card>
-	);
+      </CardContent>
+    </Card>
+  );
 };
 
 export default Friends;

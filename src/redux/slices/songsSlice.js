@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   songs: [],
@@ -6,7 +6,7 @@ const initialState = {
 };
 
 export const songsSlice = createSlice({
-  name: 'songs',
+  name: "songs",
   initialState,
   reducers: {
     setSongs: (state, action) => {

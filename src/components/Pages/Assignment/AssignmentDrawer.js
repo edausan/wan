@@ -1,13 +1,7 @@
-import { DeleteTwoTone, EditTwoTone } from '@mui/icons-material';
-import {
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from '@mui/material';
-import React from 'react';
-import { DeleteAssignment } from '../../../Firebase/assignmentApi';
+import { DeleteTwoTone, EditTwoTone } from "@mui/icons-material";
+import { Drawer, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import React from "react";
+import { DeleteAssignment } from "@/Firebase/assignmentApi";
 
 const AssignmentDrawer = ({ open, setOpen, assignment }) => {
   const handleDelete = async () => {
@@ -15,24 +9,24 @@ const AssignmentDrawer = ({ open, setOpen, assignment }) => {
       DeleteAssignment({ id: assignment.id });
       setOpen(false);
     } catch (error) {
-      console.log(error.message);
+      throw new Error(error.message);
     }
   };
 
   return (
-    <Drawer anchor='bottom' open={open} onClose={() => setOpen(false)}>
+    <Drawer anchor="bottom" open={open} onClose={() => setOpen(false)}>
       <List>
         <ListItemButton disabled>
           <ListItemIcon>
             <EditTwoTone />
           </ListItemIcon>
-          <ListItemText primary='Edit' />
+          <ListItemText primary="Edit" />
         </ListItemButton>
         <ListItemButton onClick={handleDelete}>
           <ListItemIcon>
             <DeleteTwoTone />
           </ListItemIcon>
-          <ListItemText primary='Delete' />
+          <ListItemText primary="Delete" />
         </ListItemButton>
       </List>
     </Drawer>

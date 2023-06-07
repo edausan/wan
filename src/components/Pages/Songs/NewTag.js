@@ -1,7 +1,6 @@
-import { ClearOutlined, SaveOutlined } from '@mui/icons-material';
-import { IconButton, TextField } from '@mui/material';
-import React, { useState } from 'react';
-import { useCallback } from 'react';
+import { ClearOutlined, SaveOutlined } from "@mui/icons-material";
+import { IconButton, TextField } from "@mui/material";
+import React, { useState, useCallback } from "react";
 
 const NewSongTag = ({ tagExist, setEditDetails, handleAddTag }) => {
   const [tag, setTag] = useState(null);
@@ -11,19 +10,19 @@ const NewSongTag = ({ tagExist, setEditDetails, handleAddTag }) => {
   // };
 
   return (
-    <div className='px-4 py-2 flex flex-row'>
+    <div className="px-4 py-2 flex flex-row">
       <TextField
         fullWidth
-        variant='standard'
-        size='small'
-        label='New Tag'
-        className='TAG [&>label]:text-sm [&>div>input]:text-sm'
+        variant="standard"
+        size="small"
+        label="New Tag"
+        className="TAG [&>label]:text-sm [&>div>input]:text-sm"
         onChange={(e) => setTag(e.target.value)}
         error={tagExist}
-        helperText={tagExist ? 'Tag already exists.' : ''}
+        helperText={tagExist ? "Tag already exists." : ""}
       />
       <IconButton onClick={() => handleAddTag(tag)} disabled={!tag || tagExist}>
-        <SaveOutlined className='w-[18px] h-[18px]' />
+        <SaveOutlined className="w-[18px] h-[18px]" />
       </IconButton>
       <IconButton
         onClick={() =>
@@ -33,7 +32,7 @@ const NewSongTag = ({ tagExist, setEditDetails, handleAddTag }) => {
           }))
         }
       >
-        <ClearOutlined className='w-[18px] h-[18px]' />
+        <ClearOutlined className="w-[18px] h-[18px]" />
       </IconButton>
     </div>
   );

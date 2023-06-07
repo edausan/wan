@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   lineups: [],
@@ -6,7 +6,7 @@ const initialState = {
 };
 
 export const lineupsSlice = createSlice({
-  name: 'lineups',
+  name: "lineups",
   initialState,
   reducers: {
     setLineups: (state, action) => {

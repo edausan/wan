@@ -1,21 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Card, Chip, IconButton, TextField } from "@mui/material";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState, useContext } from "react";
 import { Clear, FilterList, SearchOutlined } from "@mui/icons-material";
-import { useContext } from "react";
-import { AppCtx } from "../../../App";
+import { AppCtx } from "@/App";
 
 const FilterDrawer = React.lazy(() => import("./FilterDrawer"));
 
-const SongSearch = ({
-  setSearchText,
-  open,
-  setOpen,
-  artists,
-  albums,
-  searchText,
-  tags,
-}) => {
+const SongSearch = ({ setSearchText, open, setOpen, artists, albums, searchText, tags }) => {
   const { mode } = useContext(AppCtx);
   const [text, setText] = useState(null);
 
@@ -55,11 +46,7 @@ const SongSearch = ({
             <SearchOutlined />
           </IconButton>
         </div>
-        <IconButton
-          className="w-[40px] h-[40px]"
-          onClick={() => setOpen(true)}
-          size="small"
-        >
+        <IconButton className="w-[40px] h-[40px]" onClick={() => setOpen(true)} size="small">
           <FilterList />
         </IconButton>
       </section>
@@ -84,11 +71,7 @@ const SongSearch = ({
               className={`text-white text-xs !h-[26px] ${
                 searchText === tag ? "!bg-gray-800" : "!bg-gray-600"
               }`}
-              onClick={
-                searchText === tag
-                  ? () => setSearchText(null)
-                  : () => setSearchText(tag)
-              }
+              onClick={searchText === tag ? () => setSearchText(null) : () => setSearchText(tag)}
             />
           );
         })}

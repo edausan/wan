@@ -1,11 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   assignments: [],
 };
 
 export const assignmentSlice = createSlice({
-  name: 'assignments',
+  name: "assignments",
   initialState,
   reducers: {
     setAssignments: (state, action) => {
