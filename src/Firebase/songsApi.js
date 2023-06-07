@@ -94,7 +94,7 @@ export const UpdateLineupPinned = async ({ lineup }) => {
       };
     }
   } catch (error) {
-    console.error(error);
+    throw new Error(error);
   }
 };
 
@@ -155,7 +155,7 @@ export const GetSingleLineup = async ({ id }) => {
   if (lineup.exists()) {
     return lineup.data();
   } else {
-    console.log("No such document!");
+    throw new Error("No such document!");
   }
 };
 
@@ -258,7 +258,7 @@ export const UpdateChords = async ({ id, chords }) => {
       return await updateDoc(ref, { chords });
     }
   } catch (err) {
-    console.log(err.message);
+    throw new Error(err);
   }
 };
 
@@ -270,7 +270,7 @@ export const UpdateLyrics = async ({ id, lyrics }) => {
       return await updateDoc(ref, { lyrics });
     }
   } catch (err) {
-    console.log(err.message);
+    throw new Error(err);
   }
 };
 
@@ -286,7 +286,7 @@ export const GetSong = async ({ song }) => {
       if (lineup.exists()) {
         return lineup.data();
       } else {
-        console.log("No such document!");
+        throw new Error("No such document!");
       }
     } catch (error) {
       throw new Error(error.message);
@@ -327,7 +327,7 @@ export const RealtimeSongs = () => {
         },
       );
     } catch (error) {
-      console.log({ RealtimeMetadata_ERROR: error });
+      throw new Error(error);
     }
   }, []);
 
@@ -362,7 +362,7 @@ export const RealtimeLineups = () => {
         }
       });
     } catch (error) {
-      console.log({ RealtimeMetadata_ERROR: error });
+      throw new Error(error);
     }
   }, []);
 
