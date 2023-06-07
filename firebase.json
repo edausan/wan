@@ -13,7 +13,7 @@
       }
     ],
     "headers": [ {
-      "source": "*",
+      "source": "www.soundhelix.com",
       "headers": [ {
         "key": "Access-Control-Allow-Origin",
         "value": "*"
