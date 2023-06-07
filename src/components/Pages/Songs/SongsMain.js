@@ -128,7 +128,7 @@ const SongsMain = () => {
 
   return (
     <div className="laptop:mx-[-.75rem] desktop:mx-[-.75rem]">
-      <Fetching close={!isFetching} label="Songs Library" />
+      {/* <Fetching close={!songsQuery.isFetching} label="Songs Library" /> */}
       <Suspense fallback={<></>}>
         <SongSearch
           open={memoizedOpen}

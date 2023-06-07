@@ -5,9 +5,12 @@ import SPOTIFY_LOGO from "@assets/spotify_logo.png";
 import ALBUM_PLACEHOLDER from "@assets/music_placeholder.jpg";
 import { AppCtx } from "@/App";
 import { ADMIN, JIL_ADMIN, ADRIAN } from "@/data";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { useHistory } from "react-router-dom";
 
 const Song = ({ song, setOpenDrawer, openDrawer, handleExpandClick }) => {
   const { currentUser } = useContext(AppCtx);
+  const history = useHistory();
 
   const allowed =
     currentUser.user.uid === ADMIN ||
@@ -27,31 +30,36 @@ const Song = ({ song, setOpenDrawer, openDrawer, handleExpandClick }) => {
     !song?.chords?.chorus &&
     !song?.chords?.bridge;
 
+  const handleClick = () => {
+    history.push(`/song/${song.id}`);
+    setOpenDrawer({ song, state: true });
+  };
+
   return (
     <Card
       key={song?.id}
-      className="phone:col-span-2 laptop:col-span-1 flex flex-row shadow-md"
-      elevation={0}
+      className="phone:col-span-2 laptop:col-span-1 flex flex-row shadow-none hover:shadow-md transition-all duration-200 cursor-pointer"
+      onClick={handleClick}
     >
       <Suspense fallback={<Skeleton variant="rectangular" width={50} height="100%" />}>
-        <CardMedia
+        {/* <CardMedia
           component="img"
           image={song?.cover || ALBUM_PLACEHOLDER}
           className={`w-[50px] min-w-[50px] overflow-hidden`}
-        />
+        /> */}
       </Suspense>
       <div className="flex-1 flex flex-row">
         <CardHeader
-          onClick={
-            allowed
-              ? () => setOpenDrawer({ song, status: true })
-              : currentUser.user_metadata.ministry === "VIA"
-              ? () => handleExpandClick(song, "Lyrics")
-              : () => handleExpandClick(song, "Chords")
-          }
-          className="flex-1 pt-2 pb-3 pl-2 phone:max-w-[205px] phone_lg:max-w-[244px] tablet:max-w-full laptop:max-w-full"
+          // onClick={
+          //   allowed
+          //     ? () => setOpenDrawer({ song, status: true })
+          //     : currentUser.user_metadata.ministry === "VIA"
+          //     ? () => handleExpandClick(song, "Lyrics")
+          //     : () => handleExpandClick(song, "Chords")
+          // }
+          className="flex-1 pt-2 pb-2 pl-2 "
           title={
-            <p className="text-sm laptop:text-sm phone:text-xs font-bold truncate desktop:max-w-full laptop:max-w-full tablet:max-w-full phone:max-w-[170px] box-border">
+            <p className="text-md laptop:text-sm phone:text-[14px] font-bold truncate desktop:max-w-full laptop:max-w-full tablet:max-w-full  box-border">
               {song?.title}
             </p>
           }
@@ -70,8 +78,8 @@ const Song = ({ song, setOpenDrawer, openDrawer, handleExpandClick }) => {
           action={<div></div>}
         />
 
-        <div className="flex flex-row items-center">
-          <div
+        <div className="flex flex-row items-center justify-end">
+          {/* <div
             className={`bg-sky-500 h-full flex flex-col items-center justify-center  ${
               lyrics_disabled ? "bg-gray-100" : ""
             }`}
@@ -97,6 +105,12 @@ const Song = ({ song, setOpenDrawer, openDrawer, handleExpandClick }) => {
             >
               <MusicNote fontSize="small" className="w-[16x] h-[16px]" />
             </IconButton>
+          </div> */}
+
+          <div className="pr-2">
+            <ChevronRightIcon />
+            {/* <IconButton>
+            </IconButton> */}
           </div>
           {/* <div className="px-1 flex flex-col justify-center items-center gap-1">
             <YouTube

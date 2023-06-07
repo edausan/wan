@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/slices/usersSlice";
 import { ADMIN } from "@/data";
 import SongLoading from "./SongLoading";
+import SongPreview from "./SongPreview";
 
 const Song = lazy(() => import("./Song"));
 const CreateNewSong = lazy(() => import("./CreateNewSong"));
@@ -53,6 +54,8 @@ const SongList = ({ songs }) => {
           <SpeedDialIcon className="relative z-50" openIcon={<Add />} />
         </button>
       )}
+
+      <SongPreview openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
 
       {songs.map((song) => {
         return (
