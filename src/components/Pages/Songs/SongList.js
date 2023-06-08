@@ -21,17 +21,27 @@ const SongList = ({ songs }) => {
   const [expanded, setExpanded] = useState(false);
   const [openDrawer, setOpenDrawer] = useState({ song: null, state: false });
   const [open, setOpen] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     if (params.id) {
       const song = songs.filter((s) => s.id === params.id)[0];
       setOpenDrawer({ song, state: true });
     }
+  }, [params.id, songs]);
+
+  useEffect(() => {
+    if (params.id) {
+      setUpdating(true);
+      setTimeout(() => {
+        setUpdating(false);
+      }, 500);
+    }
   }, [params.id]);
 
   useEffect(() => {
     !openDrawer.state && history.push("/songs");
-  }, [openDrawer.state]);
+  }, [history, openDrawer.state]);
 
   const handleClose = useCallback(() => {}, []);
 
@@ -69,7 +79,7 @@ const SongList = ({ songs }) => {
         </button>
       )}
 
-      <SongPreview openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
+      <SongPreview openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} updating={updating} />
 
       {songs.map((song) => {
         return (

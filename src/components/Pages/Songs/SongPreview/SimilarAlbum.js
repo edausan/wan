@@ -10,7 +10,7 @@ const SimilarAlbum = ({ song, album }) => {
   const [sameAlbum, setSameAlbum] = useState([]);
 
   useEffect(() => {
-    if (!songsQuery.isFetching) {
+    if (!songsQuery.isFetching && album) {
       const songs = songsQuery.data;
       const filtered = songs.filter((song) => song?.album?.toLowerCase() === album?.toLowerCase());
       setSameAlbum(filtered.splice(0, 5));
