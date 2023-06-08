@@ -1,23 +1,37 @@
 import { Add } from "@mui/icons-material";
 import { SpeedDialIcon } from "@mui/material";
-import React, { useCallback, useState, useMemo, Suspense, lazy } from "react";
+import React, { useCallback, useState, useMemo, Suspense, lazy, useEffect } from "react";
 import EditSong from "./EditSong";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/slices/usersSlice";
 import { ADMIN } from "@/data";
 import SongLoading from "./SongLoading";
 import SongPreview from "./SongPreview";
+import { useHistory, useParams } from "react-router-dom";
 
 const Song = lazy(() => import("./Song"));
 const CreateNewSong = lazy(() => import("./CreateNewSong"));
 const SongDetailsDrawer = lazy(() => import("../../Lineup/SongDetailsDrawer"));
 
 const SongList = ({ songs }) => {
+  const params = useParams();
+  const history = useHistory();
   const currentUser = useSelector(selectCurrentUser);
   const [drawerData, setDrawerData] = useState({ song: null, id: null });
   const [expanded, setExpanded] = useState(false);
   const [openDrawer, setOpenDrawer] = useState({ song: null, state: false });
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (params.id) {
+      const song = songs.filter((s) => s.id === params.id)[0];
+      setOpenDrawer({ song, state: true });
+    }
+  }, [params.id]);
+
+  useEffect(() => {
+    !openDrawer.state && history.push("/songs");
+  }, [openDrawer.state]);
 
   const handleClose = useCallback(() => {}, []);
 
