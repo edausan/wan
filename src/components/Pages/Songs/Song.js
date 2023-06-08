@@ -38,7 +38,7 @@ const Song = ({ song, setOpenDrawer, openDrawer, handleExpandClick }) => {
   return (
     <Card
       key={song?.id}
-      className="phone:col-span-2 laptop:col-span-1 flex flex-row shadow-none hover:shadow-md transition-all duration-200 cursor-pointer"
+      className="phone:col-span-2 laptop:col-span-1 flex flex-row shadow-none hover:shadow-md transition-all duration-200 cursor-pointer rounded-lg"
       onClick={handleClick}
     >
       <Suspense fallback={<Skeleton variant="rectangular" width={50} height="100%" />}>
