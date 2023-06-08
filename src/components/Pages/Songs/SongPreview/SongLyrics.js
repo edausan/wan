@@ -15,13 +15,7 @@ const SongLyrics = ({ song }) => {
   const isWorship = song?.tags.findIndex((tag) => tag === "Worship" || tag === "Solemn") >= 0;
 
   return (
-    <section className={`p-4 ${song?.media?.youtube ? "mt-14" : "mt-0"}`}>
-      {noLyrics && (
-        <button className="flex flex-row gap-2 items-start justify-center w-full shadow-none hover:shadow-lg p-4 rounded-full cursor-pointer transition-all duration-200">
-          <Add />
-          Add Lyrics
-        </button>
-      )}
+    <section className={`p-4 ${song?.media?.youtube ? "mt-4" : "mt-0"}`}>
       <div className="p-4">
         <Part label="Verse" value={verse} isWorship={isWorship} />
         <Part label="Pre-chorus" value={pre_chorus} isWorship={isWorship} />

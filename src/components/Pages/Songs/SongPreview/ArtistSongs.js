@@ -3,9 +3,10 @@ import SongsQuery from "@api/songsQuery";
 import IconButton from "@mui/material/IconButton";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import BG from "@assets/BG-Song.jpg";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 const ArtistSongs = ({ artist, song }) => {
+  const history = useHistory();
   const { songsQuery } = SongsQuery();
   const [artistSongs, setArtistSongs] = useState([]);
 
@@ -15,7 +16,7 @@ const ArtistSongs = ({ artist, song }) => {
       const filtered = songs.filter(
         (song) => song?.artist?.toLowerCase() === artist?.toLowerCase(),
       );
-      setArtistSongs(filtered.splice(0, 5));
+      setArtistSongs(filtered.filter((s) => s.id !== song?.id).splice(0, 5));
     }
   }, [artist, songsQuery.data, songsQuery.isFetching]);
 
@@ -35,6 +36,9 @@ const ArtistSongs = ({ artist, song }) => {
           {artistSongs.map((song) => {
             return (
               <div
+                onClick={() => history.push(`/song/${song?.id}`)}
+                role="button"
+                tabIndex={0}
                 key={song?.id}
                 className="flex flex-row items-center gap-2 shadow-none hover:shadow-lg transition-all duration-200 px-2 py-1 rounded-full cursor-pointer"
               >
