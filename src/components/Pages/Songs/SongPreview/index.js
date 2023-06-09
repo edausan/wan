@@ -1,7 +1,7 @@
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import { IconButton, Skeleton, SwipeableDrawer } from "@mui/material";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import BG from "@assets/BG-Song.jpg";
 import SongPlayer from "./SongPlayer";
@@ -9,17 +9,20 @@ import ArtistSongs from "./ArtistSongs";
 import SongLyrics from "./SongLyrics";
 import SimilarAlbum from "./SimilarAlbum";
 import AddDetails from "./AddDetails";
+import AddLyrics from "./AddLyrics";
+import AddChords from "./AddChords";
 
 const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
-  console.log(openDrawer);
   const { song, state } = openDrawer;
   const params = useParams();
   const history = useHistory();
   const path = history.location.pathname;
 
-  const isWorship = song?.tags.findIndex((tag) => tag === "Worship" || tag === "Solemn") >= 0;
+  const [drawer, setDrawer] = useState("");
 
-  // console.log({ isWorship, tags: song?.tags });
+  console.log({ drawer });
+
+  const isWorship = song?.tags.findIndex((tag) => tag === "Worship" || tag === "Solemn") >= 0;
 
   return useMemo(() => {
     return (
@@ -64,7 +67,9 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
             </div>
           </article>
 
-          <AddDetails song={song} />
+          <AddDetails song={song} setDrawer={setDrawer} />
+          <AddLyrics song={song} open={drawer === "lyrics"} onClick={() => setDrawer("")} />
+          <AddChords song={song} open={drawer === "chords"} onClick={() => setDrawer("")} />
 
           <SongLyrics song={song} />
 
@@ -73,7 +78,7 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
         </section>
       </SwipeableDrawer>
     );
-  }, [isWorship, openDrawer.state, setOpenDrawer, song, updating]);
+  }, [drawer, isWorship, openDrawer.state, setOpenDrawer, song, updating]);
 };
 
 const Text = ({ updating, text, label = "" }) => {
