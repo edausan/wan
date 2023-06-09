@@ -82,7 +82,7 @@ const SongList = ({ songs }) => {
       <SongPreview openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} updating={updating} />
 
       {songs
-        .filter((song) => !song?.lyrics?.verse && !song?.media?.youtube)
+        // .filter((song) => !song?.lyrics?.verse && !song?.media?.youtube)
         .map((song) => {
           return (
             <Suspense key={song?.id} fallback={<SongLoading />}>
