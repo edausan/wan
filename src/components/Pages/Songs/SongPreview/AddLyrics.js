@@ -85,7 +85,7 @@ const LyricsPart = ({ ...props }) => {
       from: "from-white-",
       to: "to-white",
     };
-    return parts[loweredLabel].enabled || song?.lyrics[loweredLabel] ? (
+    return parts[loweredLabel].enabled || (song?.lyrics && song?.lyrics[loweredLabel]) ? (
       <div className="flex flex-col items-end justify-center bg-slate-100 p-4 pb-0 rounded-md">
         <TextField
           variant="standard"
