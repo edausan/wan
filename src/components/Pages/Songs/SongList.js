@@ -81,18 +81,20 @@ const SongList = ({ songs }) => {
 
       <SongPreview openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} updating={updating} />
 
-      {songs.map((song) => {
-        return (
-          <Suspense key={song?.id} fallback={<SongLoading />}>
-            <Song
-              song={song}
-              handleExpandClick={handleExpandClick}
-              openDrawer={openDrawer}
-              setOpenDrawer={setOpenDrawer}
-            />
-          </Suspense>
-        );
-      })}
+      {songs
+        .filter((song) => !song?.lyrics?.verse && !song?.media?.youtube)
+        .map((song) => {
+          return (
+            <Suspense key={song?.id} fallback={<SongLoading />}>
+              <Song
+                song={song}
+                handleExpandClick={handleExpandClick}
+                openDrawer={openDrawer}
+                setOpenDrawer={setOpenDrawer}
+              />
+            </Suspense>
+          );
+        })}
     </div>
   );
 };
