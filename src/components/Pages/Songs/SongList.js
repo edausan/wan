@@ -13,7 +13,7 @@ const Song = lazy(() => import("./Song"));
 const CreateNewSong = lazy(() => import("./CreateNewSong"));
 const SongDetailsDrawer = lazy(() => import("../../Lineup/SongDetailsDrawer"));
 
-const SongList = ({ songs }) => {
+const SongList = ({ songs, updateLyricsQuery }) => {
   const params = useParams();
   const history = useHistory();
   const currentUser = useSelector(selectCurrentUser);
@@ -22,6 +22,10 @@ const SongList = ({ songs }) => {
   const [openDrawer, setOpenDrawer] = useState({ song: null, state: false });
   const [open, setOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
+
+  useEffect(() => {
+    !openDrawer.state && history.push("/songs");
+  }, [history, openDrawer.state]);
 
   useEffect(() => {
     if (params.id) {
@@ -38,10 +42,6 @@ const SongList = ({ songs }) => {
       }, 500);
     }
   }, [params.id]);
-
-  useEffect(() => {
-    !openDrawer.state && history.push("/songs");
-  }, [history, openDrawer.state]);
 
   const handleClose = useCallback(() => {}, []);
 
@@ -79,7 +79,12 @@ const SongList = ({ songs }) => {
         </button>
       )}
 
-      <SongPreview openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} updating={updating} />
+      <SongPreview
+        openDrawer={openDrawer}
+        setOpenDrawer={setOpenDrawer}
+        updating={updating}
+        updateLyricsQuery={updateLyricsQuery}
+      />
 
       {songs
         // .filter((song) => !song?.lyrics?.verse && !song?.media?.youtube)

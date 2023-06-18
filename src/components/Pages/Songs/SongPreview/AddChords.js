@@ -1,11 +1,15 @@
-import { ChevronLeft, Clear, ClearAll, DeleteOutline, Remove } from "@mui/icons-material";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { ChevronLeft, Clear, ClearAll, DeleteOutline, Remove, Save } from "@mui/icons-material";
 import { IconButton, SwipeableDrawer, TextField } from "@mui/material";
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Button } from "./AddDetails";
+import ChordEditor from "@components/Pages/ChordEditor";
+import TextArea from "@components/CustomComponents/TextArea";
 
 const LyricsContext = createContext();
 
 const AddChords = ({ song, open, onClick }) => {
+  const [addChords, setAddChords] = useState({ part: "", chords: "" });
   const [parts, setParts] = useState({
     verse: {
       enabled: false,
@@ -35,6 +39,46 @@ const AddChords = ({ song, open, onClick }) => {
 
   console.log(parts);
 
+  const handleUpdateChordsData = () => {
+    const songChords = song?.chords;
+    console.log({ has: songChords.hasOwnProperty("verse_2") });
+    const lyrics = {
+      verse: {
+        enabled: songChords.hasOwnProperty("verse") && songChords?.verse,
+        value: songChords?.verse,
+      },
+      verse_2: {
+        enabled: songChords.hasOwnProperty("verse_2") && songChords?.verse_2,
+        value: songChords?.verse_2 || "",
+      },
+      verse_3: {
+        enabled: songChords.hasOwnProperty("verse_3") && songChords?.verse_3,
+        value: songChords?.verse_3 || "",
+      },
+      pre_chorus: {
+        enabled: songChords.hasOwnProperty("pre_chorus") && songChords?.pre_chorus,
+        value: songChords?.pre_chorus || "",
+      },
+      chorus: {
+        enabled: songChords.hasOwnProperty("chorus") && songChords?.chorus,
+        value: songChords?.chorus || "",
+      },
+      bridge: {
+        enabled: songChords.hasOwnProperty("bridge") && songChords?.bridge,
+        value: songChords?.bridge || "",
+      },
+    };
+    setParts({ ...lyrics });
+  };
+
+  console.log({ parts });
+
+  useEffect(() => {
+    if (song?.chords) {
+      handleUpdateChordsData();
+    }
+  }, [song?.chords, open]);
+
   return useMemo(() => {
     const noChords =
       !song?.chords?.verse &&
@@ -44,7 +88,13 @@ const AddChords = ({ song, open, onClick }) => {
 
     return (
       <SwipeableDrawer onClose={() => {}} open={open} anchor="right" className="z-[1004] w-[100%]">
-        <LyricsContext.Provider value={{ setParts, parts, song }}>
+        <LyricsContext.Provider value={{ setParts, parts, song, addChords, setAddChords }}>
+          <ChordEditorWrapper
+            open={addChords.part}
+            song={song}
+            handleOnClose={() => setAddChords({ part: "", chords: "" })}
+          />
+
           <section className="w-[100vw]">
             <div
               id="top-bar"
@@ -54,9 +104,12 @@ const AddChords = ({ song, open, onClick }) => {
                 <IconButton onClick={onClick}>
                   <ChevronLeft className="text-white" />
                 </IconButton>{" "}
-                <span>
-                  {noChords ? "Add" : "Update"} Chords | <strong>{song?.title}</strong>
+                <span className="flex flex-col">
+                  <small>{noChords ? "Add" : "Update"} Chords</small> <strong>{song?.title}</strong>
                 </span>
+                <IconButton onClick={() => {}}>
+                  <Save className="text-white" />
+                </IconButton>
               </h3>
             </div>
 
@@ -72,11 +125,11 @@ const AddChords = ({ song, open, onClick }) => {
         </LyricsContext.Provider>
       </SwipeableDrawer>
     );
-  }, [onClick, open, parts, song]);
+  }, [addChords, onClick, open, parts, song]);
 };
 
 const LyricsPart = ({ ...props }) => {
-  const { parts, setParts, song } = useContext(LyricsContext);
+  const { parts, setParts, song, setAddChords } = useContext(LyricsContext);
   const label = props?.label;
   const loweredLabel = label?.toLowerCase().split(" ").join("-").split("-").join("_");
 
@@ -85,22 +138,13 @@ const LyricsPart = ({ ...props }) => {
       from: "from-white-",
       to: "to-white",
     };
-    return parts[loweredLabel].enabled || (song?.chords && song?.chords[loweredLabel]) ? (
+    return parts[loweredLabel].enabled && parts[loweredLabel] ? (
       <div className="flex flex-col items-end justify-center bg-slate-100 p-4 pb-0 rounded-md">
-        <TextField
-          variant="standard"
-          fullWidth
-          value={parts[loweredLabel].value || song?.chords[loweredLabel]}
-          multiline
-          className={`${label} [&>div>textarea]:text-sm [&>label]:text-sm`}
-          {...props}
-          onChange={(e) =>
-            setParts((prev) => ({
-              ...prev,
-              [loweredLabel]: { ...prev[loweredLabel], value: e.target.value },
-            }))
-          }
-        />
+        <div className="flex items-center justify-start w-full text-sky-500 mb-2">
+          <small>{props?.label}</small>
+        </div>
+        <TextArea value={parts[loweredLabel].value} color="#000" />
+
         <div className="flex flex-row items-center mt-2">
           <IconButton
             className="text-sm text-yellow-500 mb-2"
@@ -115,12 +159,12 @@ const LyricsPart = ({ ...props }) => {
           </IconButton>
           <IconButton
             className="text-xs text-red-400 mb-2"
-            onClick={() =>
+            onClick={() => {
               setParts((prev) => ({
                 ...prev,
                 [loweredLabel]: { enabled: false, value: "" },
-              }))
-            }
+              }));
+            }}
           >
             <DeleteOutline />
           </IconButton>
@@ -131,15 +175,31 @@ const LyricsPart = ({ ...props }) => {
         label={`${label}`}
         gradient={gradient}
         className="text-gray-500 border border-gray-300 !shadow-none"
-        onClick={() =>
+        onClick={() => {
           setParts((prev) => ({
             ...prev,
             [loweredLabel]: { ...prev[loweredLabel], enabled: true },
-          }))
-        }
+          }));
+
+          setAddChords((prev) => ({ ...prev, part: loweredLabel }));
+        }}
       />
     );
   }, [label, loweredLabel, parts, props, setParts, song?.chords]);
+};
+
+const ChordEditorWrapper = ({ open = false, song, handleOnClose = () => {} }) => {
+  return (
+    <SwipeableDrawer
+      open={open}
+      onClose={handleOnClose}
+      anchor="right"
+      className="z-[1004] w-[100vw]"
+    >
+      <ChordEditor />
+      <button onClick={handleOnClose}>Close</button>
+    </SwipeableDrawer>
+  );
 };
 
 export default AddChords;

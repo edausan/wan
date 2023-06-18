@@ -4,6 +4,7 @@ import { GetAlbumCovers, GetAllSongs, RealtimeSongs } from "@/Firebase/songsApi"
 import SongList from "./SongList";
 import { useQuery } from "react-query";
 import Fetching from "@components/CustomComponents/Fetching";
+import SongsQuery from "@api/songsQuery";
 
 // const SongList = React.lazy(() => import('./SongList'));
 const SongSearch = React.lazy(() => import("./SongSearch"));
@@ -22,17 +23,23 @@ const SongsMain = () => {
   const memoizedArtists = useMemo(() => artists, [artists]);
   const memoizedOpen = useMemo(() => open, [open]);
 
-  const { data, isLoading, isFetching } = useQuery("songs", GetAllSongs, {
-    cacheTime: 60 * 60 * 1000,
-  });
+  const { updateLyricsQuery, songsQuery } = SongsQuery();
 
-  const albumCoverQuery = useQuery("album-covers", GetAlbumCovers, {
-    cacheTime: 60 * 60 * 1000,
-  });
+  const { data, isLoading, isFetching, refetch } = songsQuery;
+
+  // const albumCoverQuery = useQuery("album-covers", GetAlbumCovers, {
+  //   cacheTime: 60 * 60 * 1000,
+  // });
 
   useEffect(() => {
-    albumCoverQuery.refetch();
-  }, []);
+    if (updateLyricsQuery.isSuccess) {
+      refetch();
+    }
+  }, [updateLyricsQuery.isSuccess]);
+
+  // useEffect(() => {
+  //   albumCoverQuery.refetch();
+  // }, []);
 
   useEffect(() => {
     data && data?.length > 0 && !isFetching && setSongList(data);
@@ -141,7 +148,7 @@ const SongsMain = () => {
         />
       </Suspense>
       <div className="max-w-[680px] mx-auto box-border">
-        <SongList songs={songList} />
+        <SongList songs={songList} updateLyricsQuery={updateLyricsQuery} />
       </div>
     </div>
   );

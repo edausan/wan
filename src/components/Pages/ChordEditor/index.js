@@ -107,7 +107,7 @@ const ChordEditor = () => {
   }, [selectedChordVariant.chord]);
 
   return (
-    <div className="max-w-[650px] w-full mx-auto p-4">
+    <div className="max-w-[650px] w-[100vw] mx-auto p-4">
       {selectedChordVariant.chord && (
         <div
           tabIndex={0}
