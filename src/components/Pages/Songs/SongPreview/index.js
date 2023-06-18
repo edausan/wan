@@ -12,24 +12,37 @@ import AddDetails from "./AddDetails";
 import AddLyrics from "./AddLyrics";
 import AddChords from "./AddChords";
 import SongsQuery from "@api/songsQuery";
+import { getAuth } from "firebase/auth";
+import { FirebaseApp } from "@/Firebase";
+import SongChords from "./SongChords";
+import UserQuery from "@api/userQuery";
 
-const SongPreview = ({ openDrawer, setOpenDrawer, updating, updateLyricsQuery }) => {
+const SongPreview = ({
+  openDrawer,
+  setOpenDrawer,
+  updating,
+  updateLyricsQuery,
+  updateChordsQuery,
+}) => {
+  const auth = getAuth(FirebaseApp);
+  const { currentUser } = auth;
   const { song, state } = openDrawer;
   const params = useParams();
   const history = useHistory();
-  const path = history.location.pathname;
+
+  const { userQuery } = UserQuery(currentUser.uid);
 
   const [drawer, setDrawer] = useState("");
 
-  const { isLoading, data } = updateLyricsQuery;
+  const updateLyrics = updateLyricsQuery;
+  const updateChords = updateChordsQuery;
 
   useEffect(() => {
-    console.log({ isLoading });
-    if (!isLoading) {
+    if (!updateLyrics.isLoading || !updateChords.isLoading) {
       setDrawer("");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
+  }, [updateLyrics.isLoading, updateChords.isLoading]);
 
   const isWorship = song?.tags.findIndex((tag) => tag === "Worship" || tag === "Solemn") >= 0;
 
@@ -83,16 +96,35 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating, updateLyricsQuery })
             onClick={() => setDrawer("")}
             updateLyricsQuery={updateLyricsQuery}
           />
-          <AddChords song={song} open={drawer === "chords"} onClick={() => setDrawer("")} />
+          <AddChords
+            song={song}
+            open={drawer === "chords"}
+            onClick={() => setDrawer("")}
+            updateChordsQuery={updateChordsQuery}
+          />
 
-          <SongLyrics song={song} />
+          {userQuery?.data?.ministry === "VIA" ? (
+            <SongLyrics song={song} />
+          ) : (
+            <SongChords song={song} />
+          )}
 
           {song?.artist && <ArtistSongs artist={song?.artist} song={song} />}
           {song?.album && <SimilarAlbum album={song?.album} song={song} />}
         </section>
       </SwipeableDrawer>
     );
-  }, [drawer, isWorship, openDrawer.state, setOpenDrawer, song, updateLyricsQuery, updating]);
+  }, [
+    drawer,
+    isWorship,
+    openDrawer.state,
+    setOpenDrawer,
+    song,
+    updateChordsQuery,
+    updateLyricsQuery,
+    updating,
+    userQuery?.data?.ministry,
+  ]);
 };
 
 const Text = ({ updating, text, label = "" }) => {

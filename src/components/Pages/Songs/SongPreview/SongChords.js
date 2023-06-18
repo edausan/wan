@@ -2,8 +2,8 @@ import { Add } from "@mui/icons-material";
 import React from "react";
 import TextArea from "@components/CustomComponents/TextArea";
 
-const SongLyrics = ({ song }) => {
-  const { verse, pre_chorus, chorus, bridge } = song?.lyrics || {
+const SongChords = ({ song }) => {
+  const { verse, pre_chorus, chorus, bridge } = song?.chords || {
     verse: "",
     pre_chorus: "",
     chorus: "",
@@ -39,4 +39,4 @@ const Part = ({ label = "", value, isWorship = false }) => {
   );
 };
 
-export default SongLyrics;
+export default SongChords;

@@ -23,23 +23,15 @@ const SongsMain = () => {
   const memoizedArtists = useMemo(() => artists, [artists]);
   const memoizedOpen = useMemo(() => open, [open]);
 
-  const { updateLyricsQuery, songsQuery } = SongsQuery();
+  const { updateLyricsQuery, updateChordsQuery, songsQuery } = SongsQuery();
 
   const { data, isLoading, isFetching, refetch } = songsQuery;
 
-  // const albumCoverQuery = useQuery("album-covers", GetAlbumCovers, {
-  //   cacheTime: 60 * 60 * 1000,
-  // });
-
   useEffect(() => {
-    if (updateLyricsQuery.isSuccess) {
+    if (updateLyricsQuery.isSuccess || updateChordsQuery.isSuccess) {
       refetch();
     }
-  }, [updateLyricsQuery.isSuccess]);
-
-  // useEffect(() => {
-  //   albumCoverQuery.refetch();
-  // }, []);
+  }, [updateLyricsQuery.isSuccess, updateChordsQuery.isSuccess]);
 
   useEffect(() => {
     data && data?.length > 0 && !isFetching && setSongList(data);
@@ -148,7 +140,11 @@ const SongsMain = () => {
         />
       </Suspense>
       <div className="max-w-[680px] mx-auto box-border">
-        <SongList songs={songList} updateLyricsQuery={updateLyricsQuery} />
+        <SongList
+          songs={songList}
+          updateLyricsQuery={updateLyricsQuery}
+          updateChordsQuery={updateChordsQuery}
+        />
       </div>
     </div>
   );

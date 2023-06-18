@@ -5,10 +5,16 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from "
 import { Button } from "./AddDetails";
 import ChordEditor from "@components/Pages/ChordEditor";
 import TextArea from "@components/CustomComponents/TextArea";
+import { useParams } from "react-router-dom";
+import LoadingScreen from "@components/CustomComponents/LoadingScreen";
 
-const LyricsContext = createContext();
+const ChordsContext = createContext();
 
-const AddChords = ({ song, open, onClick }) => {
+const AddChords = ({ song, open, onClick, updateChordsQuery }) => {
+  const params = useParams();
+
+  const { isLoading, isSuccess, isError, mutate } = updateChordsQuery;
+
   const [addChords, setAddChords] = useState({ part: "", chords: "" });
   const [parts, setParts] = useState({
     verse: {
@@ -37,11 +43,9 @@ const AddChords = ({ song, open, onClick }) => {
     },
   });
 
-  console.log(parts);
-
   const handleUpdateChordsData = () => {
     const songChords = song?.chords;
-    console.log({ has: songChords.hasOwnProperty("verse_2") });
+    // console.log({ has: songChords.hasOwnProperty("verse_2") });
     const lyrics = {
       verse: {
         enabled: songChords.hasOwnProperty("verse") && songChords?.verse,
@@ -71,7 +75,21 @@ const AddChords = ({ song, open, onClick }) => {
     setParts({ ...lyrics });
   };
 
-  console.log({ parts });
+  const handleSave = () => {
+    const chords = {
+      verse: parts.verse.value,
+      verse_2: parts.verse_2.value,
+      verse_3: parts.verse_3.value,
+      pre_chorus: parts.pre_chorus.value,
+      chorus: parts.chorus.value,
+      bridge: parts.bridge.value,
+    };
+
+    mutate({
+      id: params.id,
+      chords,
+    });
+  };
 
   useEffect(() => {
     if (song?.chords) {
@@ -88,12 +106,13 @@ const AddChords = ({ song, open, onClick }) => {
 
     return (
       <SwipeableDrawer onClose={() => {}} open={open} anchor="right" className="z-[1004] w-[100%]">
-        <LyricsContext.Provider value={{ setParts, parts, song, addChords, setAddChords }}>
-          <ChordEditorWrapper
+        <LoadingScreen status={isLoading} text="Saving Chords" />
+        <ChordsContext.Provider value={{ setParts, parts, song, addChords, setAddChords }}>
+          {/* <ChordEditorWrapper
             open={addChords.part}
             song={song}
             handleOnClose={() => setAddChords({ part: "", chords: "" })}
-          />
+          /> */}
 
           <section className="w-[100vw]">
             <div
@@ -104,10 +123,10 @@ const AddChords = ({ song, open, onClick }) => {
                 <IconButton onClick={onClick}>
                   <ChevronLeft className="text-white" />
                 </IconButton>{" "}
-                <span className="flex flex-col">
+                <span className="flex flex-col flex-1">
                   <small>{noChords ? "Add" : "Update"} Chords</small> <strong>{song?.title}</strong>
                 </span>
-                <IconButton onClick={() => {}}>
+                <IconButton onClick={handleSave}>
                   <Save className="text-white" />
                 </IconButton>
               </h3>
@@ -122,14 +141,14 @@ const AddChords = ({ song, open, onClick }) => {
               <LyricsPart label="Bridge" />
             </div>
           </section>
-        </LyricsContext.Provider>
+        </ChordsContext.Provider>
       </SwipeableDrawer>
     );
   }, [addChords, onClick, open, parts, song]);
 };
 
 const LyricsPart = ({ ...props }) => {
-  const { parts, setParts, song, setAddChords } = useContext(LyricsContext);
+  const { parts, setParts, song, setAddChords } = useContext(ChordsContext);
   const label = props?.label;
   const loweredLabel = label?.toLowerCase().split(" ").join("-").split("-").join("_");
 
@@ -140,10 +159,20 @@ const LyricsPart = ({ ...props }) => {
     };
     return parts[loweredLabel].enabled && parts[loweredLabel] ? (
       <div className="flex flex-col items-end justify-center bg-slate-100 p-4 pb-0 rounded-md">
-        <div className="flex items-center justify-start w-full text-sky-500 mb-2">
-          <small>{props?.label}</small>
-        </div>
-        <TextArea value={parts[loweredLabel].value} color="#000" />
+        <TextField
+          variant="standard"
+          fullWidth
+          value={parts[loweredLabel].value}
+          multiline
+          className={`${label} [&>div>textarea]:text-sm [&>label]:text-sm`}
+          onChange={(e) =>
+            setParts((prev) => ({
+              ...prev,
+              [loweredLabel]: { ...prev[loweredLabel], value: e.target.value },
+            }))
+          }
+          {...props}
+        />
 
         <div className="flex flex-row items-center mt-2">
           <IconButton
