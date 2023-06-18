@@ -3,8 +3,6 @@ import Add from "@mui/icons-material/Add";
 import React from "react";
 
 const AddDetails = ({ song, setDrawer }) => {
-  console.log({ add_details: song });
-
   const withMedia = song?.media?.youtube;
 
   const noLyrics =

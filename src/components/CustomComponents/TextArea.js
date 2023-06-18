@@ -1,12 +1,13 @@
 import React from "react";
 import { TextField } from "@mui/material";
 
-const TextArea = ({ value, className, size, styles, color = "#fff" }) => {
+const TextArea = ({ value, className, size, styles, color = "#fff", label }) => {
   return (
     <TextField
       disabled
       multiline
       value={value}
+      label={label}
       fullWidth
       className={`first:px-0 ${className}`}
       sx={{

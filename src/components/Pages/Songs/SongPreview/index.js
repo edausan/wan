@@ -11,8 +11,9 @@ import SimilarAlbum from "./SimilarAlbum";
 import AddDetails from "./AddDetails";
 import AddLyrics from "./AddLyrics";
 import AddChords from "./AddChords";
+import SongsQuery from "@api/songsQuery";
 
-const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
+const SongPreview = ({ openDrawer, setOpenDrawer, updating, updateLyricsQuery }) => {
   const { song, state } = openDrawer;
   const params = useParams();
   const history = useHistory();
@@ -20,7 +21,15 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
 
   const [drawer, setDrawer] = useState("");
 
-  console.log({ drawer });
+  const { isLoading, data } = updateLyricsQuery;
+
+  useEffect(() => {
+    console.log({ isLoading });
+    if (!isLoading) {
+      setDrawer("");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
 
   const isWorship = song?.tags.findIndex((tag) => tag === "Worship" || tag === "Solemn") >= 0;
 
@@ -68,7 +77,12 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
           </article>
 
           <AddDetails song={song} setDrawer={setDrawer} />
-          <AddLyrics song={song} open={drawer === "lyrics"} onClick={() => setDrawer("")} />
+          <AddLyrics
+            song={song}
+            open={drawer === "lyrics"}
+            onClick={() => setDrawer("")}
+            updateLyricsQuery={updateLyricsQuery}
+          />
           <AddChords song={song} open={drawer === "chords"} onClick={() => setDrawer("")} />
 
           <SongLyrics song={song} />
@@ -78,7 +92,7 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
         </section>
       </SwipeableDrawer>
     );
-  }, [drawer, isWorship, openDrawer.state, setOpenDrawer, song, updating]);
+  }, [drawer, isWorship, openDrawer.state, setOpenDrawer, song, updateLyricsQuery, updating]);
 };
 
 const Text = ({ updating, text, label = "" }) => {

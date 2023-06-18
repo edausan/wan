@@ -1,7 +1,6 @@
 import PlayArrowRounded from "@mui/icons-material/PlayArrowRounded";
 import IconButton from "@mui/material/IconButton";
 import React, { useEffect, useMemo, useState } from "react";
-import WaveSurfer from "wavesurfer.js";
 import Sample from "@assets/salamat.mp3";
 import { PauseRounded } from "@mui/icons-material";
 
