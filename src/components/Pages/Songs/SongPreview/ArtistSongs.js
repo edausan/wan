@@ -3,9 +3,10 @@ import SongsQuery from "@api/songsQuery";
 import IconButton from "@mui/material/IconButton";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import BG from "@assets/BG-Song.jpg";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 
 const ArtistSongs = ({ artist, song }) => {
+  const params = useParams();
   const history = useHistory();
   const { songsQuery } = SongsQuery();
   const [artistSongs, setArtistSongs] = useState([]);
@@ -18,11 +19,11 @@ const ArtistSongs = ({ artist, song }) => {
       );
       setArtistSongs(filtered.filter((s) => s.id !== song?.id).splice(0, 5));
     }
-  }, [artist, songsQuery.data, songsQuery.isFetching]);
+  }, [artist, song?.id, songsQuery.data, songsQuery.isFetching, params.id]);
 
   return useMemo(() => {
     return (
-      <section className="flex flex-col gap-2 w-full mt-4 px-8 py-4">
+      <section className="flex flex-col gap-2 w-full px-8 py-4 bg-gray-100">
         <div>
           <h1 className="text-lg">
             Similar Artist |{" "}

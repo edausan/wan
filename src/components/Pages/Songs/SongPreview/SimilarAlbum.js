@@ -19,7 +19,7 @@ const SimilarAlbum = ({ song, album }) => {
 
   return useMemo(() => {
     return (
-      <section className="flex flex-col gap-2 w-full mt-4 px-8 py-4">
+      <section className="flex flex-col gap-2 w-full px-8 py-4 bg-gray-100">
         <div>
           <h1 className="text-lg">
             Similar Album |{" "}

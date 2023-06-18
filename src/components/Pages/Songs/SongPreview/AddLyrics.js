@@ -37,9 +37,6 @@ const AddLyrics = ({ song, open, onClick, updateLyricsQuery }) => {
     },
   });
 
-  const [isLoadingState, setIsLoadingState] = useState(false);
-  const [status, setStatus] = useState(null);
-
   const { isLoading, isSuccess, isError, mutate } = updateLyricsQuery;
 
   const handleUpdateLyricsData = () => {
@@ -73,24 +70,24 @@ const AddLyrics = ({ song, open, onClick, updateLyricsQuery }) => {
     setParts({ ...lyrics });
   };
 
-  useEffect(() => {
-    if (isLoading) {
-      setIsLoadingState(true);
-      setStatus("Saving...");
-    } else if (!isLoading && isSuccess) {
-      console.log({ isSuccess });
-      setStatus("Saved");
-      setTimeout(() => {
-        setIsLoadingState(false);
-      }, 5000);
-    } else if (!isLoading && isError) {
-      console.log({ isError });
-      setStatus("Error");
-      setTimeout(() => {
-        setIsLoadingState(false);
-      }, 5000);
-    }
-  }, [isLoading, isSuccess, isError]);
+  // useEffect(() => {
+  //   if (isLoading) {
+  //     setIsLoadingState(true);
+  //     setStatus("Saving...");
+  //   } else if (!isLoading && isSuccess) {
+  //     console.log({ isSuccess });
+  //     setStatus("Saved");
+  //     setTimeout(() => {
+  //       setIsLoadingState(false);
+  //     }, 5000);
+  //   } else if (!isLoading && isError) {
+  //     console.log({ isError });
+  //     setStatus("Error");
+  //     setTimeout(() => {
+  //       setIsLoadingState(false);
+  //     }, 5000);
+  //   }
+  // }, [isLoading, isSuccess, isError]);
 
   useEffect(() => {
     if (song?.lyrics) {
@@ -143,18 +140,18 @@ const AddLyrics = ({ song, open, onClick, updateLyricsQuery }) => {
             </div>
 
             <div id="lyrics-parts" className="p-4 mt-4 flex flex-col gap-4">
-              <LyricsPart label="Verse" disable={isLoadingState} />
-              <LyricsPart label="Verse 2" disable={isLoadingState} />
+              <LyricsPart label="Verse" />
+              <LyricsPart label="Verse 2" />
               <LyricsPart label="Verse 3" />
-              <LyricsPart label="Pre-chorus" disable={isLoadingState} />
-              <LyricsPart label="Chorus" disable={isLoadingState} />
-              <LyricsPart label="Bridge" disable={isLoadingState} />
+              <LyricsPart label="Pre-chorus" />
+              <LyricsPart label="Chorus" />
+              <LyricsPart label="Bridge" />
             </div>
           </section>
         </LyricsContext.Provider>
       </SwipeableDrawer>
     );
-  }, [onClick, open, parts, song, isLoadingState, status, isLoading]);
+  }, [onClick, open, parts, song, isLoading]);
 };
 
 const LyricsPart = ({ ...props }) => {
