@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useState, useCallback, Suspense } from "react";
-import { GetAlbumCovers, GetAllSongs, RealtimeSongs } from "@/Firebase/songsApi";
+import { RealtimeSongs } from "@/Firebase/songsApi";
 import SongList from "./SongList";
-import { useQuery } from "react-query";
-import Fetching from "@components/CustomComponents/Fetching";
 import SongsQuery from "@api/songsQuery";
 
 // const SongList = React.lazy(() => import('./SongList'));
@@ -54,8 +52,8 @@ const SongsMain = () => {
     }
   }, [searchText]);
 
-  const handleSearch = useCallback(() => {
-    const search_result = songList.filter((song) => {
+  const handleSearch = () => {
+    const search_result = data.filter((song) => {
       const text = searchText?.toLowerCase();
       const title = song?.title?.toLowerCase();
       const artist = song?.artist?.toLowerCase();
@@ -77,11 +75,11 @@ const SongsMain = () => {
     });
 
     setSongList(search_result);
-  }, [searchText]);
+  };
 
   const handleAlbums = () => {
     const albums_arr = [];
-    songList?.forEach((song) => {
+    data?.forEach((song) => {
       const idx = albums_arr.findIndex((a) => a?.trim() === song?.album?.trim());
       if (idx === -1 && song?.album) {
         albums_arr.push(song?.album?.trim());
@@ -92,7 +90,7 @@ const SongsMain = () => {
 
   const handleArtists = () => {
     const artists_arr = [];
-    songList?.forEach((song) => {
+    data?.forEach((song) => {
       const idx = artists_arr.findIndex((a) => a?.trim() === song?.artist?.trim());
       if (idx === -1 && song?.artist) {
         artists_arr.push(song?.artist?.trim());
@@ -104,7 +102,7 @@ const SongsMain = () => {
   const handleTags = () => {
     const tags = [];
 
-    songList?.forEach((song) => {
+    data?.forEach((song) => {
       song?.tags?.forEach((tag) => {
         const idx = tags.findIndex((t) => t === tag);
         if (idx === -1) {
@@ -134,12 +132,13 @@ const SongsMain = () => {
           setOpen={handleOpen}
           artists={memoizedArtists}
           albums={memoizedAlbums}
-          setSearchText={handleAddSearchText}
+          setSearchText={setSearchText}
           searchText={searchText}
           tags={tags}
         />
       </Suspense>
       <div className="max-w-[680px] mx-auto box-border">
+        {searchText && <small className="px-4">Total songs: {songList.length}</small>}
         <SongList
           songs={songList}
           updateLyricsQuery={updateLyricsQuery}

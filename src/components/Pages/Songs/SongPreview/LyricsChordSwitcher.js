@@ -4,8 +4,6 @@ import React, { useEffect, useState } from "react";
 
 const LyricsChordSwitcher = ({ isJAM, setLyricsMode }) => {
   const [isSwitched, setIsSwitched] = useState(isJAM);
-  console.log({ isJAM });
-
   useEffect(() => {
     setLyricsMode(isSwitched);
   }, [isSwitched]);

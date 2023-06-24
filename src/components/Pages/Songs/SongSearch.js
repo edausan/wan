@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Card, Chip, IconButton, TextField } from "@mui/material";
-import React, { Suspense, useState, useContext } from "react";
+import React, { Suspense, useState, useContext, useEffect } from "react";
 import { Clear, FilterList, SearchOutlined } from "@mui/icons-material";
 import { AppCtx } from "@/App";
 
@@ -10,9 +10,9 @@ const SongSearch = ({ setSearchText, open, setOpen, artists, albums, searchText,
   const { mode } = useContext(AppCtx);
   const [text, setText] = useState(null);
 
-  // useEffect(() => {
-  //   setSearchText(text);
-  // }, [text]);
+  useEffect(() => {
+    setSearchText(text);
+  }, [text]);
 
   const handleClear = () => {
     setText("");

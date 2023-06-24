@@ -36,8 +36,6 @@ const SongPreview = ({
   const [drawer, setDrawer] = useState("");
   const [lyricsMode, setLyricsMode] = useState(userQuery?.data?.ministry === "VIA");
 
-  console.log({ lyricsMode });
-
   const updateLyrics = updateLyricsQuery;
   const updateChords = updateChordsQuery;
 
