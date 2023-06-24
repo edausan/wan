@@ -16,6 +16,7 @@ import { getAuth } from "firebase/auth";
 import { FirebaseApp } from "@/Firebase";
 import SongChords from "./SongChords";
 import UserQuery from "@api/userQuery";
+import LyricsChordSwitcher from "./LyricsChordSwitcher";
 
 const SongPreview = ({
   openDrawer,
@@ -33,6 +34,9 @@ const SongPreview = ({
   const { userQuery } = UserQuery(currentUser.uid);
 
   const [drawer, setDrawer] = useState("");
+  const [lyricsMode, setLyricsMode] = useState(userQuery?.data?.ministry === "VIA");
+
+  console.log({ lyricsMode });
 
   const updateLyrics = updateLyricsQuery;
   const updateChords = updateChordsQuery;
@@ -90,6 +94,12 @@ const SongPreview = ({
           </article>
 
           <AddDetails song={song} setDrawer={setDrawer} />
+
+          <LyricsChordSwitcher
+            isJAM={userQuery?.data?.ministry !== "VIA"}
+            setLyricsMode={setLyricsMode}
+          />
+
           <AddLyrics
             song={song}
             open={drawer === "lyrics"}
@@ -103,11 +113,7 @@ const SongPreview = ({
             updateChordsQuery={updateChordsQuery}
           />
 
-          {userQuery?.data?.ministry === "VIA" ? (
-            <SongLyrics song={song} />
-          ) : (
-            <SongChords song={song} />
-          )}
+          {!lyricsMode ? <SongLyrics song={song} /> : <SongChords song={song} />}
 
           {song?.artist && <ArtistSongs artist={song?.artist} song={song} />}
           {song?.album && <SimilarAlbum album={song?.album} song={song} />}
@@ -115,15 +121,16 @@ const SongPreview = ({
       </SwipeableDrawer>
     );
   }, [
-    drawer,
-    isWorship,
     openDrawer.state,
-    setOpenDrawer,
     song,
-    updateChordsQuery,
-    updateLyricsQuery,
+    isWorship,
     updating,
     userQuery?.data?.ministry,
+    drawer,
+    updateLyricsQuery,
+    updateChordsQuery,
+    lyricsMode,
+    setOpenDrawer,
   ]);
 };
 

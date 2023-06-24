@@ -132,7 +132,7 @@ const AddChords = ({ song, open, onClick, updateChordsQuery }) => {
               </h3>
             </div>
 
-            <div id="lyrics-parts" className="p-4 mt-4 flex flex-col gap-4">
+            <div id="lyrics-parts" className="p-4 flex flex-col gap-4">
               <LyricsPart label="Verse" />
               <LyricsPart label="Verse 2" />
               <LyricsPart label="Verse 3" />

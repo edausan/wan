@@ -15,7 +15,7 @@ const SongChords = ({ song }) => {
   const isWorship = song?.tags.findIndex((tag) => tag === "Worship" || tag === "Solemn") >= 0;
 
   return (
-    <section className={`p-4 ${song?.media?.youtube ? "mt-4" : "mt-0"}`}>
+    <section className={`p-4 pt-0 ${song?.media?.youtube ? "mt-0" : "mt-0"}`}>
       <div className="p-4">
         <Part label="Verse" value={verse} isWorship={isWorship} />
         <Part label="Pre-chorus" value={pre_chorus} isWorship={isWorship} />
