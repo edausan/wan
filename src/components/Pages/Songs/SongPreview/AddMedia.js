@@ -42,7 +42,9 @@ const AddMedia = ({ song, open, onClick, updateMediaQuery }) => {
           gradient={{ ...ButtonGradients.Media }}
         />
 
-        {media && <Media media={media} phoneHeight="250px" laptopHeight="250px" />}
+        {media && (
+          <Media media={media} phoneHeight="phone:h-[250px]" laptopHeight="laptop:h-[250px]" />
+        )}
         <div className="p-4">
           <TextField label="Paste Youtube Link" onChange={handleChange} fullWidth />
         </div>

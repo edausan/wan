@@ -15,12 +15,12 @@ const SongPlayer = ({ stop, song }) => {
 export const Media = ({
   media,
   width = "w-[100%]",
-  phoneHeight = "120px",
-  laptopHeight = "120px",
+  phoneHeight = "phone:h-[120px]",
+  laptopHeight = "laptop:h-[120px]",
 }) => {
   return (
     <iframe
-      className={`${width} phone:h-[${phoneHeight}] laptop:h-[${laptopHeight}]`}
+      className={`${width} ${phoneHeight} ${laptopHeight}`}
       title="spotify"
       src={media}
       frameborder="0"
