@@ -63,7 +63,7 @@ export const Button = ({
   onClick,
   label = "",
   gradient = { ...ButtonGradients.Media },
-  icon = <Add />,
+  icon = <Add className="text-xs" />,
   className = "",
 }) => {
   return (
@@ -71,9 +71,12 @@ export const Button = ({
       onClick={onClick}
       role="button"
       tabIndex={0}
-      className={`flex flex-row items-center justify-start gap-2 p-2 cursor-pointer rounded-full bg-gradient-to-r ${gradient.from} ${gradient.to} text-white shadow-sm hover:shadow-lg transition-all duration-200 text-sm min-w-fit ${className}`}
+      className={`flex flex-row items-center justify-start gap-2 p-2 pr-3 cursor-pointer rounded-full bg-gradient-to-r ${gradient.from} ${gradient.to} text-white shadow-sm hover:shadow-lg transition-all duration-200 text-sm min-w-fit ${className}`}
     >
-      <span className="bg-white/30 rounded-full">{icon}</span> <span>{label}</span>
+      <span className="bg-white/20 rounded-full w-[24px] h-[24px] p-1 flex items-center justify-center">
+        {icon}
+      </span>{" "}
+      <span className="flex-1 text-center mr-6">{label}</span>
     </span>
   );
 };

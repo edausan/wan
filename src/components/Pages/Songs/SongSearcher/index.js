@@ -9,10 +9,13 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { time } from "../../../Firebase";
-import TextArea from "../../CustomComponents/TextArea";
-import Loading from "../../CustomComponents/Loading";
-import { Media } from "./SongPreview/SongPlayer";
+import { time } from "../../../../Firebase";
+import TextArea from "../../../CustomComponents/TextArea";
+import Loading from "../../../CustomComponents/Loading";
+import { Media } from "../SongPreview/SongPlayer";
+import { Button } from "../SongPreview/AddDetails";
+import { Add } from "@mui/icons-material";
+import AddToSongBank from "./AddToSongBank";
 
 const allSongsApi =
   "https://www.songpraise.com/api/songTitlesAfterModifiedDate/631123200000/language/5a2d25458c270b37345af0c5";
@@ -197,19 +200,30 @@ const SongSearcher = () => {
 };
 
 const SongPreview = ({ song, onClose }) => {
+  const [addToBank, setAddToBank] = useState(false);
   return (
     <SwipeableDrawer open={song?.uuid || false} onClose={onClose} anchor="right">
-      <section className="w-[80vw] h-[100vh] bg-white">
+      <section className="w-[90vw] h-[100vh] bg-white">
+        <AddToSongBank song={song} open={addToBank} onClose={() => setAddToBank(false)} />
+
         {song?.youtubeUrl && (
-          <div className="sticky top-0 z-10">
-            <Media
-              media={`https://www.youtube.com/embed/${song?.youtubeUrl}`}
-              phoneHeight="phone:h-[250px]"
+          <Media
+            media={`https://www.youtube.com/embed/${song?.youtubeUrl}`}
+            phoneHeight="phone:h-[200px]"
+          />
+        )}
+        <section className="sticky top-0 z-10">
+          <div className="flex flex-row phone:flex-col gap-2 items-center justify-start bg-white text-black shadow-xl p-4">
+            <span className="flex-1 font-bold text-md">{song?.title}</span>
+            <Button
+              onClick={() => setAddToBank(true)}
+              label="Add to Song Bank"
+              className="phone:w-full"
             />
           </div>
-        )}
-        <div className="p-8">
-          <h2 className="font-bold text-lg mb-4">{song?.title}</h2>
+        </section>
+
+        <div className="p-8 pt-4">
           {song?.songVerseDTOS.map((verse) => (
             <div className="mb-4">
               <span>{verse?.chorus ? "Chorus" : "Verse"}</span>
