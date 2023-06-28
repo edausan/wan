@@ -6,9 +6,7 @@ import TextArea from "../../../CustomComponents/TextArea";
 import { Save, SaveAlt, SaveAltOutlined } from "@mui/icons-material";
 
 const AddToSongBank = ({ song, open, onClose }) => {
-  const handleClickPart = ({ part, part_idx }) => {
-    console.log({ part, part_idx });
-  };
+  const handleClickPart = ({ part, part_idx }) => {};
 
   return (
     <SwipeableDrawer open={open} onClose={onClose} anchor="right">
