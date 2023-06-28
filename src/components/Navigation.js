@@ -149,9 +149,9 @@ const Navigation = () => {
           </Link>
         </Grid>
 
-        {/* <Grid item flex={1}>
+        <Grid item flex={1}>
           <Link
-            to={`/chorder`}
+            to={`/song-searcher`}
             style={{
               display: "flex",
               padding: 16,
@@ -164,7 +164,7 @@ const Navigation = () => {
           >
             <AudioFileOutlined />
           </Link>
-        </Grid> */}
+        </Grid>
       </Grid>
     </Paper>
   );

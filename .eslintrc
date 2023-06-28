@@ -3,7 +3,6 @@
   "parser": "@babel/eslint-parser",
   "rules": {
     "no-console": "error",
-    "prettier/prettier": ["error", { "endOfLine": "auto" }],
-    "no-unused-vars": "warn"
+    "prettier/prettier": ["error", { "endOfLine": "auto" }]
   }
 }
