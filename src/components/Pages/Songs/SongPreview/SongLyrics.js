@@ -3,8 +3,10 @@ import React from "react";
 import TextArea from "@components/CustomComponents/TextArea";
 
 const SongLyrics = ({ song }) => {
-  const { verse, pre_chorus, chorus, bridge } = song?.lyrics || {
+  const { verse, verse_2, verse_3, pre_chorus, chorus, bridge } = song?.lyrics || {
     verse: "",
+    verse_2: "",
+    verse_3: "",
     pre_chorus: "",
     chorus: "",
     bridge: "",
@@ -18,6 +20,8 @@ const SongLyrics = ({ song }) => {
     <section className={`p-4 pt-0 ${song?.media?.youtube ? "mt-0" : "mt-0"}`}>
       <div className="p-4">
         <Part label="Verse" value={verse} isWorship={isWorship} />
+        <Part label="Verse 2" value={verse_2} isWorship={isWorship} />
+        <Part label="Verse 3" value={verse_3} isWorship={isWorship} />
         <Part label="Pre-chorus" value={pre_chorus} isWorship={isWorship} />
         <Part label="Chorus" value={chorus} isWorship={isWorship} />
         <Part label="Bridge" value={bridge} isWorship={isWorship} />
