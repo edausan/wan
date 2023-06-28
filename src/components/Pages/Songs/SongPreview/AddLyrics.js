@@ -2,9 +2,10 @@
 import { ChevronLeft, Clear, DeleteOutline, Save } from "@mui/icons-material";
 import { CircularProgress, IconButton, SwipeableDrawer, TextField } from "@mui/material";
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { Button } from "./AddDetails";
+import { Button, ButtonGradients } from "./AddDetails";
 import { useParams } from "react-router-dom";
 import LoadingScreen from "@components/CustomComponents/LoadingScreen";
+import TopBar from "./TopBar";
 
 const LyricsContext = createContext();
 
@@ -122,22 +123,14 @@ const AddLyrics = ({ song, open, onClick, updateLyricsQuery }) => {
         <LoadingScreen status={isLoading} text="Saving Lyrics" />
         <LyricsContext.Provider value={{ setParts, parts, song }}>
           <section className="w-[100vw]">
-            <div
-              id="top-bar"
-              className="p-4 bg-gradient-to-r from-cyan-400 to-sky-500 text-white shadow-lg sticky top-0 left-0 w-full z-10"
-            >
-              <h3 className="text-sm flex flex-row gap-2 items-center justify-start">
-                <IconButton onClick={onClick}>
-                  <ChevronLeft className="text-white" />
-                </IconButton>{" "}
-                <span className="flex flex-col flex-1">
-                  <small>{noLyrics ? "Add" : "Update"} Lyrics</small> <strong>{song?.title}</strong>
-                </span>
-                <IconButton onClick={handleSave}>
-                  <Save className="text-white" />
-                </IconButton>
-              </h3>
-            </div>
+            <TopBar
+              label="Lyrics"
+              isUpdate={!noLyrics}
+              handleSave={handleSave}
+              song={song}
+              onClick={onClick}
+              gradient={{ ...ButtonGradients.Lyrics }}
+            />
 
             <div id="lyrics-parts" className="p-4 mt-2 flex flex-col gap-4">
               <LyricsPart label="Verse" />

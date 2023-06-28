@@ -21,15 +21,15 @@ const SongsMain = () => {
   const memoizedArtists = useMemo(() => artists, [artists]);
   const memoizedOpen = useMemo(() => open, [open]);
 
-  const { updateLyricsQuery, updateChordsQuery, songsQuery } = SongsQuery();
+  const { updateLyricsQuery, updateChordsQuery, updateMediaQuery, songsQuery } = SongsQuery();
 
   const { data, isLoading, isFetching, refetch } = songsQuery;
 
   useEffect(() => {
-    if (updateLyricsQuery.isSuccess || updateChordsQuery.isSuccess) {
+    if (updateLyricsQuery.isSuccess || updateChordsQuery.isSuccess || updateMediaQuery.isSuccess) {
       refetch();
     }
-  }, [updateLyricsQuery.isSuccess, updateChordsQuery.isSuccess]);
+  }, [updateLyricsQuery.isSuccess, updateChordsQuery.isSuccess, updateMediaQuery.isSuccess]);
 
   useEffect(() => {
     data && data?.length > 0 && !isFetching && setSongList(data);
@@ -143,6 +143,7 @@ const SongsMain = () => {
           songs={songList}
           updateLyricsQuery={updateLyricsQuery}
           updateChordsQuery={updateChordsQuery}
+          updateMediaQuery={updateMediaQuery}
         />
       </div>
     </div>

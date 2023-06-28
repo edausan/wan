@@ -2,11 +2,12 @@
 import { ChevronLeft, Clear, ClearAll, DeleteOutline, Remove, Save } from "@mui/icons-material";
 import { IconButton, SwipeableDrawer, TextField } from "@mui/material";
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { Button } from "./AddDetails";
+import { Button, ButtonGradients } from "./AddDetails";
 import ChordEditor from "@components/Pages/ChordEditor";
 import TextArea from "@components/CustomComponents/TextArea";
 import { useParams } from "react-router-dom";
 import LoadingScreen from "@components/CustomComponents/LoadingScreen";
+import TopBar from "./TopBar";
 
 const ChordsContext = createContext();
 
@@ -115,22 +116,14 @@ const AddChords = ({ song, open, onClick, updateChordsQuery }) => {
           /> */}
 
           <section className="w-[100vw]">
-            <div
-              id="top-bar"
-              className="p-4 bg-gradient-to-r from-orange-400 to-yellow-500 text-white shadow-lg sticky top-0 left-0 w-full z-10"
-            >
-              <h3 className="text-sm flex flex-row gap-2 items-center justify-start">
-                <IconButton onClick={onClick}>
-                  <ChevronLeft className="text-white" />
-                </IconButton>{" "}
-                <span className="flex flex-col flex-1">
-                  <small>{noChords ? "Add" : "Update"} Chords</small> <strong>{song?.title}</strong>
-                </span>
-                <IconButton onClick={handleSave}>
-                  <Save className="text-white" />
-                </IconButton>
-              </h3>
-            </div>
+            <TopBar
+              label="Chords"
+              isUpdate={!noChords}
+              song={song}
+              onClick={onClick}
+              handleSave={handleSave}
+              gradient={{ ...ButtonGradients.Chords }}
+            />
 
             <div id="lyrics-parts" className="p-4 flex flex-col gap-4">
               <LyricsPart label="Verse" />

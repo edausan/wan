@@ -13,7 +13,7 @@ const Song = lazy(() => import("./Song"));
 const CreateNewSong = lazy(() => import("./CreateNewSong"));
 const SongDetailsDrawer = lazy(() => import("../../Lineup/SongDetailsDrawer"));
 
-const SongList = ({ songs, updateLyricsQuery, updateChordsQuery }) => {
+const SongList = ({ songs, updateLyricsQuery, updateChordsQuery, updateMediaQuery }) => {
   const params = useParams();
   const history = useHistory();
   const currentUser = useSelector(selectCurrentUser);
@@ -85,6 +85,7 @@ const SongList = ({ songs, updateLyricsQuery, updateChordsQuery }) => {
         updating={updating}
         updateLyricsQuery={updateLyricsQuery}
         updateChordsQuery={updateChordsQuery}
+        updateMediaQuery={updateMediaQuery}
       />
 
       {songs

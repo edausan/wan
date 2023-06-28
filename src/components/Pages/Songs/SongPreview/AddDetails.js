@@ -2,6 +2,21 @@ import { Lyrics, NoteAdd, NoteAddRounded, YouTube } from "@mui/icons-material";
 import Add from "@mui/icons-material/Add";
 import React from "react";
 
+export const ButtonGradients = {
+  Lyrics: {
+    from: "from-cyan-400",
+    to: "to-sky-500",
+  },
+  Chords: {
+    from: "from-orange-400",
+    to: "to-yellow-500",
+  },
+  Media: {
+    from: "from-pink-400",
+    to: "to-rose-400",
+  },
+};
+
 const AddDetails = ({ song, setDrawer }) => {
   const withMedia = song?.media?.youtube;
 
@@ -27,22 +42,19 @@ const AddDetails = ({ song, setDrawer }) => {
       <Button
         onClick={() => setDrawer("lyrics")}
         label={`${!noLyrics ? "Update" : "Add"} Lyrics`}
-        gradient={{
-          from: "from-cyan-400",
-          to: "to-sky-500",
-        }}
+        gradient={{ ...ButtonGradients.Lyrics }}
       />
 
       <Button
         onClick={() => setDrawer("chords")}
         label={`${!noChords ? "Update" : "Add"} Chords`}
-        gradient={{
-          from: "from-orange-400",
-          to: "to-yellow-500",
-        }}
+        gradient={{ ...ButtonGradients.Chords }}
       />
 
-      {!song?.media?.youtube && <Button label="Add Media" onClick={() => setDrawer("media")} />}
+      <Button
+        label={`${song?.media?.youtube ? "Update" : "Add"} Media`}
+        onClick={() => setDrawer("media")}
+      />
     </section>
   );
 };
@@ -50,7 +62,7 @@ const AddDetails = ({ song, setDrawer }) => {
 export const Button = ({
   onClick,
   label = "",
-  gradient = { from: "from-pink-400", to: "to-rose-400" },
+  gradient = { ...ButtonGradients.Media },
   icon = <Add />,
   className = "",
 }) => {

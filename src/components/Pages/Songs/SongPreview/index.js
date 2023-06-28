@@ -17,6 +17,7 @@ import { FirebaseApp } from "@/Firebase";
 import SongChords from "./SongChords";
 import UserQuery from "@api/userQuery";
 import LyricsChordSwitcher from "./LyricsChordSwitcher";
+import AddMedia from "./AddMedia";
 
 const SongPreview = ({
   openDrawer,
@@ -24,6 +25,7 @@ const SongPreview = ({
   updating,
   updateLyricsQuery,
   updateChordsQuery,
+  updateMediaQuery,
 }) => {
   const auth = getAuth(FirebaseApp);
   const { currentUser } = auth;
@@ -38,13 +40,14 @@ const SongPreview = ({
 
   const updateLyrics = updateLyricsQuery;
   const updateChords = updateChordsQuery;
+  const updateMedia = updateMediaQuery;
 
   useEffect(() => {
-    if (!updateLyrics.isLoading || !updateChords.isLoading) {
+    if (!updateLyrics.isLoading || !updateChords.isLoading || !updateMedia.isLoading) {
       setDrawer("");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateLyrics.isLoading, updateChords.isLoading]);
+  }, [updateLyrics.isLoading, updateChords.isLoading, updateMedia.isLoading]);
 
   const isWorship = song?.tags.findIndex((tag) => tag === "Worship" || tag === "Solemn") >= 0;
 
@@ -98,6 +101,12 @@ const SongPreview = ({
             setLyricsMode={setLyricsMode}
           />
 
+          <AddMedia
+            song={song}
+            open={drawer === "media"}
+            onClick={() => setDrawer("")}
+            updateMediaQuery={updateMediaQuery}
+          />
           <AddLyrics
             song={song}
             open={drawer === "lyrics"}

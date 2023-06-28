@@ -273,6 +273,17 @@ export const UpdateLyrics = async ({ id, lyrics }) => {
     throw new Error(err);
   }
 };
+export const UpdateMedia = async ({ id, media }) => {
+  try {
+    const ref = doc(songsRef, id);
+
+    if (id) {
+      return await updateDoc(ref, { media });
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+};
 
 /**
  * TODO: GET single song
