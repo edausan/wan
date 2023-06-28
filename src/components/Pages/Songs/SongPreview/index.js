@@ -94,36 +94,38 @@ const SongPreview = ({
             </div>
           </article>
 
-          <AddDetails song={song} setDrawer={setDrawer} />
+          <section className="max-w-[680px] mx-auto w-full">
+            <AddDetails song={song} setDrawer={setDrawer} />
 
-          <LyricsChordSwitcher
-            isJAM={userQuery?.data?.ministry !== "VIA"}
-            setLyricsMode={setLyricsMode}
-          />
+            <LyricsChordSwitcher
+              isJAM={userQuery?.data?.ministry !== "VIA"}
+              setLyricsMode={setLyricsMode}
+            />
 
-          <AddMedia
-            song={song}
-            open={drawer === "media"}
-            onClick={() => setDrawer("")}
-            updateMediaQuery={updateMediaQuery}
-          />
-          <AddLyrics
-            song={song}
-            open={drawer === "lyrics"}
-            onClick={() => setDrawer("")}
-            updateLyricsQuery={updateLyricsQuery}
-          />
-          <AddChords
-            song={song}
-            open={drawer === "chords"}
-            onClick={() => setDrawer("")}
-            updateChordsQuery={updateChordsQuery}
-          />
+            <AddMedia
+              song={song}
+              open={drawer === "media"}
+              onClick={() => setDrawer("")}
+              updateMediaQuery={updateMediaQuery}
+            />
+            <AddLyrics
+              song={song}
+              open={drawer === "lyrics"}
+              onClick={() => setDrawer("")}
+              updateLyricsQuery={updateLyricsQuery}
+            />
+            <AddChords
+              song={song}
+              open={drawer === "chords"}
+              onClick={() => setDrawer("")}
+              updateChordsQuery={updateChordsQuery}
+            />
 
-          {!lyricsMode ? <SongLyrics song={song} /> : <SongChords song={song} />}
+            {!lyricsMode ? <SongLyrics song={song} /> : <SongChords song={song} />}
 
-          {song?.artist && <ArtistSongs artist={song?.artist} song={song} />}
-          {song?.album && <SimilarAlbum album={song?.album} song={song} />}
+            {song?.artist && <ArtistSongs artist={song?.artist} song={song} />}
+            {song?.album && <SimilarAlbum album={song?.album} song={song} />}
+          </section>
         </section>
       </SwipeableDrawer>
     );
@@ -134,6 +136,7 @@ const SongPreview = ({
     updating,
     userQuery?.data?.ministry,
     drawer,
+    updateMediaQuery,
     updateLyricsQuery,
     updateChordsQuery,
     lyricsMode,

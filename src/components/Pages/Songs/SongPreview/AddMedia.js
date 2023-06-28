@@ -1,10 +1,10 @@
-import { FormControl, SwipeableDrawer, TextField } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import TopBar from "./TopBar";
 import { ButtonGradients } from "./AddDetails";
 import { Media } from "./SongPlayer";
 import { useParams } from "react-router-dom";
 import LoadingScreen from "@components/CustomComponents/LoadingScreen";
+import { SwipeableDrawer, TextField } from "@mui/material";
 
 const AddMedia = ({ song, open, onClick, updateMediaQuery }) => {
   const params = useParams();
