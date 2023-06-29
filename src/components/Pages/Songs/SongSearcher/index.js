@@ -112,7 +112,7 @@ const SongSearcher = () => {
 
   // filter songs on searching
   const handleSearch = (e) => {
-    const res = songs.filter((song) => song.title.includes(searchText.toLowerCase()));
+    const res = songs.filter((song) => song.title.toLowerCase().includes(searchText.toLowerCase()));
     setSearchResult(res);
   };
 
