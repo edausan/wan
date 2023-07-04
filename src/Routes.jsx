@@ -1,15 +1,11 @@
 import { Suspense, lazy } from "react";
 import { Switch, Route } from "react-router-dom";
 import Loading from "@components/CustomComponents/Loading";
-import ChordEditor from "@components/Pages/ChordEditor";
-import SongPreview from "./components/Pages/Songs/SongPreview";
 
 // Components
 const Home = lazy(() => import("./components/Pages/Home"));
 const Lineup = lazy(() => import("./components/Lineup/LineupMain"));
 const Assignments = lazy(() => import("./components/Pages/Assignments"));
-const NewLineup = lazy(() => import("./components/Lineup/NewLineup"));
-const EditLineup = lazy(() => import("./components/Lineup/EditLineup"));
 const Settings = lazy(() => import("./components/Pages/Settings"));
 const EditProfile = lazy(() => import("./components/Pages/User/EditProfile"));
 const ViewLineup = lazy(() => import("./components/Lineup/ViewLineup"));
@@ -98,11 +94,6 @@ const Routes = () => {
       <Route path="/theme/:id">
         <Suspense fallback={<Loading />}>
           <Theme />
-        </Suspense>
-      </Route>
-      <Route path="/chorder">
-        <Suspense fallback={<Loading />}>
-          <ChordEditor />
         </Suspense>
       </Route>
     </Switch>

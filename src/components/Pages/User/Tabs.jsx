@@ -5,7 +5,7 @@ import PostLoading from "../Home/PostLoading";
 // import LineupItem from '../../Lineup/LineupItem';
 // import PostsMain from '../Home/PostsMain';
 
-const LineupItem = React.lazy(() => import("../../Lineup/LineupItem"));
+const LineupItem = React.lazy(() => import("@components/Lineup/LineupItem"));
 const PostsMain = React.lazy(() => import("../Home/PostsMain"));
 
 const TabPanel = (props) => {

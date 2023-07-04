@@ -11,7 +11,7 @@ const SongHeader = ({ song }) => {
       } w-[100%] flex flex-row bg-white z-50 shadow-lg mb-2`}
     >
       <div className={`Album-Cover-Wrapper w-[100px] bg-black`}>
-        <img src={song.cover} alt="" />
+        <img src={song?.cover} alt="" />
       </div>
       <div className="p-2 flex flex-col justify-center flex-1 z-20 ">
         <strong>{song?.title}</strong>

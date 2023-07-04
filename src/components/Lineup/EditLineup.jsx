@@ -12,7 +12,7 @@ import { Grid, Card, Snackbar, Alert } from "@mui/material";
 
 import { LINEUP } from "../../data";
 import { AppCtx } from "../../App";
-import { GetAllSongs, UpdateLineup, GetAllLineups } from "../../Firebase/songsApi";
+import { GetAllSongs, UpdateLineup, GetAllLineups } from "@/Firebase/songsApi"; 
 import moment from "moment";
 import { useHistory, useParams } from "react-router-dom";
 
@@ -20,7 +20,7 @@ import { getAuth } from "firebase/auth";
 import { FirebaseApp } from "../../Firebase";
 import { SaveTwoTone } from "@mui/icons-material";
 import { useMutation, useQuery } from "react-query";
-import LoadingScreen from "../CustomComponents/LoadingScreen";
+import LoadingScreen from "@components/CustomComponents/LoadingScreen";
 
 const Service = lazy(() => import("./Service"));
 const LineupCard = lazy(() => import("./LineupCard"));

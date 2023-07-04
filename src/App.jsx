@@ -2,15 +2,15 @@
 import "./App.css";
 import React, { useRef, lazy, Suspense, useState, createContext, useEffect } from "react";
 import { Grid } from "@mui/material";
-import { RealtimeMetadata } from "./Firebase/authApi";
+import { RealtimeMetadata } from "@/Firebase/authApi";
 import { BrowserRouter as Router } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { FirebaseApp } from "./Firebase";
-import Navigation from "./components/Navigation";
+import { FirebaseApp } from "@/Firebase";
+import Navigation from "@components/Navigation";
 import { useDispatch } from "react-redux";
 import { setUser } from "./redux/slices/usersSlice";
-import Loading from "./components/CustomComponents/Loading";
+import Loading from "@components/CustomComponents/Loading";
 import { ReactQueryDevtools } from "react-query/devtools";
 
 // React Query
