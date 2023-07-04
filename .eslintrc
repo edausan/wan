@@ -4,6 +4,6 @@
   "rules": {
     "no-console": "error",
     "prettier/prettier": ["error", { "endOfLine": "auto" }],
-    "no-unused-vars": "warn"
+    "no-unused-vars": "error"
   }
 }
