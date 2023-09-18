@@ -76,6 +76,10 @@ const LineupItem = ({
     lineup?.songs.length > 0 && lineup?.songs[0].title && GetSongsData();
   }, [lineup.songs]);
 
+  useEffect(() => {
+    isExpanded && songsQuery.refetch();
+  }, [isExpanded]);
+
   const songsQuery = useQuery("songs", GetAllSongs);
   const mutatedLineup = useMutation(DeleteLineup);
   const lineupsQuery = useQuery("lineups", GetAllLineups);
