@@ -21,7 +21,7 @@ const Routes = () => {
     <Switch>
       <Route exact path="/">
         <Suspense fallback={<Loading />}>
-          <Home />
+          <Lineup />
         </Suspense>
       </Route>
       <Route exact path="/assignments">

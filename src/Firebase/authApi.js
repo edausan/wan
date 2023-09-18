@@ -19,6 +19,7 @@ import {
 import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
 import { useEffect, useState } from "react";
 import moment from "moment";
+import { useHistory } from "react-router-dom";
 
 const auth = getAuth(FirebaseApp);
 
@@ -86,8 +87,10 @@ export const SignIn = async ({ email, password }) => {
 };
 
 export const SignOut = () => {
+  const history = useHistory();
   try {
     signOut(auth);
+    history.push("/");
   } catch (error) {
     throw new Error(error);
   }

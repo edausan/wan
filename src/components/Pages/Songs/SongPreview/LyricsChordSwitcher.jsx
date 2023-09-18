@@ -11,7 +11,7 @@ const LyricsChordSwitcher = ({ isJAM, setLyricsMode }) => {
   const bg = !isSwitched ? "from-cyan-400 to-sky-500" : "from-orange-400 to-yellow-500";
 
   return (
-    <div className="flex flex-row gap-2 items-center justify-start px-6">
+    <div className="flex flex-row gap-2 items-center justify-start px-6 laptop:mt-0 phone:mt-2">
       <button
         className={`cursor-pointer relative px-4 py-2 rounded-full bg-gray-50 flex flex-row gap-4 transition-all duration-200 after:content-[''] after:absolute after:top-[50%] after:translate-y-[-50%] after:h-[75%] after:bg-sky-500 after:rounded-full after:z-0 after:transition-all after:duration-200 after:bg-gradient-to-r ${bg} after:shadow-md shadow-inner ${
           isSwitched ? "after:left-[46%] after:w-[50%]" : "after:left-[0.3rem] after:w-[45%]"

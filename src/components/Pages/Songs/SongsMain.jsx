@@ -139,12 +139,7 @@ const SongsMain = () => {
       </Suspense>
       <div className="max-w-[680px] mx-auto box-border">
         {searchText && <small className="px-4">Total songs: {songList.length}</small>}
-        <SongList
-          songs={songList}
-          updateLyricsQuery={updateLyricsQuery}
-          updateChordsQuery={updateChordsQuery}
-          updateMediaQuery={updateMediaQuery}
-        />
+        <SongList songs={songList} />
       </div>
     </div>
   );

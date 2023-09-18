@@ -41,6 +41,7 @@ const LineupItemDrawer = lazy(() => import("./LineupItemDrawer"));
 const Actions = lazy(() => import("./LineupItem/Actions"));
 const Header = lazy(() => import("./LineupItem/Header"));
 const LineupChords = lazy(() => import("./LineupChords"));
+const SongPreview = lazy(() => import("@/components/Pages/Songs/SongPreview"));
 
 const LineupItem = ({
   lineup,
@@ -65,7 +66,7 @@ const LineupItem = ({
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openSongDrawer, setOpenSongDrawer] = useState({
     song: null,
-    status: false,
+    state: false,
   });
   const [pinned, setPinned] = useState(false);
   const [morePins, setMorePins] = useState(pinnedLineup?.length > 1);
@@ -142,6 +143,8 @@ const LineupItem = ({
       <LoadingScreen status={mutatedLineup.isLoading} text="Deleting" />
       {drawerData.song && (
         <Suspense fallback={<div></div>}>
+          {/* <SongPreview openDrawer={drawerData} /> */}
+
           <SongDetailsDrawer
             drawerData={drawerData}
             expanded={expanded}
@@ -154,7 +157,10 @@ const LineupItem = ({
       )}
 
       <Suspense fallback={<div></div>}>
-        <EditSong drawer={openSongDrawer} setOpen={setOpenSongDrawer} />
+        {openSongDrawer.state && (
+          <SongPreview openDrawer={openSongDrawer} setOpenDrawer={setOpenSongDrawer} />
+        )}
+        {/* <EditSong drawer={openSongDrawer} setOpen={setOpenSongDrawer} /> */}
       </Suspense>
 
       <Suspense fallback={<div></div>}>
@@ -282,7 +288,7 @@ const LineupItem = ({
                     return (
                       <ListItem key={`${s.id}~${idx}`}>
                         <ListItemText
-                          onClick={() => setOpenSongDrawer({ song: s, status: true })}
+                          onClick={() => setOpenSongDrawer({ song: s, state: true })}
                           primary={<span className="text-sm">{s.title || s.song}</span>}
                           secondary={<span className="text-xs">{s.label}</span>}
                           // onClick={() =>

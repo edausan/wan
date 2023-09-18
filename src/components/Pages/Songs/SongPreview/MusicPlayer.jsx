@@ -39,7 +39,7 @@ const MusicPlayer = () => {
     return (
       <section className="bg-white laptop:w-[75%] phone:w-[85%] p-2 rounded-full z-10 absolute bottom-0 left-[50%] translate-x-[-50%] translate-y-[50%] shadow-2xl flex flex-row items-center justify-between">
         <div className="w-[50px] h-[50px] rounded-full bg-sky-500"></div>
-        <div className="flex-1 h-[50px] relative ml-2">
+        <div className="flex-1 h-[50px] laptop:h-[100px] relative ml-2">
           <div
             className="w-full absolute top-[50%] left-0 translate-y-[-50%]"
             id="wave-container"

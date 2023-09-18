@@ -10,12 +10,13 @@ const SongChords = ({ song }) => {
     bridge: "",
   };
 
-  const noLyrics = !verse && !pre_chorus && !chorus && !bridge;
+  const noChords = !verse && !pre_chorus && !chorus && !bridge;
 
   const isWorship = song?.tags.findIndex((tag) => tag === "Worship" || tag === "Solemn") >= 0;
 
   return (
     <section className={`p-4 pt-0 ${song?.media?.youtube ? "mt-0" : "mt-0"}`}>
+      {noChords && <span className="p-4 text-gray-400 box-border block">No chords yet.</span>}
       <div className="p-4">
         <Part label="Verse" value={verse} isWorship={isWorship} />
         <Part label="Pre-chorus" value={pre_chorus} isWorship={isWorship} />

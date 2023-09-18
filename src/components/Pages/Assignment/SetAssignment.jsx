@@ -51,7 +51,6 @@ import { useSelector } from "react-redux";
 import { selectUsers } from "@/redux/slices/usersSlice";
 import { useQuery } from "react-query";
 import { GetAllUsers } from "@/Firebase/authApi";
-// import AssignmentDrawer from './AssignmentDrawer';
 
 const AssignmentDrawer = React.lazy(() => import("./AssignmentDrawer"));
 

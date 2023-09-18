@@ -7,7 +7,7 @@ import { AppCtx } from "@/App";
 const FilterDrawer = React.lazy(() => import("./FilterDrawer"));
 
 const SongSearch = ({ setSearchText, open, setOpen, artists, albums, searchText, tags }) => {
-  const { mode } = useContext(AppCtx);
+  // const { mode } = useContext(AppCtx);
   const [text, setText] = useState(null);
 
   useEffect(() => {
@@ -21,9 +21,7 @@ const SongSearch = ({ setSearchText, open, setOpen, artists, albums, searchText,
 
   return (
     <Card
-      className={`p-4 sticky top-0 left-0 w-full z-10 box-border rounded-none shadow-md backdrop-blur-sm ${
-        mode ? "bg-white/60" : "bg-[#121212]/60"
-      }`}
+      className={`p-4 sticky top-0 left-0 w-full z-10 box-border rounded-none shadow-md backdrop-blur-sm ${"bg-white/60"}`}
       elevation={0}
     >
       <section className="flex flex-row gap-1 max-w-[680px] items-center justify-between mx-auto">

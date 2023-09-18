@@ -1,5 +1,6 @@
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { IconButton, Skeleton, SwipeableDrawer } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -18,15 +19,9 @@ import SongChords from "./SongChords";
 import UserQuery from "@api/userQuery";
 import LyricsChordSwitcher from "./LyricsChordSwitcher";
 import AddMedia from "./AddMedia";
+import Wrapper from "@/components/CustomComponents/Wrapper";
 
-const SongPreview = ({
-  openDrawer,
-  setOpenDrawer,
-  updating,
-  updateLyricsQuery,
-  updateChordsQuery,
-  updateMediaQuery,
-}) => {
+const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
   const auth = getAuth(FirebaseApp);
   const { currentUser } = auth;
   const { song, state } = openDrawer;
@@ -37,6 +32,9 @@ const SongPreview = ({
 
   const [drawer, setDrawer] = useState("");
   const [lyricsMode, setLyricsMode] = useState(userQuery?.data?.ministry === "VIA");
+  const [hideMedia, setHideMedia] = useState(false);
+
+  const { updateLyricsQuery, updateChordsQuery, updateMediaQuery, songsQuery } = SongsQuery();
 
   const updateLyrics = updateLyricsQuery;
   const updateChords = updateChordsQuery;
@@ -62,70 +60,91 @@ const SongPreview = ({
         <section className={`bg-white h-[100vh] w-[100vw] `}>
           <article
             className={`sticky z-10 top-0 w-full flex flex-row items-start h-auto ${
-              song?.media?.youtube ? "pb-20" : ""
+              song?.media?.youtube && !hideMedia ? "pb-20" : ""
             } ${
               isWorship
                 ? "bg-gradient-to-r from-orange-600 to-yellow-500"
                 : "bg-gradient-to-r from-sky-600 to-cyan-500"
             }  text-white p-4`}
           >
-            <div
+            {/* <div
               className={`${
                 !song?.media?.youtube ? "h-[100px]" : "h-[180px]"
               } overflow-hidden w-full absolute top-0 left-0 z-0 blur-sm`}
             >
               <img src={BG} alt="" className="w-[110%] h-full opacity-30" />
-            </div>
+            </div> */}
 
-            {song?.media?.youtube && <SongPlayer stop={openDrawer.state} song={song} />}
+            {song?.media?.youtube && !hideMedia && (
+              <SongPlayer setHideMedia={setHideMedia} stop={openDrawer.state} song={song} />
+            )}
 
             <IconButton className="" onClick={() => setOpenDrawer({ song: null, state: false })}>
               <ChevronLeft className="text-white" />
             </IconButton>
 
+            {hideMedia && (
+              <IconButton
+                onClick={() => setHideMedia(false)}
+                className="bg-white text-sm ml-auto absolute top-3 right-3 z-50"
+              >
+                <PlayCircleIcon className="text-red-600" />
+              </IconButton>
+            )}
+
             <div className="mt-0 z-10 px-4 relative w-full">
-              <h1 className="text-2xl font-black w-full">
-                <Text updating={updating} text={song?.title} />
-              </h1>
-              <div className="text-sm w-full">
-                {song?.album && <Text updating={updating} text={song?.album} label="Album:" />}
-                {song?.artist && <Text updating={updating} text={song?.artist} label="Artist:" />}
+              <div className="text-sm w-full flex laptop:items-center laptop:flex-row laptop:gap-2 phone:flex-col phone:items-start phone:gap-0">
+                <h1 className="text-2xl font-black phone:text-xl">
+                  <Text updating={updating} text={song?.title} />
+                </h1>
+
+                {song?.album && (
+                  <span className="bg-black/10 inline-block px-4 py-1 rounded-full my-2">
+                    {song?.album && <Text updating={updating} text={song?.album} label="Album:" />}
+                  </span>
+                )}
+                {/* {song?.album && <br></br>} */}
+                <span className="bg-black/10 inline-block px-3 py-1 rounded-full">
+                  {song?.artist && <Text updating={updating} text={song?.artist} label="Artist:" />}
+                </span>
               </div>
             </div>
           </article>
 
-          <section className="max-w-[680px] mx-auto w-full">
-            <AddDetails song={song} setDrawer={setDrawer} />
+          <Wrapper>
+            <section className="mx-auto w-full">
+              <AddDetails song={song} setDrawer={setDrawer} hideMedia={hideMedia} />
 
-            <LyricsChordSwitcher
-              isJAM={userQuery?.data?.ministry !== "VIA"}
-              setLyricsMode={setLyricsMode}
-            />
+              <LyricsChordSwitcher
+                isJAM={userQuery?.data?.ministry !== "VIA"}
+                setLyricsMode={setLyricsMode}
+              />
 
-            <AddMedia
-              song={song}
-              open={drawer === "media"}
-              onClick={() => setDrawer("")}
-              updateMediaQuery={updateMediaQuery}
-            />
-            <AddLyrics
-              song={song}
-              open={drawer === "lyrics"}
-              onClick={() => setDrawer("")}
-              updateLyricsQuery={updateLyricsQuery}
-            />
-            <AddChords
-              song={song}
-              open={drawer === "chords"}
-              onClick={() => setDrawer("")}
-              updateChordsQuery={updateChordsQuery}
-            />
+              <AddMedia
+                song={song}
+                open={drawer === "media"}
+                onClick={() => setDrawer("")}
+                updateMediaQuery={updateMediaQuery}
+              />
+              <AddLyrics
+                song={song}
+                open={drawer === "lyrics"}
+                onClick={() => setDrawer("")}
+                updateLyricsQuery={updateLyricsQuery}
+              />
+              <AddChords
+                song={song}
+                open={drawer === "chords"}
+                onClick={() => setDrawer("")}
+                updateChordsQuery={updateChordsQuery}
+              />
 
-            {!lyricsMode ? <SongLyrics song={song} /> : <SongChords song={song} />}
+              {!lyricsMode ? <SongLyrics song={song} /> : <SongChords song={song} />}
 
-            {song?.artist && <ArtistSongs artist={song?.artist} song={song} />}
-            {song?.album && <SimilarAlbum album={song?.album} song={song} />}
-          </section>
+              {song?.artist && <ArtistSongs artist={song?.artist} song={song} />}
+              {song?.album && <SimilarAlbum album={song?.album} song={song} />}
+            </section>
+          </Wrapper>
         </section>
       </SwipeableDrawer>
     );

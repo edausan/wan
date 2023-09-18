@@ -13,7 +13,7 @@ const Song = lazy(() => import("./Song"));
 const CreateNewSong = lazy(() => import("./CreateNewSong"));
 const SongDetailsDrawer = lazy(() => import("@components/Lineup/SongDetailsDrawer"));
 
-const SongList = ({ songs, updateLyricsQuery, updateChordsQuery, updateMediaQuery }) => {
+const SongList = ({ songs }) => {
   const params = useParams();
   const history = useHistory();
   const currentUser = useSelector(selectCurrentUser);
@@ -79,14 +79,7 @@ const SongList = ({ songs, updateLyricsQuery, updateChordsQuery, updateMediaQuer
         </button>
       )}
 
-      <SongPreview
-        openDrawer={openDrawer}
-        setOpenDrawer={setOpenDrawer}
-        updating={updating}
-        updateLyricsQuery={updateLyricsQuery}
-        updateChordsQuery={updateChordsQuery}
-        updateMediaQuery={updateMediaQuery}
-      />
+      <SongPreview openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} updating={updating} />
 
       {songs
         // .filter((song) => !song?.lyrics?.verse && !song?.media?.youtube)

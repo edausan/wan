@@ -4,7 +4,6 @@ import {
   HomeOutlined,
   AssignmentOutlined,
   SpeakerNotesOutlined,
-
 } from "@mui/icons-material";
 import { Paper, Grid, useTheme, Avatar, CircularProgress } from "@mui/material";
 import React, { useContext } from "react";
@@ -18,7 +17,7 @@ const Navigation = () => {
   // const { setPageIndex } = useContext(AppCtx);
   const auth = getAuth(FirebaseApp);
   const user = auth.currentUser;
-  const { mode } = useContext(AppCtx);
+  // const { mode } = useContext(AppCtx);
 
   const location = useLocation();
   const { pathname } = location;
@@ -41,7 +40,8 @@ const Navigation = () => {
         boxShadow: "0 -5px 10px rgba(0,0,0,.1)",
         borderRadius: 0,
       }}
-      className={`pb-0 backdrop-blur-sm ${mode ? "bg-white/80" : "bg-[#121212]/70"}`}
+      // className={`pb-0 backdrop-blur-sm ${mode ? "bg-white/80" : "bg-[#121212]/70"}`}
+      className={`pb-0 backdrop-blur-sm bg-white/80`}
     >
       <Grid
         container
@@ -50,7 +50,7 @@ const Navigation = () => {
         }}
         justifyContent="center"
       >
-        <Grid item flex={1}>
+        {/* <Grid item flex={1}>
           <Link
             to="/"
             style={{
@@ -68,7 +68,7 @@ const Navigation = () => {
               <HomeOutlined />
             )}
           </Link>
-        </Grid>
+        </Grid> */}
         <Grid item flex={1}>
           <Link
             to="/assignments"
@@ -130,7 +130,7 @@ const Navigation = () => {
           </Link>
         </Grid>
 
-        <Grid item flex={1}>
+        {/* <Grid item flex={1}>
           <Link
             to={`/profile/${user?.uid}`}
             style={{
@@ -147,7 +147,7 @@ const Navigation = () => {
           >
             <Avatar src={user?.photoURL} alt={user?.displayName} sx={{ width: 26, height: 26 }} />
           </Link>
-        </Grid>
+        </Grid> */}
 
         {/* <Grid item flex={1}>
           <Link

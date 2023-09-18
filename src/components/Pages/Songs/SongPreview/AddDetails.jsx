@@ -17,7 +17,7 @@ export const ButtonGradients = {
   },
 };
 
-const AddDetails = ({ song, setDrawer }) => {
+const AddDetails = ({ song, setDrawer, hideMedia }) => {
   const withMedia = song?.media?.youtube;
 
   const noLyrics =
@@ -36,7 +36,7 @@ const AddDetails = ({ song, setDrawer }) => {
     <section
       id="add-details"
       className={`p-4 flex flex-row max-w-[100%] overflow-x-auto gap-2 ${
-        withMedia ? "mt-16" : "mt-6"
+        withMedia && !hideMedia ? "mt-20 laptop:mt-[180px]" : "mt-0"
       }`}
     >
       <Button

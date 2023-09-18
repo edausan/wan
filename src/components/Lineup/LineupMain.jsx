@@ -18,7 +18,7 @@ const Lineup = () => {
   const params = useParams();
   // const { data: lineups } = RealtimeLineups();
   const { currentUser } = useSelector(selectUsers);
-  const { scrollToTop } = useContext(AppCtx);
+  // const { scrollToTop } = useContext(AppCtx);
   const [pinnedLineup, setPinnedLineup] = useState(null);
   const [showPinned, setShowPinned] = useState(false);
   const [lineupData, setLineupData] = useState([]);
@@ -37,7 +37,7 @@ const Lineup = () => {
   }, [data, isFetching, isFetched]);
 
   useEffect(() => {
-    scrollToTop();
+    // scrollToTop();
   }, []);
 
   useEffect(() => {
@@ -127,4 +127,4 @@ const Lineup = () => {
   );
 };
 
-export default React.memo(Lineup);
+export default Lineup;
