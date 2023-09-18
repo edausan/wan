@@ -138,7 +138,7 @@ const CreateNewSong = ({ open, setOpen }) => {
         chords: null,
         cover: null,
         lyrics: null,
-        tags: null,
+        tags: [],
         title: null,
         media: {
           youtube: null,
@@ -233,7 +233,7 @@ const CreateNewSong = ({ open, setOpen }) => {
           </Snackbar>
 
           <div className="flex flex-row gap-2 items-end">
-            <div className="w-[70px] relative">
+            {/* <div className="w-[70px] relative">
               <label
                 htmlFor="upload-cover"
                 className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-10"
@@ -248,8 +248,8 @@ const CreateNewSong = ({ open, setOpen }) => {
               </label>
 
               <img src={songDetails?.cover || ALBUM_PLACEHOLDER} alt="" className="w-full" />
-            </div>
-            <div className="p-2 pb-0 box-border flex-1">
+            </div> */}
+            <div className="p-4 pb-0 box-border flex-1">
               <FormControl size="small" variant="standard" fullWidth>
                 <InputLabel>Song Title</InputLabel>
                 <Input
@@ -269,9 +269,6 @@ const CreateNewSong = ({ open, setOpen }) => {
                 <InputLabel>Artist</InputLabel>
                 <Input
                   onChange={(e) => setSongDetails({ ...songDetails, artist: e.target.value })}
-                  // className={`INPUT [&>textarea]:text-xs [&>label]:text-xs [&::before]:!border-b-0 [&::after]:border-0 ${
-                  // 	editDetails.artist ? "[&::before]:border-0" : ""
-                  // }`}
                 />
               </FormControl>
             </div>
@@ -280,9 +277,6 @@ const CreateNewSong = ({ open, setOpen }) => {
                 <InputLabel>Album</InputLabel>
                 <Input
                   onChange={(e) => setSongDetails({ ...songDetails, album: e.target.value })}
-                  // className={`INPUT [&>textarea]:text-xs [&::before]:!border-b-0 [&::after]:border-0 ${
-                  // 	editDetails.album ? "[&::before]:border-0" : ""
-                  // }`}
                 />
               </FormControl>
             </div>

@@ -47,6 +47,10 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateLyrics.isLoading, updateChords.isLoading, updateMedia.isLoading]);
 
+  useEffect(() => {
+    !openDrawer.state && setHideMedia(false);
+  }, [openDrawer.state]);
+
   const isWorship = song?.tags.findIndex((tag) => tag === "Worship" || tag === "Solemn") >= 0;
 
   return useMemo(() => {
@@ -59,7 +63,7 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
       >
         <section className={`bg-white h-[100vh] w-[100vw] `}>
           <article
-            className={`sticky z-10 top-0 w-full flex flex-row items-start h-auto ${
+            className={`sticky z-10 top-0 w-full flex flex-row items-center h-auto ${
               song?.media?.youtube && !hideMedia ? "pb-20" : ""
             } ${
               isWorship
@@ -74,11 +78,6 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
             >
               <img src={BG} alt="" className="w-[110%] h-full opacity-30" />
             </div> */}
-
-            {song?.media?.youtube && !hideMedia && (
-              <SongPlayer setHideMedia={setHideMedia} stop={openDrawer.state} song={song} />
-            )}
-
             <IconButton className="" onClick={() => setOpenDrawer({ song: null, state: false })}>
               <ChevronLeft className="text-white" />
             </IconButton>
@@ -86,29 +85,34 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
             {hideMedia && (
               <IconButton
                 onClick={() => setHideMedia(false)}
-                className="bg-white text-sm ml-auto absolute top-3 right-3 z-50"
+                className="bg-rose-500 text-sm ml-auto absolute laptop:top-[50%] phone:top-[100%] translate-y-[-50%] right-3 z-50 shadow-lg"
               >
-                <PlayCircleIcon className="text-red-600" />
+                <PlayCircleIcon className="text-white" />
               </IconButton>
             )}
 
-            <div className="mt-0 z-10 px-4 relative w-full">
+            <Wrapper>
+              {song?.media?.youtube && !hideMedia && (
+                <SongPlayer setHideMedia={setHideMedia} stop={openDrawer.state} song={song} />
+              )}
+
               <div className="text-sm w-full flex laptop:items-center laptop:flex-row laptop:gap-2 phone:flex-col phone:items-start phone:gap-0">
-                <h1 className="text-2xl font-black phone:text-xl">
+                <h1 className="text-2xl font-black phone:text-sm">
                   <Text updating={updating} text={song?.title} />
                 </h1>
 
                 {song?.album && (
                   <span className="bg-black/10 inline-block px-4 py-1 rounded-full my-2">
-                    {song?.album && <Text updating={updating} text={song?.album} label="Album:" />}
+                    <Text updating={updating} text={song?.album} label="Album:" />
                   </span>
                 )}
-                {/* {song?.album && <br></br>} */}
-                <span className="bg-black/10 inline-block px-3 py-1 rounded-full">
-                  {song?.artist && <Text updating={updating} text={song?.artist} label="Artist:" />}
-                </span>
+                {song?.artist && (
+                  <span className="bg-black/10 inline-block px-3 py-1 rounded-full">
+                    <Text updating={updating} text={song?.artist} label="Artist:" />
+                  </span>
+                )}
               </div>
-            </div>
+            </Wrapper>
           </article>
 
           <Wrapper>
@@ -141,14 +145,17 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
 
               {!lyricsMode ? <SongLyrics song={song} /> : <SongChords song={song} />}
 
-              {song?.artist && <ArtistSongs artist={song?.artist} song={song} />}
-              {song?.album && <SimilarAlbum album={song?.album} song={song} />}
+              <div className="mt-auto">
+                {song?.artist && <ArtistSongs artist={song?.artist} song={song} />}
+                {song?.album && <SimilarAlbum album={song?.album} song={song} />}
+              </div>
             </section>
           </Wrapper>
         </section>
       </SwipeableDrawer>
     );
   }, [
+    hideMedia,
     openDrawer.state,
     song,
     isWorship,

@@ -1,5 +1,9 @@
-const Wrapper = ({ children }) => {
-  return <section className="max-w-[680px] mx-auto">{children}</section>;
+const Wrapper = ({ className = "", children }) => {
+  return (
+    <section id="Wrapper" className={`max-w-[680px] laptop:mx-auto h-full ${className}`}>
+      {children}
+    </section>
+  );
 };
 
 export default Wrapper;

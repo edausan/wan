@@ -12,12 +12,12 @@ import React from "react";
 
 const SongType = ({ open, setOpen, setSongType }) => {
   return (
-    <Dialog onClose={() => setOpen(false)} open={open}>
-      <DialogTitle className="text-sm">Select Song Type</DialogTitle>
+    <Dialog open={open}>
+      <DialogTitle className="text-sm w-[240px] text-center">Select Song Type</DialogTitle>
       <List>
         <ListItemButton onClick={() => setSongType("Praise")}>
           <ListItemIcon>
-            <Avatar>
+            <Avatar className="w-8 h-8">
               <MusicNoteTwoTone />
             </Avatar>
           </ListItemIcon>
@@ -26,7 +26,7 @@ const SongType = ({ open, setOpen, setSongType }) => {
 
         <ListItemButton onClick={() => setSongType("Worship")}>
           <ListItemIcon>
-            <Avatar>
+            <Avatar className="w-8 h-8">
               <MusicNoteTwoTone />
             </Avatar>
           </ListItemIcon>

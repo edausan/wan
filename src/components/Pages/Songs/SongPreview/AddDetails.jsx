@@ -36,7 +36,7 @@ const AddDetails = ({ song, setDrawer, hideMedia }) => {
     <section
       id="add-details"
       className={`p-4 flex flex-row max-w-[100%] overflow-x-auto gap-2 ${
-        withMedia && !hideMedia ? "mt-20 laptop:mt-[180px]" : "mt-0"
+        withMedia && !hideMedia ? "phone:mt-32 laptop:mt-52" : "phone:mt-4 laptop:mt-0"
       }`}
     >
       <Button

@@ -7,16 +7,20 @@ import { AppCtx } from "@/App";
 import { ADMIN, JIL_ADMIN, ADRIAN } from "@/data";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useHistory } from "react-router-dom";
+import UserQuery from "@api/userQuery";
 
 const Song = ({ song, setOpenDrawer, openDrawer, handleExpandClick }) => {
-  const { currentUser } = useContext(AppCtx);
+  // const { currentUser } = useContext(AppCtx);
+  // const { currentUser } = UserQuery();
+  const userQuery = UserQuery().userQuery;
+  const { data: currentUser } = userQuery;
   const history = useHistory();
 
   const allowed =
-    currentUser.user.uid === ADMIN ||
-    currentUser.user.uid === ADRIAN ||
-    currentUser.user.uid === JIL_ADMIN ||
-    currentUser.user_metadata.ministry === "VIA";
+    currentUser.uid === ADMIN ||
+    currentUser.uid === ADRIAN ||
+    currentUser.uid === JIL_ADMIN ||
+    currentUser.ministry === "VIA";
 
   const lyrics_disabled =
     !song?.lyrics?.verse &&

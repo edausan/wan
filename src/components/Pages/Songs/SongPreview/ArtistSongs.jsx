@@ -14,53 +14,58 @@ const ArtistSongs = ({ artist, song }) => {
   useEffect(() => {
     if (!songsQuery.isFetching) {
       const songs = songsQuery.data;
-      const filtered = songs.filter(
-        (song) => song?.artist?.toLowerCase() === artist?.toLowerCase(),
-      );
+      const filtered = songs
+        .filter((song) => {
+          // console.log({ song });
+          return song?.artist?.toLowerCase() === artist?.toLowerCase();
+        })
+        .filter((s) => s.title !== song.title);
       setArtistSongs(filtered.filter((s) => s.id !== song?.id).splice(0, 5));
     }
-  }, [artist, song?.id, songsQuery.data, songsQuery.isFetching, params.id]);
+  }, [artist, song?.id, songsQuery.data, songsQuery.isFetching, params.id, song.title]);
 
   return useMemo(() => {
     return (
-      <section className="flex flex-col gap-2 w-full px-8 py-4 bg-gray-100">
-        <div>
-          <h1 className="text-lg">
-            Similar Artist |{" "}
-            <small className="text-sky-500">
-              <Link to={`/songs/artist=${artist}`}>{artist}</Link>
-            </small>
-          </h1>
-        </div>
+      artistSongs.length > 0 && (
+        <section className="flex flex-col gap-2 w-full px-8 py-4 bg-gray-100">
+          <div>
+            <h1 className="text-lg">
+              Similar Artist |{" "}
+              <small className="text-sky-500">
+                <Link to={`/songs/artist=${artist}`}>{artist}</Link>
+              </small>
+            </h1>
+          </div>
 
-        <div className="flex flex-col gap-4">
-          {artistSongs.map((song) => {
-            return (
-              <div
-                onClick={() => history.push(`/song/${song?.id}`)}
-                role="button"
-                tabIndex={0}
-                key={song?.id}
-                className="flex flex-row items-center gap-2 shadow-none hover:shadow-lg transition-all duration-200 px-2 py-1 rounded-full cursor-pointer"
-              >
-                <div className="w-[30px] h-[30px] rounded-full bg-sky-500 overflow-hidden">
-                  <img src={BG} alt="" className="h-full opacity-30" />
-                </div>
-                <div className="flex-1">
-                  <h1 className="font-bold text-sm">{song?.title}</h1>
-                  <p className="text-xs text-gray-400">{song?.artist}</p>
-                </div>
+          <div className="flex flex-col gap-4">
+            {artistSongs.map((song) => {
+              return (
+                <div
+                  onClick={() => history.push(`/song/${song?.id}`)}
+                  role="button"
+                  tabIndex={0}
+                  key={song?.id}
+                  className="flex flex-row items-center gap-2 shadow-none hover:shadow-lg hover:bg-white transition-all duration-200 px-2 py-1 rounded-full cursor-pointer"
+                >
+                  <div className="w-[30px] h-[30px] rounded-full bg-sky-500 overflow-hidden">
+                    <img src={BG} alt="" className="h-full opacity-30" />
+                  </div>
+                  <div className="flex-1">
+                    <h1 className="font-bold text-sm">{song?.title}</h1>
+                    <p className="text-xs text-gray-400">{song?.artist}</p>
+                  </div>
 
-                <IconButton>
-                  <ChevronRight />
-                </IconButton>
-              </div>
-            );
-          })}
-        </div>
-      </section>
+                  <IconButton>
+                    <ChevronRight />
+                  </IconButton>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )
     );
-  }, [artist, artistSongs]);
+  }, [artist, artistSongs, history]);
 };
 
 export default ArtistSongs;

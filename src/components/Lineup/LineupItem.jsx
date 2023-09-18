@@ -157,9 +157,9 @@ const LineupItem = ({
       )}
 
       <Suspense fallback={<div></div>}>
-        {openSongDrawer.state && (
-          <SongPreview openDrawer={openSongDrawer} setOpenDrawer={setOpenSongDrawer} />
-        )}
+        {/* {openSongDrawer.state && ( */}
+        <SongPreview openDrawer={openSongDrawer} setOpenDrawer={setOpenSongDrawer} />
+        {/* )} */}
         {/* <EditSong drawer={openSongDrawer} setOpen={setOpenSongDrawer} /> */}
       </Suspense>
 
