@@ -96,19 +96,48 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
                 <SongPlayer setHideMedia={setHideMedia} stop={openDrawer.state} song={song} />
               )}
 
-              <div className="text-sm w-full flex laptop:items-center laptop:flex-row laptop:gap-2 phone:flex-col phone:items-start phone:gap-0">
-                <h1 className="text-2xl font-black phone:text-sm">
+              <div className="text-sm w-full flex gap-2 laptop:items-center laptop:flex-row laptop:gap-2 phone:flex-col phone:items-start phone:gap-1">
+                <h1 className="laptop:text-2xl font-black phone:text-sm">
                   <Text updating={updating} text={song?.title} />
                 </h1>
 
+                <div className="flex gap-1 laptop:w-auto phone:w-full laptop:items-center phone:items-stretch">
+                  {song?.key && (
+                    <span className="bg-black/10 inline-block px-2 py-1 rounded-full">
+                      <Text updating={updating} text={song?.key} label="Key:" className="text-xs" />
+                    </span>
+                  )}
+
+                  {song?.tempo && (
+                    <span className="bg-black/10 inline-block px-2 py-1 rounded-full">
+                      <Text
+                        updating={updating}
+                        text={song?.tempo}
+                        label="BPM:"
+                        className="text-xs"
+                      />
+                    </span>
+                  )}
+                </div>
+
                 {song?.album && (
-                  <span className="bg-black/10 inline-block px-4 py-1 rounded-full my-2">
-                    <Text updating={updating} text={song?.album} label="Album:" />
+                  <span className="bg-black/10 inline-block px-3 py-1 rounded-full">
+                    <Text
+                      updating={updating}
+                      text={song?.album}
+                      label="Album:"
+                      className="text-xs"
+                    />
                   </span>
                 )}
                 {song?.artist && (
                   <span className="bg-black/10 inline-block px-3 py-1 rounded-full">
-                    <Text updating={updating} text={song?.artist} label="Artist:" />
+                    <Text
+                      updating={updating}
+                      text={song?.artist}
+                      label="Artist:"
+                      className="text-xs"
+                    />
                   </span>
                 )}
               </div>
@@ -170,11 +199,11 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
   ]);
 };
 
-const Text = ({ updating, text, label = "" }) => {
+const Text = ({ updating, text, label = "", className }) => {
   return updating ? (
     <Skeleton variant="text" className="w-[100%]" />
   ) : (
-    <p>
+    <p className={`leading-none ${className}`}>
       {label ? `${label} ` : ""}
       {text}
     </p>

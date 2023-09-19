@@ -41,21 +41,23 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
   });
 
   const [songDetails, setSongDetails] = useState({
-    cover: song?.cover || null,
-    title: song?.title || null,
-    album: song?.album || null,
-    key: song?.key || null,
+    cover: song?.cover || "",
+    title: song?.title,
+    album: song?.album,
+    key: song?.key,
+    time_signature: "",
+    tempo: "",
     lyrics: {
-      verse: null,
-      pre_chorus: null,
-      chorus: null,
+      verse: "",
+      pre_chorus: "",
+      chorus: "",
       ...song?.lyrics,
     },
     chords: {
-      intro: null,
-      verse: null,
-      pre_chorus: null,
-      chorus: null,
+      intro: "",
+      verse: "",
+      pre_chorus: "",
+      chorus: "",
       ...song?.chords,
     },
     media: {
@@ -229,14 +231,14 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
 
   return (
     <>
-      <AlbumCover
+      {/* <AlbumCover
         open={openCovers}
         setOpen={setOpenCovers}
         setSelectedCover={setSelectedCover}
         selectedCover={selectedCover}
         setImage={setImage}
         resized={resized}
-      />
+      /> */}
       <LoadingScreen status={updating} text="Updating, " />
       <SwipeableDrawer
         anchor="bottom"
@@ -282,7 +284,7 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
                 <InputLabel>Song Title</InputLabel>
                 <Input
                   multiline
-                  disabled={editTitle}
+                  // disabled={editTitle}
                   defaultValue={song?.title}
                   onChange={(e) =>
                     handleSetSongDetails({
@@ -315,7 +317,7 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
                 <InputLabel>Artist</InputLabel>
                 <Input
                   multiline
-                  disabled={editDetails.artist}
+                  // disabled={editDetails.artist}
                   defaultValue={song?.artist}
                   onChange={(e) =>
                     handleSetSongDetails({
@@ -354,7 +356,7 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
                 <InputLabel>Album</InputLabel>
                 <Input
                   multiline
-                  disabled={editDetails.album}
+                  // disabled={editDetails.album}
                   defaultValue={song?.album}
                   onChange={(e) =>
                     handleSetSongDetails({

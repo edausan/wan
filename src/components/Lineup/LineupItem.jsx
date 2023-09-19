@@ -8,6 +8,7 @@ import {
   MusicNote,
   YouTube,
 } from "@mui/icons-material";
+import EditIcon from "@mui/icons-material/Edit";
 
 import {
   Accordion,
@@ -71,6 +72,7 @@ const LineupItem = ({
   const [pinned, setPinned] = useState(false);
   const [morePins, setMorePins] = useState(pinnedLineup?.length > 1);
   const [showChords, setShowChords] = useState(false);
+  const [editSong, setEditSong] = useState({ song: null, status: false });
 
   useEffect(() => {
     lineup?.songs.length > 0 && lineup?.songs[0].title && GetSongsData();
@@ -161,10 +163,11 @@ const LineupItem = ({
       )}
 
       <Suspense fallback={<div></div>}>
-        {/* {openSongDrawer.state && ( */}
         <SongPreview openDrawer={openSongDrawer} setOpenDrawer={setOpenSongDrawer} />
-        {/* )} */}
-        {/* <EditSong drawer={openSongDrawer} setOpen={setOpenSongDrawer} /> */}
+      </Suspense>
+
+      <Suspense fallback={<div></div>}>
+        <EditSong drawer={editSong} setOpen={setEditSong} />
       </Suspense>
 
       <Suspense fallback={<div></div>}>
@@ -291,14 +294,22 @@ const LineupItem = ({
                   .map((s, idx) => {
                     return (
                       <ListItem key={`${s.id}~${idx}`}>
-                        <ListItemText
-                          onClick={() => setOpenSongDrawer({ song: s, state: true })}
-                          primary={<span className="text-sm">{s.title || s.song}</span>}
-                          secondary={<span className="text-xs">{s.label}</span>}
-                          // onClick={() =>
-                          //   setIsModalOpen({ song: s, status: true })
-                          // }
-                        />
+                        <div className="flex items-start flex-1 gap-1">
+                          <YouTube
+                            fontSize="small"
+                            className="w-[16x] h-[16px] mt-[3px]"
+                            color={!s?.media?.youtube ? "disabled" : "error"}
+                          />
+                          <ListItemText
+                            className="mt-0"
+                            onClick={() => setOpenSongDrawer({ song: s, state: true })}
+                            primary={<span className="text-sm">{s.title || s.song}</span>}
+                            secondary={<span className="text-xs">{s.label}</span>}
+                            // onClick={() =>
+                            //   setIsModalOpen({ song: s, status: true })
+                            // }
+                          />
+                        </div>
 
                         <IconButton
                           color="primary"
@@ -316,20 +327,28 @@ const LineupItem = ({
                         >
                           <MusicNote fontSize="small" />
                         </IconButton>
+
+                        <IconButton
+                          color="warning"
+                          onClick={() => setEditSong({ song: s, status: true })}
+                          sx={{ mr: 1 }}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
                         {/* <div className="px-1 flex flex-col justify-center items-center gap-1">
-													<YouTube
-														fontSize="small"
-														className="w-[16x] h-[16px]"
-														color={!s?.media?.youtube ? "disabled" : "error"}
-													/>
-													<img
+                          <YouTube
+                            fontSize="small"
+                            className="w-[16x] h-[16px]"
+                            color={!s?.media?.youtube ? "disabled" : "error"}
+                          />
+                          <img
 														src={SPOTIFY_LOGO}
 														alt=""
 														className={`w-[16px] ${
 															!s?.media?.spotify ? "grayscale opacity-30" : ""
 														}`}
 													/>
-												</div> */}
+                        </div> */}
                       </ListItem>
                     );
                   })}

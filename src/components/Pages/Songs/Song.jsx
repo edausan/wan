@@ -10,10 +10,10 @@ import { useHistory } from "react-router-dom";
 import UserQuery from "@api/userQuery";
 
 const Song = ({ song, setOpenDrawer, openDrawer, handleExpandClick }) => {
-  // const { currentUser } = useContext(AppCtx);
+  const { currentUser } = useContext(AppCtx);
   // const { currentUser } = UserQuery();
   const userQuery = UserQuery().userQuery;
-  const { data: currentUser } = userQuery;
+  // const { data: currentUser } = userQuery;
   const history = useHistory();
 
   const allowed =

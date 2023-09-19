@@ -61,7 +61,8 @@ const ChordsAddtnl = ({ setSongDetails, song }) => {
       </div>
       <div className="col-span-1 tablet:col-span-1">
         <TextField
-          disabled
+          // disabled
+          onChange={(e) => setSongDetails({ ...song, time_signature: e.target.value })}
           label="Time Signature"
           variant="standard"
           className="VERSE [&>div>textarea]:text-sm [&>label]:text-sm"
@@ -69,7 +70,8 @@ const ChordsAddtnl = ({ setSongDetails, song }) => {
       </div>
       <div className="col-span-1 tablet:col-span-1 flex flex-row gap-2 items-end">
         <TextField
-          disabled
+          // disabled
+          onChange={(e) => setSongDetails({ ...song, tempo: e.target.value })}
           label="Tempo"
           variant="standard"
           fullWidth

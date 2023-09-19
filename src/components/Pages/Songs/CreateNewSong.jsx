@@ -205,14 +205,14 @@ const CreateNewSong = ({ open, setOpen }) => {
         setOpen={setOpenSongType}
         setSongType={handleSongType}
       />
-      <AlbumCover
+      {/* <AlbumCovers
         open={openCovers}
         setOpen={setOpenCovers}
         setSelectedCover={setSelectedCover}
         selectedCover={selectedCover}
         setImage={setImage}
         resized={resized}
-      />
+      /> */}
       <LoadingScreen status={updating} text="Saving, " />
       <SwipeableDrawer
         anchor="bottom"
