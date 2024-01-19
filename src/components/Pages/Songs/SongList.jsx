@@ -24,7 +24,7 @@ const SongList = ({ songs }) => {
   const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
-    !openDrawer.state && history.push("/songs");
+    // !openDrawer.state && history.push("/songs");
   }, [history, openDrawer.state]);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const SongList = ({ songs }) => {
     }
   }, [params.id]);
 
-  const handleClose = useCallback(() => {}, []);
+  const handleClose = () => {};
 
   const drawer_data = useMemo(() => drawerData, [drawerData]);
   const expand = useMemo(() => expanded, [expanded]);

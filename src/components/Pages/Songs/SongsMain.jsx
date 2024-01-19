@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useMemo, useState, useCallback, Suspense } from "react";
+import React, { useEffect, useMemo, useState, useCallback, Suspense, createContext } from "react";
 import { RealtimeSongs } from "@/Firebase/songsApi";
 import SongList from "./SongList";
 import SongsQuery from "@api/songsQuery";
@@ -7,6 +7,7 @@ import SongsQuery from "@api/songsQuery";
 // const SongList = React.lazy(() => import('./SongList'));
 const SongSearch = React.lazy(() => import("./SongSearch"));
 
+export const SongsCtx = createContext();
 const SongsMain = () => {
   // const { songs } = useSelector(selectSongs);
   const { data: songs } = RealtimeSongs();
@@ -137,10 +138,12 @@ const SongsMain = () => {
           tags={tags}
         />
       </Suspense>
-      <div className="max-w-[680px] mx-auto box-border">
-        {searchText && <small className="px-4">Total songs: {songList.length}</small>}
-        <SongList songs={songList} />
-      </div>
+      <SongsCtx.Provider value={{ refetch }}>
+        <div className="max-w-[680px] mx-auto box-border">
+          {searchText && <small className="px-4">Total songs: {songList.length}</small>}
+          <SongList songs={songList} />
+        </div>
+      </SongsCtx.Provider>
     </div>
   );
 };

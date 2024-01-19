@@ -2,7 +2,7 @@ import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { IconButton, Skeleton, SwipeableDrawer } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import BG from "@assets/BG-Song.jpg";
 import SongPlayer from "./SongPlayer";
@@ -20,9 +20,11 @@ import UserQuery from "@api/userQuery";
 import LyricsChordSwitcher from "./LyricsChordSwitcher";
 import AddMedia from "./AddMedia";
 import Wrapper from "@/components/CustomComponents/Wrapper";
+import { SongsCtx } from "../SongsMain";
 
 const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
   const auth = getAuth(FirebaseApp);
+  const { refetch } = useContext(SongsCtx);
   const { currentUser } = auth;
   const { song, state } = openDrawer;
   const params = useParams();
@@ -53,6 +55,11 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
 
   const isWorship = song?.tags.findIndex((tag) => tag === "Worship" || tag === "Solemn") >= 0;
 
+  const handleSongRoute = () => {
+    history.push("/songs");
+    setOpenDrawer({ song: null, state: false });
+  };
+
   return useMemo(() => {
     return (
       <SwipeableDrawer
@@ -78,7 +85,7 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
             >
               <img src={BG} alt="" className="w-[110%] h-full opacity-30" />
             </div> */}
-            <IconButton className="" onClick={() => setOpenDrawer({ song: null, state: false })}>
+            <IconButton className="" onClick={handleSongRoute}>
               <ChevronLeft className="text-white" />
             </IconButton>
 
@@ -146,6 +153,7 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
 
           <Wrapper>
             <section className="mx-auto w-full">
+              {/* <button onClick={refetch}>Refetch</button> */}
               <AddDetails song={song} setDrawer={setDrawer} hideMedia={hideMedia} />
 
               <LyricsChordSwitcher
