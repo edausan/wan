@@ -50,7 +50,7 @@ const ChordsAddtnl = ({ setSongDetails, song }) => {
           <Select
             defaultValue={song?.key}
             label="Key"
-            labelId="key"
+            labelid="key"
             onChange={(e) => setSongDetails({ ...song, key: e.target.value })}
           >
             {Keys.map((key) => {

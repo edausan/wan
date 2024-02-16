@@ -13,7 +13,7 @@ import { getAuth } from "firebase/auth";
 import { FirebaseApp } from "@/Firebase";
 import { SaveTwoTone } from "@mui/icons-material";
 import Service from "./Service";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import LoadingScreen from "@components/CustomComponents/LoadingScreen";
 
 export const NewLineupCtx = createContext(null);
@@ -31,8 +31,8 @@ const NewLineup = () => {
   const [songs, setSongs] = useState([]);
   const [openService, setOpenService] = useState(false);
 
-  const { data } = useQuery("songs", GetAllSongs);
-  const mutatedNewLineup = useMutation(AddLineup);
+  const { data } = useQuery({ queryKey: ["songs"], queryFn: GetAllSongs });
+  const mutatedNewLineup = useMutation({ mutationKey: "add-lineup", mutationFn: AddLineup });
 
   const dateRef = useRef(null);
 

@@ -111,7 +111,7 @@ const Login = ({ setScreen }) => {
               <Input
                 variant="standard"
                 label="Password"
-                labelId="password"
+                labelid="password"
                 fullWidth
                 disabled={isSigning}
                 type={show ? "text" : "password"}

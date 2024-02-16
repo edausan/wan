@@ -12,14 +12,14 @@ import { Grid, Card, Snackbar, Alert } from "@mui/material";
 
 import { LINEUP } from "../../data";
 import { AppCtx } from "../../App";
-import { GetAllSongs, UpdateLineup, GetAllLineups } from "@/Firebase/songsApi"; 
+import { GetAllSongs, UpdateLineup, GetAllLineups } from "@/Firebase/songsApi";
 import moment from "moment";
 import { useHistory, useParams } from "react-router-dom";
 
 import { getAuth } from "firebase/auth";
 import { FirebaseApp } from "../../Firebase";
 import { SaveTwoTone } from "@mui/icons-material";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import LoadingScreen from "@components/CustomComponents/LoadingScreen";
 
 const Service = lazy(() => import("./Service"));
@@ -39,10 +39,10 @@ const NewLineup = () => {
   const [service, setService] = useState(null);
   const [openService, setOpenService] = useState(false);
 
-  const { data } = useQuery("songs", GetAllSongs);
-  const lineupQuery = useQuery("lineups", GetAllLineups);
+  const { data } = useQuery({ queryKey: ["songs"], queryFn: GetAllSongs });
+  const lineupQuery = useQuery({ queryKey: ["lineups"], queryFn: GetAllLineups });
 
-  const mutatedLineup = useMutation(UpdateLineup);
+  const mutatedLineup = useMutation({ mutationKey: "update-lineup", mutationFn: UpdateLineup });
   const dateRef = useRef(null);
 
   useEffect(() => {

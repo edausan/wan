@@ -1,6 +1,14 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import {
+  getFirestore,
+  connectFirestoreEmulator,
+  initializeFirestore,
+  persistentLocalCache,
+  CACHE_SIZE_UNLIMITED,
+} from "firebase/firestore";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -18,6 +26,19 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const FirebaseApp = initializeApp(firebaseConfig);
+
+initializeFirestore(FirebaseApp, {
+  localCache: persistentLocalCache({
+    cacheSizeBytes: CACHE_SIZE_UNLIMITED,
+  }),
+});
+
 export const Firestore = getFirestore(FirebaseApp);
+
+// firebaseApps previously initialized using initializeApp()
+// connectFirestoreEmulator(Firestore, "127.0.0.1", 8080);
+
+const auth = getAuth(FirebaseApp);
+// connectAuthEmulator(auth, "http://127.0.0.1:9099");
 
 export const time = 24 * 60 * 60 * 1000;

@@ -11,7 +11,7 @@ import { Link, useLocation } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import { FirebaseApp } from "@/Firebase";
 import { AppCtx } from "@/App";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { GetAllLineups } from "@/Firebase/songsApi";
 const Navigation = () => {
   // const { setPageIndex } = useContext(AppCtx);
@@ -23,7 +23,7 @@ const Navigation = () => {
   const { pathname } = location;
   const theme = useTheme();
 
-  const lineupQuery = useQuery("lineups", GetAllLineups);
+  const lineupQuery = useQuery({ queryKey: ["lineups"], queryFn: GetAllLineups });
   const handleRefetchLineups = () => {
     lineupQuery.refetch();
   };

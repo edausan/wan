@@ -17,7 +17,7 @@ const Song = ({ song, setOpenDrawer, openDrawer, handleExpandClick }) => {
   const history = useHistory();
 
   const allowed =
-    currentUser.uid === ADMIN ||
+    currentUser.email === ADMIN ||
     currentUser.uid === ADRIAN ||
     currentUser.uid === JIL_ADMIN ||
     currentUser.ministry === "VIA";

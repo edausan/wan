@@ -213,7 +213,7 @@ const EditProfile = () => {
                 <Select
                   fullWidth
                   variant="standard"
-                  labelId="ministry"
+                  labelid="ministry"
                   size="small"
                   disabled
                   value={userDetails.ministry}

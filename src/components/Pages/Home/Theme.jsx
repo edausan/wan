@@ -5,7 +5,7 @@ import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectThemes } from "@/redux/slices/postsSlice";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { GetAllThemes } from "@/Firebase/postsApi";
 import Wrapper from "../../CustomComponents/Wrapper";
 
@@ -20,7 +20,7 @@ const initialState = {
 };
 
 const Theme = ({ theme, isRow }) => {
-  const { data, isFetching } = useQuery("themes", GetAllThemes);
+  const { data, isFetching } = useQuery({ queryKey: ["themes"], queryFn: GetAllThemes });
   const desktop = useMediaQuery("(min-width:640px)");
   const themes = useSelector(selectThemes);
   const params = useParams();

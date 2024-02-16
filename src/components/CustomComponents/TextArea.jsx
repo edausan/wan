@@ -5,7 +5,7 @@ const TextArea = ({ value, className, size, styles, color = "#fff", label }) => 
   return (
     <TextField
       disabled
-      multiline
+      multiline={true}
       value={value}
       label={label}
       fullWidth

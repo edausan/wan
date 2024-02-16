@@ -8,7 +8,7 @@ import { MoreVert, PushPin, PushPinOutlined } from "@mui/icons-material";
 import { getAuth } from "firebase/auth";
 import { FirebaseApp } from "@/Firebase";
 import { ADMIN } from "@/data";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 const Header = ({ showPinned, lineup, setOpenDrawer }) => {
   const auth = getAuth(FirebaseApp);
@@ -16,8 +16,11 @@ const Header = ({ showPinned, lineup, setOpenDrawer }) => {
   const params = useParams();
   const [pinned, setPinned] = useState(lineup?.pinned);
 
-  const lineupQuery = useQuery("lineups", GetAllLineups);
-  const mutatedLineup = useMutation(UpdateLineupPinned);
+  const lineupQuery = useQuery({ queryKey: ["lineups"], queryFn: GetAllLineups });
+  const mutatedLineup = useMutation({
+    mutationKey: "update-lineup-pinned",
+    mutationFn: UpdateLineupPinned,
+  });
 
   const handlePinned = async () => {
     try {
@@ -68,7 +71,7 @@ const Header = ({ showPinned, lineup, setOpenDrawer }) => {
               aria-label="profile-photo"
               src={lineup?.worship_leader?.photoURL}
             >
-              {lineup?.worship_leader?.displayName.split("")[0]}
+              {lineup?.worship_leader?.displayName?.split("")[0]}
             </Avatar>
           </div>
           // </Link>
@@ -85,7 +88,7 @@ const Header = ({ showPinned, lineup, setOpenDrawer }) => {
                   )}
                 </IconButton>
 
-                {(user.uid === lineup.worship_leader?.uid || user.uid === ADMIN) && (
+                {(user.uid === lineup.worship_leader?.uid || user.email === ADMIN) && (
                   <IconButton aria-label="settings" onClick={() => setOpenDrawer(true)}>
                     <MoreVert />
                   </IconButton>

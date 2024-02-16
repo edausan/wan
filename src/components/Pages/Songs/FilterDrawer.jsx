@@ -9,12 +9,17 @@ const FilterDrawer = ({ artists, albums, searchText, setSearchText, open, setOpe
   const { albumCovers } = useSelector(selectSongs);
 
   return (
-    <SwipeableDrawer open={open} onClose={() => setOpen(false)} anchor="bottom">
+    <SwipeableDrawer
+      open={open || false}
+      onClose={() => setOpen(false)}
+      onOpen={() => {}}
+      anchor="bottom"
+    >
       <div className="flex flex-col gap-4 p-6 ">
         <FormControl variant="standard" fullWidth>
           <InputLabel id="arists">Filter by Artist</InputLabel>
           <Select
-            labelId="arists"
+            labelid="arists"
             label="Filter by Artist"
             size="small"
             value={artists.findIndex((a) => a === searchText) === -1 ? null : searchText}

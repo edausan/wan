@@ -10,7 +10,7 @@ const AssignmentLoading = () => {
       </div>
 
       {[1, 2, 3].map((num) => {
-        return <Services />;
+        return <Services key={num} />;
       })}
     </Card>
   );

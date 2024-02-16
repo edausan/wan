@@ -1,6 +1,6 @@
 import { ArrowBack, ArrowForward, SaveAlt } from "@mui/icons-material";
 import React, { Suspense, lazy, useEffect, useState } from "react";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import { AddLineup, UpdateLineup } from "@/Firebase/songsApi";
 import dayjs from "dayjs";
 import UserQuery from "@api/userQuery";
@@ -43,8 +43,8 @@ const NewLineupLayout = ({ edit }) => {
 
   // queries
   const { lineupsQuery } = LineupQuery();
-  const mutatedNewLineup = useMutation(AddLineup);
-  const mutatedLineup = useMutation(UpdateLineup);
+  const mutatedNewLineup = useMutation({ mutationKey: "add-lineup", mutationFn: AddLineup });
+  const mutatedLineup = useMutation({ mutationKey: "update-lineup", mutationFn: UpdateLineup });
 
   const { currentUser } = UserQuery();
 

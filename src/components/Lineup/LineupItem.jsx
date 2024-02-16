@@ -33,7 +33,7 @@ import { getAuth } from "firebase/auth";
 import { FirebaseApp } from "@/Firebase";
 import { DeleteLineup, GetAllLineups, GetAllSongs } from "@/Firebase/songsApi";
 import SPOTIFY_LOGO from "@assets/spotify_logo.png";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import LoadingScreen from "@components/CustomComponents/LoadingScreen";
 
 const EditSong = lazy(() => import("@components/Pages/Songs/EditSong"));
@@ -75,16 +75,16 @@ const LineupItem = ({
   const [editSong, setEditSong] = useState({ song: null, status: false });
 
   useEffect(() => {
-    lineup?.songs.length > 0 && lineup?.songs[0].title && GetSongsData();
+    lineup?.songs?.length > 0 && lineup?.songs[0].title && GetSongsData();
   }, [lineup.songs]);
 
   useEffect(() => {
     isExpanded && songsQuery.refetch();
   }, [isExpanded]);
 
-  const songsQuery = useQuery("songs", GetAllSongs);
-  const mutatedLineup = useMutation(DeleteLineup);
-  const lineupsQuery = useQuery("lineups", GetAllLineups);
+  const songsQuery = useQuery({ queryKey: ["songs"], queryFn: GetAllSongs });
+  const mutatedLineup = useMutation({ mutationKey: "delete-lineup", mutationFn: DeleteLineup });
+  const lineupsQuery = useQuery({ queryKey: ["lineups"], queryFn: GetAllLineups });
 
   const GetSongsData = () => {
     const songs_data = lineup.songs.map((song) => {
@@ -142,7 +142,7 @@ const LineupItem = ({
 
   const handleClose = () => {};
 
-  const lineup_songs = lineup.songs[0].title ? lineupSongs : lineup.songs;
+  const lineup_songs = lineup?.songs && lineup?.songs[0].title ? lineupSongs : lineup?.songs;
 
   return (
     <>
@@ -249,7 +249,7 @@ const LineupItem = ({
                     aria-label="profile"
                     src={lineup?.worship_leader?.photoURL}
                   >
-                    {lineup?.worship_leader?.displayName.split("")[0]}
+                    {lineup?.worship_leader?.displayName?.split("")[0]}
                   </Avatar>
                   {/* </Link> */}
                 </div>
@@ -290,7 +290,7 @@ const LineupItem = ({
               <Divider />
               <AccordionDetails sx={{ px: 0 }}>
                 {lineup_songs
-                  .filter((s) => s.song || s.title)
+                  ?.filter((s) => s.song || s.title)
                   .map((s, idx) => {
                     return (
                       <ListItem key={`${s.id}~${idx}`}>

@@ -119,7 +119,13 @@ const AddLyrics = ({ song, open, onClick, updateLyricsQuery }) => {
       !song?.lyrics?.bridge;
 
     return (
-      <SwipeableDrawer onClose={() => {}} open={open} anchor="right" className="z-[1004] w-[100%]">
+      <SwipeableDrawer
+        onOpen={() => {}}
+        onClose={() => {}}
+        open={open}
+        anchor="right"
+        className="z-[1004] w-[100%]"
+      >
         <LoadingScreen status={isLoading} text="Saving Lyrics" />
         <LyricsContext.Provider value={{ setParts, parts, song }}>
           <section className="w-[100vw]">

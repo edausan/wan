@@ -9,7 +9,7 @@ import { FirebaseApp } from "@/Firebase";
 import { ADMIN, ASSIGNER } from "@/data";
 import AssignmentLoading from "./Assignment/AssignmentLoading";
 import { GetAllAssignments, GetRealtimeAssignments } from "@/Firebase/assignmentApi";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import Fetching from "../CustomComponents/Fetching";
 import { GetAllUsers } from "@/Firebase/authApi";
 
@@ -23,13 +23,15 @@ const Assignments = () => {
 
   // const { users } = useSelector(selectUsers);
 
-  const usersQuery = useQuery("users", GetAllUsers);
+  const usersQuery = useQuery({ queryKey: ["users"], queryFn: GetAllUsers });
 
   const [assignments, setAssignments] = useState([]);
 
-  const { data, isLoading, isFetching } = useQuery("assignments", GetAllAssignments, {
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["assignments"],
+    queryFn: GetAllAssignments,
     staleTime: 10000,
-    cacheTime: 60 * 60 * 100,
+    gcTime: 60 * 60 * 100,
   });
 
   useEffect(() => {
@@ -67,7 +69,7 @@ const Assignments = () => {
             );
           })}
 
-        {(user.uid === ASSIGNER || user.uid === ADMIN) && (
+        {(user.uid === ASSIGNER || user.email === ADMIN) && (
           <Link to={`/assignments/new`} style={{ textDecoration: "none", color: "inherit" }}>
             <button className="fixed bottom-[86px] right-[26px] w-[50px] h-[50px]  bg-white text-black shadow-lg rounded-full z-50">
               <span className="motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-white text-black rounded-full z-40 opacity-30"></span>

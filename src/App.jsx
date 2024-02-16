@@ -14,32 +14,35 @@ import Loading from "@components/CustomComponents/Loading";
 import { ReactQueryDevtools } from "react-query/devtools";
 
 // React Query
-import { QueryClient, QueryClientProvider } from "react-query";
-import { createWebStoragePersistor } from "react-query/createWebStoragePersistor-experimental";
-import { persistQueryClient } from "react-query/persistQueryClient-experimental";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+// import { createWebStoragePersistor } from "react-query/createWebStoragePersistor-experimental";
+// import { persistQueryClient } from "react-query/persistQueryClient-experimental";
+
+import { persistQueryClient } from "@tanstack/react-query-persist-client";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import Routes from "./Routes";
 
 // Components
 const Splash = lazy(() => import("./components/Pages/Auth/Splash"));
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      cacheTime: 1000 * 60 * 60 * 24, // 24 hours
-      // staleTime: 1000 * 60 * 60 * 24, // 24 hours
-      // refetchOnWindowFocus: false,
-    },
-  },
-});
+// const queryClient = new QueryClient({
+//   defaultOptions: {
+//     queries: {
+//       gcTime: 1000 * 60 * 60 * 24, // 24 hours
+//       // staleTime: 1000 * 60 * 60 * 24, // 24 hours
+//       // refetchOnWindowFocus: false,
+//     },
+//   },
+// });
 
-const localStoragePersistor = createWebStoragePersistor({
-  storage: window.localStorage,
-});
+// const localStoragePersister = createSyncStoragePersister({
+//   storage: window.localStorage,
+// });
 
-persistQueryClient({
-  queryClient,
-  persistor: localStoragePersistor,
-});
+// persistQueryClient({
+//   queryClient,
+//   persistor: localStoragePersister,
+// });
 
 export const AppCtx = createContext();
 
@@ -96,76 +99,76 @@ function App() {
 
   const theme = createTheme({
     palette: {
-      mode: mode ? "light" : "dark",
+      mode: "light",
       background: {
-        paper: mode ? "#ffffff" : "#121212",
+        paper: "#ffffff",
         // default: mode ? "#ffffff85" : "#121212c9"
       },
     },
   });
 
   useEffect(() => {
-    document.body.style.background = mode ? "#eee" : "#242526e8";
+    document.body.style.background = "#eee";
   }, [mode]);
 
+  {
+    /* <ReactQueryDevtools
+    initialIsOpen={true}
+    position="top-left"
+    panelProps={{
+      style: {
+        position: "fixed",
+        top: 0,
+        left: 0,
+      },
+    }}
+  /> */
+  }
   return (
-    <QueryClientProvider client={queryClient}>
-      {/* <ReactQueryDevtools
-				initialIsOpen={true}
-				position="top-left"
-				panelProps={{
-					style: {
-						position: "fixed",
-						top: 0,
-						left: 0,
-					},
-				}}
-			/> */}
-      <ThemeProvider theme={theme}>
-        <Router>
-          <AppCtx.Provider value={value}>
-            {!currentUser?.user ? (
-              <Suspense fallback={<Loading />}>
-                <Splash />
-              </Suspense>
-            ) : (
-              <main>
-                <Grid
-                  container
-                  id="scroll-body"
-                  ref={bodyRef}
-                  sx={{
-                    position: "relative",
-                    "&::before": {
-                      position: "fixed",
-                      top: "50%",
-                      left: "50%",
-                      content: '""',
-                      width: "100%",
-                      height: "100%",
-                      backgroundSize: "auto 100%",
-                      backgroundPosition: "center",
-                      zIndex: 1000,
-                      opacity: 0.5,
-                      transform: "translate(-50%, -50%)",
-                    },
-                    "& .MuiCard-root": {
-                      backdropFilter: "blur(8px)",
-                    },
-                  }}
-                >
-                  <Navigation />
+    <ThemeProvider theme={theme}>
+      <Router>
+        <AppCtx.Provider value={value}>
+          {!currentUser?.user ? (
+            <Suspense fallback={<Loading />}>
+              <Splash />
+            </Suspense>
+          ) : (
+            <main>
+              <Grid
+                container
+                id="scroll-body"
+                ref={bodyRef}
+                sx={{
+                  position: "relative",
+                  "&::before": {
+                    position: "fixed",
+                    top: "50%",
+                    left: "50%",
+                    content: '""',
+                    width: "100%",
+                    height: "100%",
+                    backgroundSize: "auto 100%",
+                    backgroundPosition: "center",
+                    zIndex: 1000,
+                    opacity: 0.5,
+                    transform: "translate(-50%, -50%)",
+                  },
+                  "& .MuiCard-root": {
+                    backdropFilter: "blur(8px)",
+                  },
+                }}
+              >
+                <Navigation />
 
-                  <div className="pt-0 w-full z-[1001] mx-auto pb-[60px]">
-                    <Routes />
-                  </div>
-                </Grid>
-              </main>
-            )}
-          </AppCtx.Provider>
-        </Router>
-      </ThemeProvider>
-    </QueryClientProvider>
+                <div className="pt-0 w-full z-[1001] mx-auto pb-[60px]">
+                  <Routes />
+                </div>
+              </Grid>
+            </main>
+          )}
+        </AppCtx.Provider>
+      </Router>
+    </ThemeProvider>
   );
 }
 

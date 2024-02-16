@@ -2,13 +2,15 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import Theme from "./Theme";
 import { GetAllThemes } from "@/Firebase/postsApi";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const ThemeMain = () => {
   const [themes, setThemes] = useState([]);
 
-  const { data, isLoading, isFetching } = useQuery("themes", GetAllThemes, {
-    cacheTime: 60 * 60 * 1000,
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["themes"],
+    queryFn: GetAllThemes,
+    gcTime: 60 * 60 * 1000,
   });
 
   useEffect(() => {

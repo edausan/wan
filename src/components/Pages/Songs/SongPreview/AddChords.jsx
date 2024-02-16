@@ -106,7 +106,13 @@ const AddChords = ({ song, open, onClick, updateChordsQuery }) => {
       !song?.chords?.bridge;
 
     return (
-      <SwipeableDrawer onClose={() => {}} open={open} anchor="right" className="z-[1004] w-[100%]">
+      <SwipeableDrawer
+        onOpen={() => {}}
+        onClose={() => {}}
+        open={open || false}
+        anchor="right"
+        className="z-[1004] w-[100%]"
+      >
         <LoadingScreen status={isLoading} text="Saving Chords" />
         <ChordsContext.Provider value={{ setParts, parts, song, addChords, setAddChords }}>
           {/* <ChordEditorWrapper
@@ -213,7 +219,7 @@ const LyricsPart = ({ ...props }) => {
 const ChordEditorWrapper = ({ open = false, song, handleOnClose = () => {} }) => {
   return (
     <SwipeableDrawer
-      open={open}
+      open={open || false}
       onClose={handleOnClose}
       anchor="right"
       className="z-[1004] w-[100vw]"

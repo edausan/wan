@@ -10,7 +10,7 @@ const SongSearch = React.lazy(() => import("./SongSearch"));
 export const SongsCtx = createContext();
 const SongsMain = () => {
   // const { songs } = useSelector(selectSongs);
-  const { data: songs } = RealtimeSongs();
+  // const { data: songs } = RealtimeSongs();
   const [searchText, setSearchText] = useState(null);
   const [songList, setSongList] = useState([]);
   const [tags, setTags] = useState([]);
@@ -33,7 +33,8 @@ const SongsMain = () => {
   }, [updateLyricsQuery.isSuccess, updateChordsQuery.isSuccess, updateMediaQuery.isSuccess]);
 
   useEffect(() => {
-    data && data?.length > 0 && !isFetching && setSongList(data);
+    console.log({ data });
+    data && data?.length > 0 && !isFetching && setSongList(data ? data : []);
   }, [data, isFetching]);
 
   useEffect(() => {
@@ -49,7 +50,7 @@ const SongsMain = () => {
     if (searchText) {
       handleSearch();
     } else {
-      setSongList(songs);
+      setSongList(data);
     }
   }, [searchText]);
 
@@ -141,7 +142,7 @@ const SongsMain = () => {
       <SongsCtx.Provider value={{ refetch }}>
         <div className="max-w-[680px] mx-auto box-border">
           {searchText && <small className="px-4">Total songs: {songList.length}</small>}
-          <SongList songs={songList} />
+          {songList?.length > 0 && <SongList songs={songList} />}
         </div>
       </SongsCtx.Provider>
     </div>

@@ -49,7 +49,7 @@ import { Link, useHistory } from "react-router-dom";
 import { AppCtx } from "@/App";
 import { useSelector } from "react-redux";
 import { selectUsers } from "@/redux/slices/usersSlice";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { GetAllUsers } from "@/Firebase/authApi";
 
 const AssignmentDrawer = React.lazy(() => import("./AssignmentDrawer"));
@@ -85,7 +85,7 @@ const SetAssignment = ({ isViewing, assignment }) => {
     },
   });
 
-  const usersQuery = useQuery("users", GetAllUsers);
+  const usersQuery = useQuery({ queryKey: ["users"], queryFn: GetAllUsers });
 
   useEffect(() => {
     scrollToTop();

@@ -24,7 +24,7 @@ import { SongsCtx } from "../SongsMain";
 
 const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
   const auth = getAuth(FirebaseApp);
-  const { refetch } = useContext(SongsCtx);
+  // const { refetch } = useContext(SongsCtx);
   const { currentUser } = auth;
   const { song, state } = openDrawer;
   const params = useParams();
@@ -63,9 +63,10 @@ const SongPreview = ({ openDrawer, setOpenDrawer, updating }) => {
   return useMemo(() => {
     return (
       <SwipeableDrawer
+        onOpen={() => {}}
         onClose={() => setOpenDrawer({ song: null, state: false })}
         className="z-[1004] w-[100%]"
-        open={openDrawer.state}
+        open={openDrawer.state || false}
         anchor="right"
       >
         <section className={`bg-white h-[100vh] w-[100vw] `}>

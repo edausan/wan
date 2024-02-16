@@ -89,7 +89,12 @@ const AddTheme = ({ open, setOpen }) => {
   return (
     <>
       <LoadingScreen status={saving} text="Saving" />
-      <SwipeableDrawer open={open} onClose={() => setOpen(false)} anchor="bottom">
+      <SwipeableDrawer
+        onOpen={() => {}}
+        open={open || false}
+        onClose={() => setOpen(false)}
+        anchor="bottom"
+      >
         <section className="max-w-[680px] mx-auto">
           <div className="desktop:min-h-[349px] laptop:min-h-[349px] phone:min-h-[211px] relative bg-black/30">
             <input

@@ -163,7 +163,7 @@ const SignUp = ({ setScreen }) => {
               <Input
                 variant="standard"
                 label="Password"
-                labelId="password"
+                labelid="password"
                 fullWidth
                 type={show ? "text" : "password"}
                 onChange={(e) => setUser({ ...user, password: e.target.value })}
@@ -188,14 +188,18 @@ const SignUp = ({ setScreen }) => {
             <FormControl variant="standard" fullWidth>
               <InputLabel id="ministry">Ministry</InputLabel>
               <Select
-                labelId="ministry"
+                labelid="ministry"
                 label="Ministry"
                 size="small"
                 sx={{ fontSize: 14 }}
                 onChange={(e) => setUser({ ...user, ministry: e.target.value })}
               >
                 {Ministries.map((ministry) => {
-                  return <MenuItem value={ministry.id}>{ministry.name}</MenuItem>;
+                  return (
+                    <MenuItem key={ministry.id} value={ministry.id}>
+                      {ministry.name}
+                    </MenuItem>
+                  );
                 })}
               </Select>
             </FormControl>

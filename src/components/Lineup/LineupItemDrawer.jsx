@@ -7,7 +7,7 @@ const LineupItemDrawer = ({ open, setOpen, handleDelete, handleEdit, user, lineu
   return (
     <Drawer anchor="bottom" open={open} onClose={() => setOpen(false)}>
       <List>
-        {(user.uid === ADMIN || user.uid === lineup.worship_leader?.uid) && (
+        {(user.email === ADMIN || user.uid === lineup.worship_leader?.uid) && (
           <ListItemButton onClick={handleEdit}>
             <ListItemIcon>
               <EditTwoTone />

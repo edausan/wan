@@ -11,7 +11,7 @@ import {
   Chip,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AddNewSong, UploadAlbumCover } from "@/Firebase/songsApi";
 import useResize from "@hooks/useResize";
 import AlbumCover from "./AlbumCover";
@@ -19,6 +19,7 @@ import EditSongTabs from "./EditSongTabs";
 import ALBUM_PLACEHOLDER from "@assets/music_placeholder.jpg";
 import SongType from "./SongType";
 import LoadingScreen from "@components/CustomComponents/LoadingScreen";
+import { SongsCtx } from "./SongsMain";
 
 const CreateNewSong = ({ open, setOpen }) => {
   const [newTag, setNewTag] = useState(null);
@@ -31,6 +32,8 @@ const CreateNewSong = ({ open, setOpen }) => {
   const [selectedCover, setSelectedCover] = useState(null);
   const [openSongType, setOpenSongType] = useState(true);
   const [showLyrics, setShowLyrics] = useState(false);
+
+  const { refetch } = useContext(SongsCtx);
 
   const { processfile, resized } = useResize(0.8);
 
@@ -123,6 +126,7 @@ const CreateNewSong = ({ open, setOpen }) => {
       setTimeout(() => {
         setOpen(false);
         setUpdated(false);
+        refetch();
       }, 1000);
     } catch (error) {
       setUpdating(false);
@@ -194,7 +198,7 @@ const CreateNewSong = ({ open, setOpen }) => {
   };
 
   const handleSongType = (type) => {
-    setSongDetails({ ...songDetails, tags: [type] });
+    setSongDetails({ ...songDetails, tags: [...type] });
     setOpenSongType(false);
   };
 
@@ -216,8 +220,9 @@ const CreateNewSong = ({ open, setOpen }) => {
       <LoadingScreen status={updating} text="Saving, " />
       <SwipeableDrawer
         anchor="bottom"
-        open={open}
+        open={open || false}
         onClose={() => setOpen(false)}
+        onOpen={() => {}}
         className="[&>.MuiDrawer-paper]:items-center"
       >
         <div className="max-w-[680px] m-x-auto w-full max-h-[100vh] overflow-y-auto">

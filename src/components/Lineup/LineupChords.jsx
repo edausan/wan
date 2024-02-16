@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, TextField, useTheme } from "@mui/material";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { GetAllSongs } from "@/Firebase/songsApi";
 
 const LineupChords = ({ lineup, showChords, setShowChords }) => {
   const [songChords, setSongChords] = useState([]);
-  const songsQuery = useQuery("songs", GetAllSongs);
+  const songsQuery = useQuery({ queryKey: ["songs"], queryFn: GetAllSongs });
 
   useEffect(() => {
     const songs = songsQuery.data;

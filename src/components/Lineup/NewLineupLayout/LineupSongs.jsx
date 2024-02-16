@@ -1,11 +1,11 @@
 import React from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { GetAllSongs } from "@/Firebase/songsApi";
 import { LINEUP } from "@/data";
 import LineupCard from "../LineupCard";
 
 const LineupSongs = ({ songs, setSongs, currentStep }) => {
-  const songsQuery = useQuery("songs", GetAllSongs);
+  const songsQuery = useQuery({ queryKey: ["songs"], queryFn: GetAllSongs });
   const songsList = songsQuery?.data;
 
   const handleChangeSong = ({ song, category }) => {

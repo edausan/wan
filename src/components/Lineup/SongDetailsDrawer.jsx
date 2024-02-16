@@ -63,8 +63,9 @@ const SongDetailsDrawer = ({ expanded, handleExpandClick, handleClose, drawerDat
   return (
     <SwipeableDrawer
       anchor="right"
-      open={expanded}
+      open={expanded || false}
       onClose={() => handleExpandClick({ song: null, id: null })}
+      onOpen={() => {}}
       className="flex relative"
     >
       <SongHeader song={drawerData.song} />

@@ -69,7 +69,7 @@ const SongList = ({ songs }) => {
 
       <CreateNewSong open={open} setOpen={setOpen} />
 
-      {(currentUser?.user_metadata?.ministry === "VIA" || currentUser?.user?.uid === ADMIN) && (
+      {(currentUser?.user_metadata?.ministry === "VIA" || currentUser?.user?.email === ADMIN) && (
         <button
           className="fixed bottom-[86px] right-[26px] w-[50px] h-[50px]  bg-white text-black shadow-lg rounded-full z-50"
           onClick={() => setOpen(true)}

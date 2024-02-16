@@ -210,7 +210,7 @@ const LINEUP = [
 ];
 
 const ASSIGNER = "k4gcy3yNWqa02aUfhw8J4fn7sS63";
-const ADMIN = "Hfhcau8TAiXR4T4FEAXp7eipDvz2";
+const ADMIN = "edmardausan15@gmail.com";
 const JIL_ADMIN = "46NVNKry9DhU1tTX3QrmM1OjudA3";
 const ADRIAN = "1s5QjVwW4iT4NtdhESqU1qcoOu12";
 

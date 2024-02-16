@@ -25,7 +25,7 @@ import ALBUM_PLACEHOLDER from "@assets/music_placeholder.jpg";
 import AlbumCover from "./AlbumCover";
 import LoadingScreen from "@components/CustomComponents/LoadingScreen";
 import NewSongTag from "./NewTag";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
   const { resized, processfile } = useResize({ quality: 0.9 });
@@ -176,8 +176,8 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
     }
   }, [new_tag]);
 
-  const lineupQuery = useQuery("lineups", GetAllLineups);
-  const songsQuery = useQuery("songs", GetAllSongs);
+  const lineupQuery = useQuery({ queryKey: ["lineups"], queryFn: GetAllLineups });
+  const songsQuery = useQuery({ queryKey: ["songs"], queryFn: GetAllSongs });
 
   const handleSave = async () => {
     setUpdating(true);
@@ -242,8 +242,9 @@ const EditSong = ({ drawer, setOpen, handleCover, isNew }) => {
       <LoadingScreen status={updating} text="Updating, " />
       <SwipeableDrawer
         anchor="bottom"
-        open={status}
+        open={status || false}
         onClose={() => setOpen(false)}
+        onOpen={() => {}}
         className="max-w-[680px] [&>.MuiDrawer-paper]:items-center"
       >
         <div className="max-w-[680px] m-x-auto w-full">

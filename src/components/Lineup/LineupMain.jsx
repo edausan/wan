@@ -19,7 +19,7 @@ const Lineup = () => {
   // const { data: lineups } = RealtimeLineups();
   const { currentUser } = useSelector(selectUsers);
   // const { scrollToTop } = useContext(AppCtx);
-  const [pinnedLineup, setPinnedLineup] = useState(null);
+  const [pinnedLineup, setPinnedLineup] = useState([]);
   const [showPinned, setShowPinned] = useState(false);
   const [lineupData, setLineupData] = useState([]);
 
@@ -103,7 +103,7 @@ const Lineup = () => {
         ?.slice()
         ?.map((l) => ({
           ...l,
-          worship_leader: usersQuery.data?.filter((u) => u.uid === l.worship_leader.uid)[0],
+          worship_leader: usersQuery.data?.filter((u) => u.uid === l.worship_leader?.uid)[0],
         }))
         .sort((a, b) => new Date(b.date_created) - new Date(a.date_created))
         .filter((lineup) => !lineup.pinned)
@@ -115,7 +115,7 @@ const Lineup = () => {
           );
         })}
 
-      {(currentUser?.user_metadata?.ministry === "VIA" || currentUser?.user?.uid === ADMIN) && (
+      {(currentUser?.user_metadata?.ministry === "VIA" || currentUser?.user?.email === ADMIN) && (
         <Link to="/lineup/new">
           <button className="fixed bottom-[86px] right-[26px] w-[50px] h-[50px]  bg-white text-black shadow-lg rounded-full z-50">
             <span className="motion-safe:animate-ping absolute top-0 left-0 w-[100%] h-[100%] bg-white text-black rounded-full z-40 opacity-30"></span>

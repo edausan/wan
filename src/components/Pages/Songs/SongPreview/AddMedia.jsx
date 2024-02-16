@@ -30,7 +30,13 @@ const AddMedia = ({ song, open, onClick, updateMediaQuery }) => {
   };
 
   return (
-    <SwipeableDrawer onClose={() => {}} open={open} anchor="right" className="z-[1004] w-[100%]">
+    <SwipeableDrawer
+      onOpen={() => {}}
+      onClose={() => {}}
+      open={open || false}
+      anchor="right"
+      className="z-[1004] w-[100%]"
+    >
       <LoadingScreen status={isLoading} text="Saving Media" />
       <section className="w-[100vw] bg-white">
         <TopBar

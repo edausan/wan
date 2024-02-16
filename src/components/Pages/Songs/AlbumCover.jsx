@@ -12,11 +12,14 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useSelector } from "react-redux";
 import { GetAlbumCovers, GetAllAlbumCovers } from "@/Firebase/songsApi";
 import { selectSongs } from "@/redux/slices/songsSlice";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const AlbumCover = ({ open, setOpen, setSelectedCover, selectedCover, setImage, resized }) => {
   // const { AlbumCovers } = GetAllAlbumCovers();
-  const { data: AlbumCovers, isFetched } = useQuery("album-covers", GetAlbumCovers);
+  const { data: AlbumCovers, isFetched } = useQuery({
+    queryKey: ["album-covers"],
+    queryFn: GetAlbumCovers,
+  });
   // const { albumCovers } = useSelector(selectSongs);
   const [img, setImg] = useState(null);
 
@@ -41,7 +44,12 @@ const AlbumCover = ({ open, setOpen, setSelectedCover, selectedCover, setImage, 
   };
 
   return (
-    <SwipeableDrawer anchor="bottom" open={open} onClose={() => setOpen(false)}>
+    <SwipeableDrawer
+      anchor="bottom"
+      open={open || false}
+      onClose={() => setOpen(false)}
+      onOpen={() => {}}
+    >
       <div className="p-4">
         <ImageList variant="masonry" cols={3} gap={6}>
           {albumCovers?.map((cover, idx) => (

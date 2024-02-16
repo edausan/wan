@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { AppCtx } from "@/App";
 import { GetAllLineups, GetSingleLineup } from "@/Firebase/songsApi";
 import LineupItem from "./LineupItem";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const ViewLineup = () => {
   const params = useParams();
@@ -17,7 +17,7 @@ const ViewLineup = () => {
     scrollToTop();
   }, []);
 
-  const { data, isFetching } = useQuery("lineups", GetAllLineups);
+  const { data, isFetching } = useQuery({ queryKey: ["lineups"], queryFn: GetAllLineups });
 
   useEffect(() => {
     if (data.length > 0 && !isFetching) {

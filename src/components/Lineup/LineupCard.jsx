@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { FormControl, Grid, InputLabel, Select, MenuItem } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { GetAllSongs } from "@/Firebase/songsApi";
 
 const initialState = {
@@ -29,7 +29,7 @@ const LineupCard = ({
   const [currentCategory, setCurrentCategory] = useState(category);
   const [filteredSongs, setFilteredSongs] = useState([]);
 
-  const songsQuery = useQuery("songs", GetAllSongs);
+  const songsQuery = useQuery({ queryKey: ["songs"], queryFn: GetAllSongs });
 
   useEffect(() => {
     setCurrentCategory(category);

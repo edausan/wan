@@ -10,7 +10,7 @@ import {
 import { useHistory, useParams } from "react-router-dom";
 import { FirebaseApp } from "@/Firebase";
 import { GetAllLineups, HeartLineup } from "@/Firebase/songsApi";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 const Actions = ({ lineup, showChords }) => {
@@ -19,8 +19,8 @@ const Actions = ({ lineup, showChords }) => {
   const user = auth.currentUser;
   const params = useParams();
 
-  const lineupQuery = useQuery("lineups", GetAllLineups);
-  const mutatedLineup = useMutation(HeartLineup);
+  const lineupQuery = useQuery({ queryKey: ["lineups"], queryFn: GetAllLineups });
+  const mutatedLineup = useMutation({ mutationKey: "heart-lineup", mutationFn: HeartLineup });
 
   const handleHeart = async () => {
     const idx = lineup?.heart?.findIndex((h) => h === user.uid);

@@ -21,7 +21,7 @@ const Splash = () => {
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      setIsLoggedIn(false);
+      setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
     }
@@ -113,7 +113,11 @@ const Splash = () => {
       <Box className="w-full max-w-[500px] text-center z-[1002] flex justify-center">
         <img src={WAN_LOGO_NEW} alt="WAN | Belleview" style={{ width: "80%" }} />
       </Box>
-      {isLoggedIn ? <Loading /> : Screen()}
+      {/* {isLoggedIn && <Loading />} */}
+      {/* {screen === "splash" && SplashScreen} */}
+      {/* {screen === "login" && <Login setScreen={setScreen} />} */}
+      <Login setScreen={setScreen} />
+      {/* {screen === "signup" && <SignUp setScreen={setScreen} />} */}
     </Grid>
   );
 };

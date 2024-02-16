@@ -15,7 +15,7 @@ const SongType = ({ open, setOpen, setSongType }) => {
     <Dialog open={open}>
       <DialogTitle className="text-sm w-[240px] text-center">Select Song Type</DialogTitle>
       <List>
-        <ListItemButton onClick={() => setSongType("Praise")}>
+        <ListItemButton onClick={() => setSongType(["Praise", "Joyful"])}>
           <ListItemIcon>
             <Avatar className="w-8 h-8">
               <MusicNoteTwoTone />
@@ -24,7 +24,7 @@ const SongType = ({ open, setOpen, setSongType }) => {
           <ListItemText primary="Praise" />
         </ListItemButton>
 
-        <ListItemButton onClick={() => setSongType("Worship")}>
+        <ListItemButton onClick={() => setSongType(["Worship", "Solemn"])}>
           <ListItemIcon>
             <Avatar className="w-8 h-8">
               <MusicNoteTwoTone />
