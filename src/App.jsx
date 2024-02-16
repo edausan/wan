@@ -12,37 +12,10 @@ import { useDispatch } from "react-redux";
 import { setUser } from "./redux/slices/usersSlice";
 import Loading from "@components/CustomComponents/Loading";
 import { ReactQueryDevtools } from "react-query/devtools";
-
-// React Query
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-// import { createWebStoragePersistor } from "react-query/createWebStoragePersistor-experimental";
-// import { persistQueryClient } from "react-query/persistQueryClient-experimental";
-
-import { persistQueryClient } from "@tanstack/react-query-persist-client";
-import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import Routes from "./Routes";
 
 // Components
 const Splash = lazy(() => import("./components/Pages/Auth/Splash"));
-
-// const queryClient = new QueryClient({
-//   defaultOptions: {
-//     queries: {
-//       gcTime: 1000 * 60 * 60 * 24, // 24 hours
-//       // staleTime: 1000 * 60 * 60 * 24, // 24 hours
-//       // refetchOnWindowFocus: false,
-//     },
-//   },
-// });
-
-// const localStoragePersister = createSyncStoragePersister({
-//   storage: window.localStorage,
-// });
-
-// persistQueryClient({
-//   queryClient,
-//   persistor: localStoragePersister,
-// });
 
 export const AppCtx = createContext();
 
